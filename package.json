@@ -1,0 +1,20 @@
+{
+    "name": "eracrypt",
+    "version": "0.0.1",
+    "scripts": {
+        "build": "webpack --mode production",
+        "dev": "webpack --mode development"
+    },
+    "dependencies": {
+        "crypto-js": "^3.1.9-1",
+        "tweetnacl": "^1.0.1"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.6.2",
+        "@babel/preset-env": "^7.6.2",
+        "babel-loader": "^8.0.6",
+        "copy-webpack-plugin": "^5.0.4",
+        "webpack": "^4.41.0",
+        "webpack-cli": "^3.3.9"
+    }
+}
