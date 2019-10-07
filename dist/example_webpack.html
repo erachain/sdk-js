@@ -1,0 +1,34 @@
+<html style='height:100%'>
+<head>
+    <title>Erachain Crypto Lib</title>
+    <script type="text/javascript" src="js/eracrypto.js"></script>
+    <script>
+
+        function testCrypt(msg) {
+            const secret1 = '2RSehSu6szKbhEap46fhLN4s2BCfD1N2PLqbKnVWCbPvzF9JRBJs8sbQFqqaGLs4x4TZZV8hD5irs2RiT7gsGVjq';
+            const public1 = '3jPhyhgqry3J95PHRLmH27UhKvn93y3x6Z748uv2vKoH';
+
+            const public2 = '6jt933MGNLo8DFEtJX1HXsfu38h21PyWpBRstaNM1Q5q';
+            const secret2 = 'kiAeqbBDqQ4Qa5X1hdpuWnzmX3GW3i9Bwk81VmNeFkXWhypZnxCYGnPDdTbbBFkgZHQkADowQhatRqYAT72nYrf';
+
+            //const msg = JSON.stringify({name:1});
+
+            const encrypted = EraCrypt.encryptMessage(msg, public2, secret1);
+            const str = Base58.encode(encrypted);
+            const decrypted = EraCrypt.decryptMessage(str, public1, secret2);
+            return decrypted;
+        }
+
+        function onLoad() {
+            var msg = 'my comment';
+            document.getElementById("message").innerHTML = "Input message: " + msg;
+            var decrypted = testCrypt(msg);
+            document.getElementById("decrypted").innerHTML = "Decrypted message: " + decrypted;
+        }
+    </script>
+</head>
+
+<body onload="onLoad()">
+    <div id="message"></div>
+    <div id="decrypted"></div>
+</body>
