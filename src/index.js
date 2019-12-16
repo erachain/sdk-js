@@ -41,7 +41,8 @@
             const message = arrayMessage.slice(1);
             let words = Bytes.convertUint8ArrayToWordArray(message);
             let decrypted = CryptoJS.AES.decrypt({ ciphertext: words }, sharedKey, { iv });
-            const jsonString = Bytes.stringFromByteArray(Bytes.prepareAfterDecrypt(Bytes.wordsToByteArray(decrypted)));
+            const jsonString = decrypted.toString(CryptoJS.enc.Utf8);
+            //const jsonString = Bytes.stringFromByteArray(Bytes.prepareAfterDecrypt(Bytes.wordsToByteArray(decrypted)));
             return jsonString;
         } catch (e) {;
             return false;
