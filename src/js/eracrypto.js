@@ -30,7 +30,9 @@
         try {
             const iv = CryptoJS.enc.Hex.parse('06040308010201020702030805070101');
             const password = getPassword(publicKey, privateKey);
+            console.log(password);
             let sharedKey =Bytes.convertUint8ArrayToWordArray(password);
+            console.log(sharedKey);
             const encrypted = CryptoJS.AES.encrypt(message, sharedKey, { iv });
             const int8Array0 = Bytes.wordsToByteArray(encrypted.ciphertext);
             const int8Array = new Int8Array([ 0x01, ...int8Array0]);
@@ -44,12 +46,15 @@
         try {
             const iv = CryptoJS.enc.Hex.parse('06040308010201020702030805070101');
             const password = getPassword(publicKey, privateKey);
+            console.log(password);
             let sharedKey = Bytes.convertUint8ArrayToWordArray(password);
+            console.log(sharedKey);
             const arrayMessage = Base58.decode(encryptedMessage);
             const message = arrayMessage.slice(1);
             let words = Bytes.convertUint8ArrayToWordArray(message);
             let decrypted = CryptoJS.AES.decrypt({ ciphertext: words }, sharedKey, { iv });
-            const jsonString = Bytes.stringFromByteArray(Bytes.prepareAfterDecrypt(Bytes.wordsToByteArray(decrypted)));
+            const jsonString = decrypted.toString(CryptoJS.enc.Utf8);
+            //const jsonString = Bytes.stringFromByteArray(Bytes.wordsToByteArray(decrypted));
             return jsonString;
         } catch (e) {;
             return false;
