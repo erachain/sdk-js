@@ -20,7 +20,7 @@ module.exports = {
     },
     plugins: [
         new CopyPlugin([
-          { from: 'src/example_webpack.html', to: '../' },
+          { from: 'src/example_webpack.html', to: '../index.html' },
         ]),
     ]
 }
