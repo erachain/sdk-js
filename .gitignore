@@ -2,7 +2,10 @@
 #
 .DS_Store
 
-package-lock.json
-
 node_modules/
-dist/
+
+package-lock.json
+yarn.lock
+
+
+

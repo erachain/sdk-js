@@ -171,10 +171,8 @@
     };
 
     window.Base58 = Base58;
+    window.Bytes = Bytes;
     window.EraCrypt = {
-        base58encode: Base58.encode,
-        base58decode: Base58.decode,
-        stringToByteArray: Bytes.stringToByteArray,
         addressByPublicKey: getAccountAddressFromPublicKey,
         generateKeys: generateKeys,
         addressBySecretKey: getAddressBySecretKey,

@@ -8,11 +8,11 @@
         const keys2 = getNewKeys()
 
         function base58encode(arr) {
-            return EraCrypt.base58encode(arr);
+            return Base58.encode(arr);
         }
 
         function base58decode(str) {
-            return EraCrypt.base58decode(str);
+            return Base58.decode(str);
         }
 
         function getNewKeys() {
@@ -32,7 +32,7 @@
         }
 
         function sign(msg, secret) {
-            return EraCrypt.base58encode(EraCrypt.sign(msg, secret));
+            return Base58.encode(EraCrypt.sign(msg, secret));
         }
 
         function verifySignature(msg, sign, public) {
@@ -61,17 +61,17 @@
 
         function onLoad() {
 
-            document.getElementById("secret").innerHTML = "secret key: " + base58encode(keys1.secretKey);
-            document.getElementById("public").innerHTML = "public key: " + base58encode(keys1.publicKey);
+            document.getElementById("secret").innerHTML = "secret key: " + Base58.encode(keys1.secretKey);
+            document.getElementById("public").innerHTML = "public key: " + Base58.encode(keys1.publicKey);
             document.getElementById("addressByPublic").innerHTML = "address: " + addressByPublic(keys1.publicKey);
             document.getElementById("addressBySecret").innerHTML = "address: " + addressBySecret(keys1.secretKey);
-            document.getElementById("publicBySecret").innerHTML = "public key: " + base58encode(publicBySecret(keys1.secretKey));
+            document.getElementById("publicBySecret").innerHTML = "public key: " + Base58.encode(publicBySecret(keys1.secretKey));
             var msg = 'Здравствуй, Erachain Javascript API!';
             document.getElementById("message").innerHTML = "test message: " + msg;
 
-            var signature = sign(EraCrypt.stringToByteArray(msg), keys1.secretKey);
+            var signature = sign(Bytes.stringToByteArray(msg), keys1.secretKey);
             document.getElementById("signature").innerHTML = "signature: " + signature;
-            document.getElementById("verifySignature").innerHTML = "verify signature: " +  verifySignature(EraCrypt.stringToByteArray(msg), base58decode(signature), keys1.publicKey);
+            document.getElementById("verifySignature").innerHTML = "verify signature: " +  verifySignature(Bytes.stringToByteArray(msg), Base58.decode(signature), keys1.publicKey);
 
             
             var decrypted = testCrypt(msg);
