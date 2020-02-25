@@ -1,7 +1,7 @@
 (function (root, U){
     "use strict";
 
-    const { scalarMult } = require("tweetnacl");
+    const { sign, scalarMult } = require("tweetnacl");
     const Base58 = require("./js/Base58.js");
     const Bytes = require("./js/Bytes.js");
     require("./js/sha256.js");
@@ -27,22 +27,17 @@
     }
 
     //Get account address from public key
-    //publicKey: Int8Array | string
+    //publicKey: Int8Array
     //
     //return : string Base58
     function getAccountAddressFromPublicKey(publicKey) {
-
-        if (typeof publicKey === "string") {
-            publicKey = Base58.decode(publicKey);
-        }
-
-        publicKey = new Int8Array(publicKey);
 
         // SHA256 PUBLICKEY FOR PROTECTION
         let publicKeyHash = SHA256.digest(publicKey);
 
         // RIPEMD160 TO CREATE A SHORTER ADDRESS
 
+        RIPEMD160.reset();
         publicKeyHash = RIPEMD160.digest(publicKeyHash);
 
         // CONVERT TO LIST
@@ -83,7 +78,7 @@
             secretKey = Base58.decode(secretKey);
         }
         const keys = sign.keyPair.fromSecretKey(new Uint8Array(secretKey));
-        return getAddressByPublicKey(new Int8Array(keys.publicKey));
+        return getAccountAddressFromPublicKey(keys.publicKey);
     }
 
     //Get address by secret key
@@ -177,6 +172,15 @@
 
     window.Base58 = Base58;
     window.EraCrypt = {
+        base58encode: Base58.encode,
+        base58decode: Base58.decode,
+        stringToByteArray: Bytes.stringToByteArray,
+        addressByPublicKey: getAccountAddressFromPublicKey,
+        generateKeys: generateKeys,
+        addressBySecretKey: getAddressBySecretKey,
+        publicKeyBySecretKey: getPublicKeyBySecretKey,
+        sign: toSign,
+        verifySign: verifySign,
         encryptMessage: encryptMessage,
         decryptMessage: decryptMessage,
     };
