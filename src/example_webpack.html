@@ -4,31 +4,90 @@
     <script type="text/javascript" src="js/eracrypto.js"></script>
     <script>
 
+        const keys1 = getNewKeys()
+        const keys2 = getNewKeys()
+
+        function base58encode(arr) {
+            return EraCrypt.base58encode(arr);
+        }
+
+        function base58decode(str) {
+            return EraCrypt.base58decode(str);
+        }
+
+        function getNewKeys() {
+            return EraCrypt.generateKeys();
+        }
+
+        function addressByPublic(public) {
+            return EraCrypt.addressByPublicKey(public)
+        }
+
+        function addressBySecret(secret) {
+            return EraCrypt.addressBySecretKey(secret)
+        }
+
+        function publicBySecret(secret) {
+            return EraCrypt.publicKeyBySecretKey(secret)
+        }
+
+        function sign(msg, secret) {
+            return EraCrypt.base58encode(EraCrypt.sign(msg, secret));
+        }
+
+        function verifySignature(msg, sign, public) {
+            return EraCrypt.verifySign(msg, sign, public);
+        }
+
         function testCrypt(msg) {
+
+            /*
             const secret1 = '2RSehSu6szKbhEap46fhLN4s2BCfD1N2PLqbKnVWCbPvzF9JRBJs8sbQFqqaGLs4x4TZZV8hD5irs2RiT7gsGVjq';
             const public1 = '3jPhyhgqry3J95PHRLmH27UhKvn93y3x6Z748uv2vKoH';
 
             const public2 = '6jt933MGNLo8DFEtJX1HXsfu38h21PyWpBRstaNM1Q5q';
             const secret2 = 'kiAeqbBDqQ4Qa5X1hdpuWnzmX3GW3i9Bwk81VmNeFkXWhypZnxCYGnPDdTbbBFkgZHQkADowQhatRqYAT72nYrf';
+            */
 
             //const msg = JSON.stringify({name:1});
 
-            const encrypted = EraCrypt.encryptMessage(msg, public2, secret1);
+            //console.log({ keys1, keys2 });
+
+            const encrypted = EraCrypt.encryptMessage(msg, keys2.publicKey, keys1.secretKey);
             const str = Base58.encode(encrypted);
-            const decrypted = EraCrypt.decryptMessage(str, public1, secret2);
+            const decrypted = EraCrypt.decryptMessage(str, keys1.publicKey, keys2.secretKey);
             return decrypted;
         }
 
         function onLoad() {
-            var msg = 'my comment';
-            document.getElementById("message").innerHTML = "Input message: " + msg;
+
+            document.getElementById("secret").innerHTML = "secret key: " + base58encode(keys1.secretKey);
+            document.getElementById("public").innerHTML = "public key: " + base58encode(keys1.publicKey);
+            document.getElementById("addressByPublic").innerHTML = "address: " + addressByPublic(keys1.publicKey);
+            document.getElementById("addressBySecret").innerHTML = "address: " + addressBySecret(keys1.secretKey);
+            document.getElementById("publicBySecret").innerHTML = "public key: " + base58encode(publicBySecret(keys1.secretKey));
+            var msg = 'Здравствуй, Erachain Javascript API!';
+            document.getElementById("message").innerHTML = "test message: " + msg;
+
+            var signature = sign(EraCrypt.stringToByteArray(msg), keys1.secretKey);
+            document.getElementById("signature").innerHTML = "signature: " + signature;
+            document.getElementById("verifySignature").innerHTML = "verify signature: " +  verifySignature(EraCrypt.stringToByteArray(msg), base58decode(signature), keys1.publicKey);
+
+            
             var decrypted = testCrypt(msg);
-            document.getElementById("decrypted").innerHTML = "Decrypted message: " + decrypted;
+            document.getElementById("decrypted").innerHTML = "decrypted message: " + decrypted;
         }
     </script>
 </head>
 
 <body onload="onLoad()">
+    <div id="secret"></div>
+    <div id="public"></div>
+    <div id="addressByPublic"></div>
+    <div id="addressBySecret"></div>
+    <div id="publicBySecret"></div>
     <div id="message"></div>
+    <div id="signature"></div>
+    <div id="verifySignature"></div>
     <div id="decrypted"></div>
 </body>
