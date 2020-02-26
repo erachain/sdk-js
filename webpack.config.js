@@ -22,5 +22,10 @@ module.exports = {
         new CopyPlugin([
           { from: 'src/example_webpack.html', to: '../index.html' },
         ]),
-    ]
+    ],
+    watch: true,
+    watchOptions: {
+        aggregateTimeout: 1000,
+        ignored: ['node_modules/**']
+    }
 }
