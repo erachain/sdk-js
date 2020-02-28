@@ -16,10 +16,6 @@
         "postversion" : "git push && git push --tags"
 
     },
-    "repository": {
-        "type": "git",
-        "url": "git+https://lab.erachain.org/erachain/web-js-encrypt.git"
-    },
     "keywords": ["Blockchain"],
     "author": "iv_avdeev@mail.ru",
     "dependencies": {
