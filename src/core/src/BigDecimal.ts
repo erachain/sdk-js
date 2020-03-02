@@ -4,8 +4,6 @@ export class BigDecimal {
     private scale = 8;
     private _num: number;
 
-    constructor(num: string, scale?: number)
-    constructor(num: number, scale?: number)
     constructor(num: number | string, scale?: number) {
         if (typeof num === "string") {
             num = parseFloat(num);
@@ -44,8 +42,6 @@ export class BigDecimal {
         return this._num;
     }
 
-    multiply(x: number): BigDecimal
-    multiply(x: BigDecimal): BigDecimal
     multiply(x: number | BigDecimal): BigDecimal {
         return new BigDecimal(this.num * this._numValue(x));
     }
@@ -59,8 +55,6 @@ export class BigDecimal {
         return new BigDecimal(value);
     }
 
-    pow(x: number): BigDecimal
-    pow(x: BigDecimal): BigDecimal
     pow(x: number | BigDecimal): BigDecimal {
         return new BigDecimal(Math.pow(this.num, this._numValue(x)));
     }

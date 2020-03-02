@@ -58,8 +58,6 @@ export abstract class Transaction {
 
     protected fee: BigDecimal;
 
-    private TYPE_NAME: string;
-
     private creator: PrivateKeyAccount;
 
     private timestamp: number;
@@ -69,7 +67,7 @@ export abstract class Transaction {
     private port: number;
 
     static diffScale(v: number) {
-        let n = new BigDecimal(v);
+        const n = new BigDecimal(v);
         let diffScale = n.getScale() - Transaction.AMOUNT_DEFAULT_SCALE;
         if (diffScale !== 0) {
             if (diffScale < 0) {
@@ -81,14 +79,11 @@ export abstract class Transaction {
 
     constructor(typeBytes: Int8Array, typeName: string, creator: PrivateKeyAccount, feePow: number, timestamp: number, reference: number, port: number) {
         this.typeBytes = typeBytes;
-        this.TYPE_NAME = typeName;
         this.port = port;
-        if (this.TYPE_NAME) {}
         this.creator = creator;
         //this.props = props;
         this.timestamp = timestamp;
         this.reference = reference;
-
         if (feePow < 0) {
             feePow = 0;
         } else if (feePow > BlockChain.FEE_POW_MAX) {

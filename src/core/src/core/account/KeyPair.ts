@@ -6,7 +6,6 @@ export class KeyPair {
     publicKey: Int8Array;
 
     constructor()
-    constructor(keyPair: IKeyPair)
     constructor(secretKey: Int8Array, publicKey: Int8Array)
     constructor(secretKey?: IKeyPair | Int8Array | string, publicKey?: Int8Array | string) {
         if (arguments.length === 0) {

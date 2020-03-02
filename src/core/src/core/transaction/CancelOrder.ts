@@ -27,7 +27,7 @@ export class CancelOrder extends Transaction {
     }
 
     async signToBytes(dataWriter: DataWriter): Promise<void> {
-        let bytes = await Base58.decode(this.signatureOrder);
+        const bytes = await Base58.decode(this.signatureOrder);
         dataWriter.set(bytes);
     }
 

@@ -23,7 +23,7 @@ export class R_SertifyPubKeys extends Transaction {
 
         this.key = key;
         this.sertifiedPublicKey = sertifiedPublicKey;
-        if (add_day == 0)
+        if (add_day === 0)
         // set to_date to default
             add_day = R_SertifyPubKeys.DEFAULT_DURATION;
         this.add_day = add_day;
@@ -35,7 +35,7 @@ export class R_SertifyPubKeys extends Transaction {
         const accountsSize = 1;
         len += accountsSize * PublicKeyAccount.PUBLIC_KEY_LENGTH;
 
-        return this.typeBytes[1] == 1 ? len + Transaction.SIGNATURE_LENGTH * accountsSize : len;
+        return this.typeBytes[1] === 1 ? len + Transaction.SIGNATURE_LENGTH * accountsSize : len;
     }
 
     public async toBytes(withSign: boolean, releaserReference: number | null): Promise<Int8Array> {

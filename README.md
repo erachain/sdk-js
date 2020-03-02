@@ -3,12 +3,9 @@
 
 JS библиотека для шифрования сообщений в EraChain сети.
 
-# Подготовка
+# Install
 
-
-# Сборка
-
-
+npm install --save erachain-js-api
 
 # Использование
 

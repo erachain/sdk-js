@@ -56,22 +56,22 @@
     }).join("");
   };
 
-  Base58.decode = function(string) {
-    if (string == undefined) {
-      string = "";
+  Base58.decode = function(str) {
+    if (str === undefined) {
+      str = "";
     }
     var bytes, c, carry, j;
-    if (string.length === 0) {
+    if (str.length === 0) {
       return new (typeof Uint8Array !== "undefined" && Uint8Array !== null ? Uint8Array : Buffer)(0);
     }
     i = void 0;
     j = void 0;
     bytes = [0];
     i = 0;
-    while (i < string.length) {
-      c = string[i];
+    while (i < str.length) {
+      c = str[i];
       if (!(c in ALPHABET_MAP)) {
-        throw "Base58.decode received unacceptable input. Character '" + c + "' is not in the Base58 alphabet.";
+        throw new Error("Base58.decode received unacceptable input. Character '" + c + "' is not in the Base58 alphabet.");
       }
       j = 0;
       while (j < bytes.length) {
@@ -94,7 +94,7 @@
       i++;
     }
     i = 0;
-    while (string[i] === "1" && i < string.length - 1) {
+    while (str[i] === "1" && i < str.length - 1) {
       bytes.push(0);
       i++;
     }

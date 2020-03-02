@@ -1,3 +1,23 @@
 {
-    "extends": ["tslint:recommended", "tslint-config-prettier"]
- }
+    "extends": ["tslint:recommended", "tslint-config-prettier"],
+    "rules": {
+        "no-var-requires": false,
+        "no-bitwise": false,
+        "comment-format": [false, "check-space"],
+        "class-name": false,
+        "variable-name": {
+            "options": [
+              "ban-keywords",
+              "allow-leading-underscore"
+            ]
+        }
+        
+    },
+    "jsRules": {
+        "check-space": false,
+        "no-bitwise": false,
+        "one-variable-per-declaration": false,
+        "no-shadowed-variable": false,
+        "no-console": false
+    }
+}

@@ -35,9 +35,7 @@ export const encryptMessage = async (message, publicKey, privateKey) => {
         const int8Array = new Int8Array([ 0x01, ...int8Array0]);
         return int8Array;
     } catch (e) {
-        if (__DEV__) {
-            console.log(e);
-        }
+        console.log(e);
         return false;
     }
 };
@@ -60,9 +58,7 @@ export const decryptJson = async (encryptedMessage, publicKey, privateKey) => {
         const jsonString = await Bytes.stringFromByteArray(prepareAfterDecrypt(wordsToByteArray(decrypted)));
         return jsonString;
     } catch (e) {
-        if (__DEV__) {
-            console.log(e);
-        }
+        console.log(e);
         return false;
     }
 };
@@ -86,9 +82,7 @@ export const decryptMessage = async (encryptedMessage, publicKey, privateKey) =>
         //console.log({ jsonString });
         return jsonString;
     } catch (e) {
-        if (__DEV__) {
-            console.log(e);
-        }
+        console.log(e);
         return false;
     }
 };

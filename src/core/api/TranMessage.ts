@@ -23,6 +23,7 @@ export const tranMessage = async (recipient: ITranRecipient, keyPair: KeyPair, b
         const privateOwner = new PrivateKeyAccount(keyPair);
 
         let messageBytes;
+
         let isEncripted = new Int8Array([0]);
         if (body.encrypted && recipient.publicKey) {
             messageBytes = await crypt.encryptMessage(body.message, recipient.publicKey, keyPair.secretKey);
@@ -30,12 +31,12 @@ export const tranMessage = async (recipient: ITranRecipient, keyPair: KeyPair, b
         } else {
             messageBytes = await Bytes.stringToByteArray(body.message);
         }
-        //console.log({ encryptedMessage });
+        // console.log({ encryptedMessage });
 
         const tx = new TransactionMessage(new Int8Array([31, 0, 0, 0]), name, privateOwner, feePow, account, timestamp, reference, body.head, messageBytes, isEncripted, isText, port) 
         await tx.sign(privateOwner, false);
 
-        //console.log({ tx });
+        // console.log({ tx });
         const bytes = await tx.toBytes(true, null);
 
         const raw = await Base58.encode(bytes);

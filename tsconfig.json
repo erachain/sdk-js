@@ -1,13 +1,28 @@
 {
     "compilerOptions": {
-      "target": "es5",
+      "target": "es6",
       "lib": ["ES2015"],
       "module": "commonjs",
       "declaration": true,
       "outDir": "./lib",
       "strict": true,
+      "allowSyntheticDefaultImports": true,
+      "noImplicitAny": true,
+      "noUnusedLocals": true,
+      "noImplicitReturns": true,
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true,
+      "preserveConstEnums": false,
+      "allowJs": true,
+      "sourceMap": false,
+      "moduleResolution": "node",
+      "alwaysStrict": true,
+      "strictNullChecks": true,
+      "skipLibCheck": true,
+      "strictPropertyInitialization": false,
       "types": [
-        "node"
+        "node",
+        "jest"
       ] 
     },
     "include": ["src"],

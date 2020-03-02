@@ -12,7 +12,7 @@ module.exports = {
         Bytes,
         Crypt: {
             generateKeys: AppCrypt.generateKeys,
-            KeyPair: KeyPair,
+            KeyPair,
             addressByPublicKey: AppCrypt.getAccountAddressFromPublicKey,
             addressBySecretKey: AppCrypt.getAddressBySecretKey,
             publicKeyBySecretKey: AppCrypt.getPublicKeyBySecretKey,
@@ -22,7 +22,7 @@ module.exports = {
             decryptMessage: crypt.decryptMessage,
         },
         Tran: {
-            tranMessage: tranMessage
+            tranMessage
         }
     }
     

@@ -12,9 +12,6 @@ export class AppCrypt {
         return await Base58.encode(byteSeed);
     }
 
-    static sha256(input: string): Int8Array
-    static sha256(input: Buffer): Int8Array
-    static sha256(input: Int8Array): Int8Array
     static sha256(input: Buffer | string | Int8Array): Int8Array {
         if (typeof input === "string") {
             return new Int8Array(createHash("sha256").update(input).digest());
@@ -52,8 +49,6 @@ export class AppCrypt {
         return sign.detached.verify(new Uint8Array(message), new Uint8Array(result), new Uint8Array(publicKey));
     }
 
-    static async getAddressByPublicKey(publicKey: string): Promise<string>
-    static async getAddressByPublicKey(publicKey: Int8Array): Promise<string>
     static async getAddressByPublicKey(publicKey: string | Int8Array): Promise<string> {
         if (typeof publicKey === "string") {
             publicKey = await Base58.decode(publicKey);
@@ -64,8 +59,6 @@ export class AppCrypt {
         return Qora.getAccountAddressFromPublicKey(publicKey);
     }
 
-    static async getAddressBySecretKey(privateKey: string): Promise<string>
-    static async getAddressBySecretKey(privateKey: Int8Array): Promise<string>
     static async getAddressBySecretKey(secretKey: string | Int8Array): Promise<string> {
         if (typeof secretKey === "string") {
             secretKey = await Base58.decode(secretKey);
@@ -75,8 +68,6 @@ export class AppCrypt {
         return AppCrypt.getAddressByPublicKey(new Int8Array(keys.publicKey));
     }
 
-    static async getPublicKeyBySecretKey(secretKey: string): Promise<Int8Array>
-    static async getPublicKeyBySecretKey(secretKey: Int8Array): Promise<Int8Array>
     static async getPublicKeyBySecretKey(secretKey: string | Int8Array): Promise<Int8Array> {
         if (typeof secretKey === "string") {
             secretKey = await Base58.decode(secretKey);

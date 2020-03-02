@@ -9,8 +9,8 @@ export class Bytes {
     }
 
     static async intToByteArray(int32: number): Promise<Int8Array> {
-        let buffer = new ArrayBuffer(4);
-        var int32View = new Int32Array(buffer);
+        const buffer = new ArrayBuffer(4);
+        const int32View = new Int32Array(buffer);
         int32View[0] = int32;
         return new Int8Array(int32View.buffer, 0, 4);
     }
@@ -21,8 +21,8 @@ export class Bytes {
     }
 
     static async longToByteArray(int64: number): Promise<Int8Array> {
-        let buffer = new ArrayBuffer(8);
-        var int64View = new BigInt64Array(buffer);
+        const buffer = new ArrayBuffer(8);
+        const int64View = new BigInt64Array(buffer);
         int64View[0] = BigInt(int64);
         return new Int8Array(int64View.buffer, 0, 8);
     }
@@ -33,8 +33,8 @@ export class Bytes {
     }
 
     static async floatToByteArray(float32: number): Promise<Int8Array> {
-        let buffer = new ArrayBuffer(8);
-        var float32View = new Float64Array(buffer);
+        const buffer = new ArrayBuffer(8);
+        const float32View = new Float64Array(buffer);
         float32View[0] = float32;
         //console.log("floatToByteArray", new Int8Array(float32View.buffer, 0, 4));
         return new Int8Array(float32View.buffer, 0, 4);
@@ -48,7 +48,7 @@ export class Bytes {
 
     static async stringToByteArray(str: string): Promise<Int8Array> {
         const utf8 = [];
-        if (str != undefined ) {
+        if (str !== undefined ) {
             for (let i=0; i < str.length; i++) {
                 let charcode: number = str.charCodeAt(i);
                 if (charcode < 0x80) utf8.push(charcode);
@@ -89,8 +89,7 @@ export class Bytes {
             wordArray = wordArray.words;
         }
         const byteArray = [];
-        for (let i = 0; i < wordArray.length; ++i) {
-            const word = wordArray[i];
+        for (const word of wordArray) {
             for (let j = 3; j >= 0; --j) {
                 byteArray.push((word >> 8 * j) & 0xFF);
             }
@@ -108,7 +107,9 @@ export class Bytes {
     };
 
     static convertUint8ArrayToWordArray(u8Array: any) {
-        let words = [], i = 0, len = u8Array.length;
+        const words = [];
+        let i = 0;
+        const len = u8Array.length;
     
         while (i < len) {
             words.push(
@@ -121,7 +122,7 @@ export class Bytes {
     
         return {
             sigBytes: words.length * 4,
-            words: words
+            words
         };
     }
 }
