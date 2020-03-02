@@ -1,7 +1,7 @@
 
 # Описание
 
-JS библиотека для шифрования сообщений в EraChain сети.
+JS EraChain API
 
 # Install via npm
 
