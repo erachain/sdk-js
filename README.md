@@ -38,7 +38,7 @@ npm publish
     const string_base58 = await EraChain.Base58.encode(input_Int8Array);
     const int8Array = await EraChain.Base58.decode(input_string_base58);
 
-    // Crypt
+    // Cryptography
 
     // Generate new key pair (secret key && public key)
     const keys: {
