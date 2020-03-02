@@ -3,11 +3,23 @@
 
 JS библиотека для шифрования сообщений в EraChain сети.
 
-# Install
+# Install via npm
 
 npm install --save erachain-js-api
 
-# Использование
+# Install for html
+
+git clone https://lab.erachain.org/erachain/web-js-encrypt.git
+
+npm run build
+
+npm run prodjs
+
+use dis/ directory
+
+# Npm module publish
+
+npm publish 
 
 
 
