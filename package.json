@@ -13,7 +13,9 @@
         "prepublishOnly": "npm test && npm run lint",
         "preversion": "npm run lint",
         "version": "npm run format && git add -A src",
-        "postversion": "git push && git push --tags"
+        "postversion": "git push && git push --tags",
+        "devjs": "webpack --mode development",
+        "prodjs": "webpack --mode production"
     },
     "keywords": [
         "Blockchain"
@@ -25,13 +27,18 @@
         "tweetnacl": "^1.0.1"
     },
     "devDependencies": {
+        "@babel/core": "^7.8.6",
         "@types/jest": "^25.1.3",
+        "babel-loader": "^8.0.6",
+        "copy-webpack-plugin": "^5.1.1",
         "jest": "^25.1.0",
         "prettier": "^1.19.1",
         "ts-jest": "^25.2.1",
         "tslint": "^6.0.0",
         "tslint-config-prettier": "^1.18.0",
-        "typescript": "^3.8.2"
+        "typescript": "^3.8.2",
+        "webpack": "^4.42.0",
+        "webpack-cli": "^3.3.11"
     },
     "files": [
         "lib/**/*"

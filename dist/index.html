@@ -1,0 +1,98 @@
+<html style='height:100%'>
+<head>
+    <title>Erachain Crypto Lib</title>
+    <script type="text/javascript" src="js/eracrypto.js"></script>
+    <script>
+
+        console.log(this)
+
+        const keys1 = getNewKeys()
+        const keys2 = getNewKeys()
+
+        function getNewKeys() {
+            return EraChain.Crypt.generateKeys();
+        }
+
+        function addressByPublic(public) {
+            return EraChain.Crypt.addressByPublicKey(public)
+        }
+
+        function addressBySecret(secret) {
+            return EraChain.Crypt.addressBySecretKey(secret)
+        }
+
+        function publicBySecret(secret) {
+            return EraChain.Crypt.publicKeyBySecretKey(secret)
+        }
+
+        function sign(msg, secret) {
+            return EraChain.Base58.encode(EraChain.Crypt.sign(msg, secret));
+        }
+
+        function verifySignature(msg, sign, public) {
+            return EraChain.Crypt.verifySign(msg, sign, public);
+        }
+
+        async function testCrypt(msg) {
+            const encrypted = await EraChain.Crypt.encryptMessage(msg, keys2.publicKey, keys1.secretKey);
+            const str = await EraChain.Base58.encode(encrypted);
+            const decrypted = await EraChain.Crypt.decryptMessage(str, keys1.publicKey, keys2.secretKey);
+            return decrypted;
+        }
+
+        async function onLoad() {
+            document.getElementById("secret").innerHTML = "secret key: " + await EraChain.Base58.encode(keys1.secretKey);
+            document.getElementById("public").innerHTML = "public key: " + await EraChain.Base58.encode(keys1.publicKey);
+            document.getElementById("addressByPublic").innerHTML = "address: " + await addressByPublic(keys1.publicKey);
+            document.getElementById("addressBySecret").innerHTML = "address: " +  await addressBySecret(keys1.secretKey);
+            document.getElementById("publicBySecret").innerHTML = "public key: " +  await EraChain.Base58.encode(await publicBySecret(keys1.secretKey));
+            var msg = 'Здравствуй, Erachain Javascript API!';
+            document.getElementById("message").innerHTML = "test message: " + msg;
+
+            var signature =  await sign(EraChain.Bytes.stringToByteArray(msg), keys1.secretKey);
+            document.getElementById("signature").innerHTML = "signature: " + signature;
+            document.getElementById("verifySignature").innerHTML = "verify signature: " +   await verifySignature(EraChain.Bytes.stringToByteArray(msg),  await EraChain.Base58.decode(signature), keys1.publicKey);
+
+            var decrypted = await testCrypt(msg);
+            document.getElementById("decrypted").innerHTML = "decrypted message: " + decrypted;
+        }
+
+    </script>
+
+</head>
+
+<body onload="onLoad()">
+    <div>Generate key pair:</div>
+    <br/>
+    <div id="secret"></div>
+    <div id="public"></div>
+    <br/>
+    <div>Get address by public key:</div>
+    <br/>
+    <div id="addressByPublic"></div>
+    <br/>
+    <div>Get address by private key:</div>
+    <br/>
+    <div id="addressBySecret"></div>
+    <br/>
+    <div>Get public key by private key:</div>
+    <br/>
+    <div id="publicBySecret"></div>
+    <br/>
+    <div>Encrypt:</div>
+    <br/>
+    <div id="message"></div>
+    <br/>
+    <div>Decrypt:</div>
+    <br/>
+    <div id="decrypted"></div>
+    <br/>
+    <div>Generate signature:</div>
+    <br/>
+    <div id="signature"></div>
+    <br/>
+    <div>Verify signature:</div>
+    <br/>
+    <div id="verifySignature"></div>
+    
+</body>
