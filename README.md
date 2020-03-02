@@ -29,14 +29,14 @@ npm run prodjs
 
 npm publish
 
-## API
+## API functions
 
 ```javascript
 
     // Base58
 
-    const base58string: string = await EraChain.Base58.encode(int8Array);
-    const int8Array: Int8Array = await EraChain.Base58.decode(base58string);
+    const string_base58 = await EraChain.Base58.encode(input_Int8Array);
+    const int8Array = await EraChain.Base58.decode(input_string_base58);
 
     // Crypt
 
@@ -46,21 +46,35 @@ npm publish
         [publicKey]: Int8Array
     } = await EraChain.Crypt.generateKeys();
 
-    const address: string = await EraChain.Crypt.addressByPublicKey(publicKeyInt8Array);
+    const address_string = await EraChain.Crypt.addressByPublicKey(publicKey_Int8Array);
 
-    const address: string = await EraChain.Crypt.addressBySecretKey(secretKeyInt8Array);
+    const address_string = await EraChain.Crypt.addressBySecretKey(secretKey_Int8Array);
 
-    const publicKeyInt8Array: Int8Array = await EraChain.Crypt.publicKeyBySecretKey(secretKeyInt8Array);
+    const publicKey_Int8Array: Int8Array = await EraChain.Crypt.publicKeyBySecretKey(secretKey_Int8Array);
 
-    const publicKeyStringBase58: string = await EraChain.Base58.encode(publicKeyInt8Array);
+    // Encode Int8Array to Base58 string
+    const publicKey_string_base58: string = await EraChain.Base58.encode(publicKey_Int8Array);
 
-    const secretKeyStringBase58: string = await EraChain.Base58.encode(secretKeyInt8Array);
+    const secretKey_string_base58: string = await EraChain.Base58.encode(secretKey_Int8Array);
 
-    const int8Array: Int8Array = await EraChain.Base58.decode(stringBase58);
+    // Decode Base58 string to Int8Array
+    const int8Array = await EraChain.Base58.decode(string_base58);
 
-    ## Signature
-    const message: Int8Array = EraChain.Bytes.stringToByteArray(messageString);
-    const signed: Int8Array = EraChain.Crypt.sign(messageInt8Array, secretKeyInt8Array);
-    
+    // Signature of string message
+    const message_Int8Array = EraChain.Bytes.stringToByteArray(message_string);
+    const signed_Int8Array = await EraChain.Crypt.sign(message_Int8Array, secretKey_Int8Array);
+    const signature_string_base58 = await EraChain.Base58.encode(signed_Int8Array);
+
+    // Verify signature
+    const result_boolean = await EraChain.Crypt.verifySign(message_Int8Array,  await EraChain.Base58.decode(signature_string_base58), publicKey_Int8Array);
+
+    // Encrypt
+    const encrypted_Int8Array = await EraChain.Crypt.encryptMessage(msg_string, key2.publicKey_Int8Array, key1.secretKey_Int8Array);
+
+    const encrypted_string_base58 = await EraChain.Base58.encode(encrypted_Int8Array);
+
+    // Decrypt
+    const decrypted_string = await EraChain.Crypt.decryptMessage(encrypted_string_base58, keys1.publicKey_Int8Array, keys2.secretKey_Int8Array);
+
 
 ```
