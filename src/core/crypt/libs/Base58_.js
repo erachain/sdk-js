@@ -2,9 +2,9 @@
 (function() {
   var ALPHABET, ALPHABET_MAP, Base58, i;
 
-  Base58 = (typeof module !== "undefined" && module !== null ? module.exports : void 0) || (window.Base58 = {});
+  Base58 = (typeof module !== 'undefined' && module !== null ? module.exports : void 0) || (window.Base58 = {});
 
-  ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+  ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
 
   ALPHABET_MAP = {};
 
@@ -16,10 +16,10 @@
   }
 
   Base58.encode = function(buffer) {
-	buffer = new Uint8Array(buffer);
+    buffer = new Uint8Array(buffer);
     var carry, digits, j;
     if (buffer.length === 0) {
-      return "";
+      return '';
     }
     i = void 0;
     j = void 0;
@@ -51,18 +51,21 @@
       digits.push(0);
       i++;
     }
-    return digits.reverse().map(function(digit) {
-      return ALPHABET[digit];
-    }).join("");
+    return digits
+      .reverse()
+      .map(function(digit) {
+        return ALPHABET[digit];
+      })
+      .join('');
   };
 
   Base58.decode = function(str) {
     if (str === undefined) {
-      str = "";
+      str = '';
     }
     var bytes, c, carry, j;
     if (str.length === 0) {
-      return new (typeof Uint8Array !== "undefined" && Uint8Array !== null ? Uint8Array : Buffer)(0);
+      return new (typeof Uint8Array !== 'undefined' && Uint8Array !== null ? Uint8Array : Buffer)(0);
     }
     i = void 0;
     j = void 0;
@@ -71,7 +74,9 @@
     while (i < str.length) {
       c = str[i];
       if (!(c in ALPHABET_MAP)) {
-        throw new Error("Base58.decode received unacceptable input. Character '" + c + "' is not in the Base58 alphabet.");
+        throw new Error(
+          "Base58.decode received unacceptable input. Character '" + c + "' is not in the Base58 alphabet.",
+        );
       }
       j = 0;
       while (j < bytes.length) {
@@ -94,11 +99,10 @@
       i++;
     }
     i = 0;
-    while (str[i] === "1" && i < str.length - 1) {
+    while (str[i] === '1' && i < str.length - 1) {
       bytes.push(0);
       i++;
     }
-    return new (typeof Uint8Array !== "undefined" && Uint8Array !== null ? Uint8Array : Buffer)(bytes.reverse());
+    return new (typeof Uint8Array !== 'undefined' && Uint8Array !== null ? Uint8Array : Buffer)(bytes.reverse());
   };
-
-}).call(this);
+}.call(this));

@@ -1,8 +1,8 @@
-import {IPersonHuman} from "./IPersonHuman";
+import { IPersonHuman } from './IPersonHuman';
 
 export interface IRegistrationData extends IPersonHuman {
-    imageInfo: any;
-    geoData: any;
-    geoDetails: any;
-    date: Date;
+  imageInfo: any;
+  geoData: any;
+  geoDetails: any;
+  date: Date;
 }
