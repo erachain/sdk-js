@@ -3,13 +3,10 @@
   
   if (typeof root === 'object') {
     root.EraChain = factory();
-    console.log("root: ", root);
   } else if (typeof exports === 'object' && typeof module === 'object') {
     module.exports.EraChain = factory();
-    console.log("module.exports: ", module.exports);
   } else if(typeof exports === 'object') {
     exports.EraChain = factory();
-    console.log("exports: ", exports);
   } 
 
 })(window, function() {

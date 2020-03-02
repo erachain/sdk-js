@@ -7,10 +7,11 @@ JS библиотека для шифрования сообщений в EraCha
 
 npm install --save erachain-js-api
 
-use:
+### Usage:
 
+```javascript
     const EraChain =  require('erachain-js-api');
-
+```
 
 # Install for html
 
@@ -20,7 +21,7 @@ npm run build
 
 npm run prodjs
 
-use:
+### Usage:
     
     download dis/ directory
 
