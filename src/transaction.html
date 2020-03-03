@@ -10,13 +10,13 @@
 
             const keys = {
                 // sender address: 7GtqHorKL6CDZW6T98C8aGFNJXc87xoivZ
-                secretKey: await EraChain.Base58.decode("5a4AabYQ54gdwYq83FNng96BTzzSL6bTxALcRFe9VZboLfzaUToZFnAdMsnNKM13NJZeCMJbykfQbNT9vryyhF4R"),
-                publicKey: await EraChain.Base58.decode("ESx4g78k72URJWW87M4vKbMCqQpChzLfQ5s8gJhsjB7B")
+                secretKey: await EraChain.Base58.decode("kiAeqbBDqQ4Qa5X1hdpuWnzmX3GW3i9Bwk81VmNeFkXWhypZnxCYGnPDdTbbBFkgZHQkADowQhatRqYAT72nYrf"),
+                publicKey: await EraChain.Base58.decode("6jt933MGNLo8DFEtJX1HXsfu38h21PyWpBRstaNM1Q5q")
             };
 
             const keyPair = new EraChain.Crypt.KeyPair(keys);
 
-            const recipientPublicKeyOrAddress = "2fGQhMDrZdeKnT83wFhjNVhJ7LrNA8faRzsfuihaN2T6";
+            const recipientPublicKeyOrAddress = "3jPhyhgqry3J95PHRLmH27UhKvn93y3x6Z748uv2vKoH";
             // recipient address: 7GEebDVKj9eW1udSNqpAXJr8TMJR3HPsXK
             const head = "Заголовок";
             const message = "Здравствуй, Мир!";
@@ -25,7 +25,7 @@
 
             const asset = {
                 assetKey: 2,
-                amount: 0.0001,
+                amount: 5,
             };
 
             EraChain.Tran.sendAsset(url, keyPair, asset, recipientPublicKeyOrAddress, head, message, encrypted, rpcPort)

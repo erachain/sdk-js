@@ -93,6 +93,8 @@ npm publish
 
 ```
 
+## API transactions
+
 ### Send message to address or public key of recipient wallet
 
 ```javascript
