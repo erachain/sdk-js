@@ -1,7 +1,7 @@
 
 # Описание
 
-JS EraChain API
+EraChain JS API
 
 # Install via npm
 

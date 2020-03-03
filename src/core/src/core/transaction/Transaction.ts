@@ -140,7 +140,9 @@ export abstract class Transaction {
     if (!asPack) {
       //WRITE TIMESTAMP
       let timestampBytes = await Bytes.longToByteArray(this.timestamp);
+      //console.log({ timestamp: this.timestamp, timestampBytes, ts2: await Bytes.longFromByteArray(timestampBytes)});
       timestampBytes = Bytes.ensureCapacity(timestampBytes, Transaction.TIMESTAMP_LENGTH, 0);
+      
       data.set(timestampBytes);
       //console.log("Transaction2", { data });
     }

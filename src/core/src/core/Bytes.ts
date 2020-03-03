@@ -12,41 +12,96 @@ export class Bytes {
   }
 
   static async intToByteArray(int32: number): Promise<Int8Array> {
+    /*
     const buffer = new ArrayBuffer(4);
     const int32View = new Int32Array(buffer);
     int32View[0] = int32;
     return new Int8Array(int32View.buffer, 0, 4);
+    */
+    const byteArray = [];
+    for (let b = 0; b < 32; b += 8) {
+      byteArray.push((int32 >>> (24 - b % 32)) & 0xFF);
+    }
+    return new Int8Array(byteArray);
+
   }
 
   static async intFromByteArray(bytes: Int8Array): Promise<number> {
+    /*
     const a = new Int32Array(bytes.buffer);
     return Number(a[0]);
+    */
+    let value = 0;
+    const ubytes = new Uint8Array(bytes);
+    for ( let i = 0; i < ubytes.length; i++) {
+        value = (value * 256) + ubytes[i];
+    }
+    return value;
   }
 
   static async longToByteArray(int64: number): Promise<Int8Array> {
+    /*
     const buffer = new ArrayBuffer(8);
     const int64View = new BigInt64Array(buffer);
     int64View[0] = BigInt(int64);
     return new Int8Array(int64View.buffer, 0, 8);
+    */
+    const byteArray = [0, 0, 0, 0, 0, 0, 0, 0];
+    for ( let index = 0; index < byteArray.length; index ++ ) {
+        const byte = int64 & 0xff;
+        byteArray [ byteArray.length - index - 1 ] = byte;
+        int64 = (int64 - byte) / 256 ;
+    }
+    return new Int8Array(byteArray);
+
   }
 
   static async longFromByteArray(bytes: Int8Array): Promise<number> {
+    /*
     const a = new BigInt64Array(bytes.buffer);
     return Number(a[0]);
+    */
+    let value = 0;
+    const ubytes = new Uint8Array(bytes);
+    for ( let i = 0; i < ubytes.length; i++) {
+        value = (value * 256) + ubytes[i];
+    }
+    return value;
+
   }
 
   static async floatToByteArray(float32: number): Promise<Int8Array> {
+    /*
     const buffer = new ArrayBuffer(8);
     const float32View = new Float64Array(buffer);
     float32View[0] = float32;
-    //console.log("floatToByteArray", new Int8Array(float32View.buffer, 0, 4));
     return new Int8Array(float32View.buffer, 0, 4);
+    */
+    const farr = new Float32Array(1);  // two indexes each 4 bytes
+    farr[0] = float32;
+    const buff = new Int8Array(farr.buffer);
+    const out = [];
+    let k = 3;
+    for (var i = 0; i < 4; i++){
+      out.push(buff[k]);
+      k--;
+    }
+    return new Int8Array(out);
+
   }
 
   static async floatFromByteArray(bytes: Int8Array): Promise<number> {
+    /*
     const a = new Float64Array(bytes.buffer);
-    //console.log("floatFromByteArray", a);
     return a[0];
+    */
+    if ( bytes.length == 4 ) {
+      const bytesArray = new DataView(new Uint8Array(bytes).buffer);
+      return bytesArray.getFloat32(0);
+    } else {
+      return 0;
+    }
+
   }
 
   static async stringToByteArray(str: string): Promise<Int8Array> {

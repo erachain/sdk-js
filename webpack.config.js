@@ -5,22 +5,34 @@ module.exports = {
     entry: './lib/index.js',
     output: {
         path: path.resolve(__dirname, 'dist/js'),
-        filename: 'eracrypto.js'
+        filename: 'erachainapi.js'
     },
     module: {
         rules: [
             {
                 test: /\.js$/,
                 exclude: /node_modules/,
-                use: {
-                    loader: "babel-loader"
-                }
+                use: [
+                    {
+                        loader: "babel-loader",
+                        options:  {
+                            presets: [
+                                '@babel/preset-env'
+                            ],
+                            plugins: [
+                                '@babel/plugin-proposal-class-properties'
+                            ]
+                        }
+                        
+                    }
+                ]
             }
         ]
     },
     plugins: [
         new CopyPlugin([
           { from: 'src/index.html', to: '../index.html' },
+          { from: 'src/transaction.html', to: '../transaction.html' },
         ]),
     ]
 }

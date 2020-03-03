@@ -1,0 +1,73 @@
+<html style='height:100%'>
+<head>
+    <title>Erachain Crypto Lib</title>
+    <script type="text/javascript" src="js/erachainapi.js"></script>
+    <script>
+        
+        async function onLoad() {
+
+            const recipientPublicKey = "3jPhyhgqry3J95PHRLmH27UhKvn93y3x6Z748uv2vKoH";
+
+            const recipient = { 
+                address: await EraChain.Crypt.addressByPublicKey(recipientPublicKey),
+                publicKey: await EraChain.Base58.decode(recipientPublicKey)
+            };    
+
+            const tranBody = {
+                head: "Test header",
+                message: "Message from JS API",
+                encrypted: true
+            }
+
+            const port = 9066;  
+
+            const keys1 = {
+                secretKey: await EraChain.Base58.decode("kiAeqbBDqQ4Qa5X1hdpuWnzmX3GW3i9Bwk81VmNeFkXWhypZnxCYGnPDdTbbBFkgZHQkADowQhatRqYAT72nYrf"),
+                publicKey: await EraChain.Base58.decode("6jt933MGNLo8DFEtJX1HXsfu38h21PyWpBRstaNM1Q5q")
+            };
+
+            const keyPair = new EraChain.Crypt.KeyPair(keys1);
+
+            const tran = await EraChain.Tran.tranMessage(recipient, keyPair, tranBody, port);
+
+        }
+
+    </script>
+
+</head>
+
+<body onload="onLoad()">
+    <div>Generate key pair:</div>
+    <br/>
+    <div id="secret"></div>
+    <div id="public"></div>
+    <br/>
+    <div>Get address by public key:</div>
+    <br/>
+    <div id="addressByPublic"></div>
+    <br/>
+    <div>Get address by private key:</div>
+    <br/>
+    <div id="addressBySecret"></div>
+    <br/>
+    <div>Get public key by private key:</div>
+    <br/>
+    <div id="publicBySecret"></div>
+    <br/>
+    <div>Encrypt:</div>
+    <br/>
+    <div id="message"></div>
+    <br/>
+    <div>Decrypt:</div>
+    <br/>
+    <div id="decrypted"></div>
+    <br/>
+    <div>Generate signature:</div>
+    <br/>
+    <div id="signature"></div>
+    <br/>
+    <div>Verify signature:</div>
+    <br/>
+    <div id="verifySignature"></div>
+    
+</body>

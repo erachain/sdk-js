@@ -54,6 +54,7 @@ export const tranMessage = async (
 
     // console.log({ tx });
     const bytes = await tx.toBytes(true, null);
+    //console.log(bytes);
 
     const raw = await Base58.encode(bytes);
 
