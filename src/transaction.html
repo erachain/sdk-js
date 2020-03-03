@@ -23,7 +23,12 @@
             const encrypted = true;
             const rpcPort = 9066; // 9066 - TestNET, 9046 - MainNET
 
-            EraChain.Tran.sendMessage(url, keyPair, recipientPublicKeyOrAddress, head, message, encrypted, rpcPort)
+            const asset = {
+                assetKey: 2,
+                amount: 0.0001,
+            };
+
+            EraChain.Tran.sendAsset(url, keyPair, asset, recipientPublicKeyOrAddress, head, message, encrypted, rpcPort)
                 .then(data => {
                     // data = {status: "ok"}
                     console.log(data);

@@ -18,12 +18,14 @@
   const { KeyPair } = require('./core/src/core/account/KeyPair');
   const { sendMessage } = require('./core/api/SendMessage');
   const { sendAsset } = require('./core/api/SendAsset');
+  const { BigDecimal } = require('./core/src/BigDecimal');
 
   const crypt = require('./core/crypt/libs/aesCrypt');
 
   const lib = {
     Base58,
     Bytes,
+    BigDecimal,
     Crypt: {
       generateKeys: AppCrypt.generateKeys,
       KeyPair,

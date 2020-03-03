@@ -25,7 +25,7 @@ npm run prodjs
 
     dist/index.html
 
-# Npm module publish
+## Npm module publish
 
 npm publish
 

@@ -4,8 +4,9 @@ import {Base58} from "../crypt/libs/Base58";
 import {Qora} from "../crypt/libs/Qora";
 import {KeyPair} from "../src/core/account/KeyPair";
 import { ITranRecipient, ITranAsset } from "../src/core/transaction/TranTypes";
+import { BigDecimal } from "../src/BigDecimal";
 
-export const sendAsset = async (url: string, keyPair: KeyPair, asset: ITranAsset, recipientPublicKey: string, head: string, message: string, encrypted: boolean, rpcPort: number): Promise<IBroadcastResponse> => {
+export const sendAsset = async (url: string, keyPair: KeyPair, asset: IAsset, recipientPublicKey: string, head: string, message: string, encrypted: boolean, rpcPort: number): Promise<IBroadcastResponse> => {
 
     let recipient: ITranRecipient = { 
         address: recipientPublicKey,
@@ -28,7 +29,12 @@ export const sendAsset = async (url: string, keyPair: KeyPair, asset: ITranAsset
         encrypted,
     } 
 
-    const tran = await tranSend(recipient, keyPair, asset, tranBody, rpcPort);
+    const transAsset: ITranAsset = {
+        assetKey: asset.assetKey,
+        amount: new BigDecimal(asset.amount),
+    }
+
+    const tran = await tranSend(recipient, keyPair, transAsset, tranBody, rpcPort);
     
     if (!tran.error) {
         const data = request.broadcastPost(tran.raw)
@@ -41,4 +47,10 @@ export const sendAsset = async (url: string, keyPair: KeyPair, asset: ITranAsset
     }
 
 }
+
+
+export interface IAsset {
+    assetKey: number;
+    amount: number;
+  }
 
