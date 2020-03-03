@@ -17,6 +17,7 @@
   const { AppCrypt } = require('./core/crypt/AppCrypt');
   const { KeyPair } = require('./core/src/core/account/KeyPair');
   const { sendMessage } = require('./core/api/SendMessage');
+  const { sendAsset } = require('./core/api/SendAsset');
 
   const crypt = require('./core/crypt/libs/aesCrypt');
 
@@ -35,7 +36,8 @@
       decryptMessage: crypt.decryptMessage,
     },
     Tran: {
-       sendMessage,
+      sendMessage,
+      sendAsset
     },
   };
   return lib;

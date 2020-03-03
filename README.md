@@ -93,7 +93,7 @@ npm publish
 
 ```
 
-### Send message
+### Send message to address or public key of recipient wallet
 
 ```javascript
 
@@ -125,3 +125,42 @@ npm publish
         });
 
 ```
+
+### Send asset to address or public key of recipient wallet
+
+```javascript
+
+    const url = "http://domain.com:9067/api"; // 9067 - TestNET, 9047 - MainNET
+
+    const keys = {
+        // sender address: 7GtqHorKL6CDZW6T98C8aGFNJXc87xoivZ
+        secretKey: await EraChain.Base58.decode("5a4AabYQ54gdwYq83FNng96BTzzSL6bTxALcRFe9VZboLfzaUToZFnAdMsnNKM13NJZeCMJbykfQbNT9vryyhF4R"),
+        publicKey: await EraChain.Base58.decode("ESx4g78k72URJWW87M4vKbMCqQpChzLfQ5s8gJhsjB7B")
+    };
+
+    const keyPair = new EraChain.Crypt.KeyPair(keys);
+
+    const asset = {
+        assetKey: 2, // 1 = ERA, 2 = COMPU, etc.
+        amount: 1,   // amount of asset
+    }
+
+    const recipientPublicKeyOrAddress = "2fGQhMDrZdeKnT83wFhjNVhJ7LrNA8faRzsfuihaN2T6";
+    // recipient address: 7GEebDVKj9eW1udSNqpAXJr8TMJR3HPsXK
+    const head = "Заголовок";
+    const message = "Здравствуй, Мир!";
+    const encrypted = true; // encrypted = true, only if recipient is public key
+                            // encrypted = false, only if sender is certified persons
+    const rpcPort = 9066; // 9066 - TestNET, 9046 - MainNET
+
+    EraChain.Tran.sendAsset(url, keyPair, recipientPublicKeyOrAddress, asset, head, message, encrypted, rpcPort)
+        .then(data => {
+            // data = {status: "ok"}
+            console.log(data);
+        })
+        .catch(e => {
+            console.log(e);
+        });
+
+```
+
