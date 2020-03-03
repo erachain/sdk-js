@@ -1,9 +1,9 @@
 
-# Описание
+# erachain-js-api
 
 EraChain JS API
 
-# Install via npm
+## Install via npm
 
 npm install --save erachain-js-api
 
@@ -13,7 +13,7 @@ npm install --save erachain-js-api
     const EraChain =  require('erachain-js-api');
 ```
 
-# Install for html
+## Install for html
 
 git clone https://lab.erachain.org/erachain/web-js-encrypt.git
 
@@ -23,7 +23,7 @@ npm run prodjs
 
 ### Usage:
 
-    download dist/ directory
+    dist/index.html
 
 # Npm module publish
 
