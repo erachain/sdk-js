@@ -31,14 +31,18 @@ npm publish
 
 ## API functions
 
-```javascript
+### Base58 functions
 
-    // Base58
+```javascript
 
     const string_base58 = await EraChain.Base58.encode(input_Int8Array);
     const int8Array = await EraChain.Base58.decode(input_string_base58);
 
-    // Cryptography
+```
+
+### Crypto keys functions (address of wallet)
+
+```javascript
 
     // Generate new key pair (secret key && public key)
     const keys: {
@@ -46,8 +50,10 @@ npm publish
         [publicKey]: Int8Array
     } = await EraChain.Crypt.generateKeys();
 
+    // address of wallet
     const address_string = await EraChain.Crypt.addressByPublicKey(publicKey_Int8Array);
 
+    // address of wallet
     const address_string = await EraChain.Crypt.addressBySecretKey(secretKey_Int8Array);
 
     const publicKey_Int8Array: Int8Array = await EraChain.Crypt.publicKeyBySecretKey(secretKey_Int8Array);
@@ -57,8 +63,11 @@ npm publish
 
     const secretKey_string_base58: string = await EraChain.Base58.encode(secretKey_Int8Array);
 
-    // Decode Base58 string to Int8Array
-    const int8Array = await EraChain.Base58.decode(string_base58);
+```
+
+### Signature functions
+
+```javascript
 
     // Signature of string message
     const message_Int8Array = EraChain.Bytes.stringToByteArray(message_string);
@@ -68,6 +77,12 @@ npm publish
     // Verify signature
     const result_boolean = await EraChain.Crypt.verifySign(message_Int8Array,  await EraChain.Base58.decode(signature_string_base58), publicKey_Int8Array);
 
+```
+
+### Encrypt/Decrypt functions
+
+```javascript
+
     // Encrypt
     const encrypted_Int8Array = await EraChain.Crypt.encryptMessage(msg_string, key2.publicKey_Int8Array, key1.secretKey_Int8Array);
 
@@ -76,5 +91,36 @@ npm publish
     // Decrypt
     const decrypted_string = await EraChain.Crypt.decryptMessage(encrypted_string_base58, keys1.publicKey_Int8Array, keys2.secretKey_Int8Array);
 
+```
+
+### Send message
+
+```javascript
+
+const url = "http://domain.com:9067/api"; // 9067 - TestNET, 9047 - MainNET
+
+            const keys = {
+                // sender address: 7GtqHorKL6CDZW6T98C8aGFNJXc87xoivZ
+                secretKey: await EraChain.Base58.decode("5a4AabYQ54gdwYq83FNng96BTzzSL6bTxALcRFe9VZboLfzaUToZFnAdMsnNKM13NJZeCMJbykfQbNT9vryyhF4R"),
+                publicKey: await EraChain.Base58.decode("ESx4g78k72URJWW87M4vKbMCqQpChzLfQ5s8gJhsjB7B")
+            };
+
+            const keyPair = new EraChain.Crypt.KeyPair(keys);
+
+            const recipientPublicKeyOrAddress = "2fGQhMDrZdeKnT83wFhjNVhJ7LrNA8faRzsfuihaN2T6";
+            // recipient address: 7GEebDVKj9eW1udSNqpAXJr8TMJR3HPsXK
+            const head = "Заголовок";
+            const message = "Здравствуй, Мир!";
+            const encrypted = true;
+            const rpcPort = 9066; // 9066 - TestNET, 9046 - MainNET
+
+            EraChain.Tran.sendMessage(url, keyPair, recipientPublicKeyOrAddress, head, message, encrypted, rpcPort)
+                .then(data => {
+                    // data = {status: "ok"}
+                    console.log(data);
+                })
+                .catch(e => {
+                    console.log(e);
+                });
 
 ```

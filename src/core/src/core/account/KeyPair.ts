@@ -7,7 +7,7 @@ export class KeyPair {
 
   constructor();
   constructor(secretKey: Int8Array, publicKey: Int8Array);
-  constructor(secretKey?: IKeyPair | Int8Array | string, publicKey?: Int8Array | string) {
+  constructor(secretKey?: IKeyPair | Int8Array, publicKey?: Int8Array) {
     if (arguments.length === 0) {
       const keys = this.generate();
       secretKey = keys.secretKey;

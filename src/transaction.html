@@ -4,55 +4,35 @@
     <script type="text/javascript" src="js/erachainapi.js"></script>
     <script>
         
-        const url = "http://192.168.1.86:9067/api";
-
-        const request = new EraChain.Fetch(url)
-
-        console.log(request);
+        
 
         async function onLoad() {
 
-            //2RSehSu6szKbhEap46fhLN4s2BCfD1N2PLqbKnVWCbPvzF9JRBJs8sbQFqqaGLs4x4TZZV8hD5irs2RiT7gsGVjq
-            //3jPhyhgqry3J95PHRLmH27UhKvn93y3x6Z748uv2vKoH
-            //7K8eqCRon1NKxnWn9o7dfbkTkL9zNEKCzR
+            const url = "http://192.168.1.86:9067/api"; // 9067 - TestNET, 9047 - MainNET
 
-            const recipientPublicKey = "3jPhyhgqry3J95PHRLmH27UhKvn93y3x6Z748uv2vKoH";
-            const publicKey = await EraChain.Base58.decode(recipientPublicKey);
-
-            const recipient = { 
-                address: await EraChain.Crypt.addressByPublicKey(publicKey),
-                publicKey: publicKey
-            };    
-
-            console.log(recipient);
-            //3jPhyhgqry3J95PHRLmH27UhKvn93y3x6Z748uv2vKoH
-            //7J2iZEMkS1ykbQPRux7tYkpG788rD7FYBr
-
-            //6jt933MGNLo8DFEtJX1HXsfu38h21PyWpBRstaNM1Q5q
-            //7MNeky11DNA3nCrDEbmudZeTwsEFgeAEjS
-
-            const tranBody = {
-                head: "Test header",
-                message: "Message from JS API",
-                encrypted: true
-            }
-
-            const port = 9066;  
-
-            const keys1 = {
-                secretKey: await EraChain.Base58.decode("kiAeqbBDqQ4Qa5X1hdpuWnzmX3GW3i9Bwk81VmNeFkXWhypZnxCYGnPDdTbbBFkgZHQkADowQhatRqYAT72nYrf"),
-                publicKey: await EraChain.Base58.decode("6jt933MGNLo8DFEtJX1HXsfu38h21PyWpBRstaNM1Q5q")
+            const keys = {
+                // sender address: 7GtqHorKL6CDZW6T98C8aGFNJXc87xoivZ
+                secretKey: await EraChain.Base58.decode("5a4AabYQ54gdwYq83FNng96BTzzSL6bTxALcRFe9VZboLfzaUToZFnAdMsnNKM13NJZeCMJbykfQbNT9vryyhF4R"),
+                publicKey: await EraChain.Base58.decode("ESx4g78k72URJWW87M4vKbMCqQpChzLfQ5s8gJhsjB7B")
             };
 
-            const keyPair = new EraChain.Crypt.KeyPair(keys1);
+            const keyPair = new EraChain.Crypt.KeyPair(keys);
 
-            const tran = await EraChain.Tran.tranMessage(recipient, keyPair, tranBody, port);
-            console.log(tran);
+            const recipientPublicKeyOrAddress = "2fGQhMDrZdeKnT83wFhjNVhJ7LrNA8faRzsfuihaN2T6";
+            // recipient address: 7GEebDVKj9eW1udSNqpAXJr8TMJR3HPsXK
+            const head = "Заголовок";
+            const message = "Здравствуй, Мир!";
+            const encrypted = true;
+            const rpcPort = 9066; // 9066 - TestNET, 9046 - MainNET
 
-            if (!tran.error) {
-                const data = await request.broadcast.broadcastPost(tran.raw);
-                console.log("broadcastPost", data);
-            }
+            EraChain.Tran.sendMessage(url, keyPair, recipientPublicKeyOrAddress, head, message, encrypted, rpcPort)
+                .then(data => {
+                    // data = {status: "ok"}
+                    console.log(data);
+                })
+                .catch(e => {
+                    console.log(e);
+                })
             
         }
 

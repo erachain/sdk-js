@@ -16,8 +16,7 @@
   const { Bytes } = require('./core/src/core/Bytes');
   const { AppCrypt } = require('./core/crypt/AppCrypt');
   const { KeyPair } = require('./core/src/core/account/KeyPair');
-  const { tranMessage } = require('./core/api/TranMessage');
-  const { FetchRequest } = require('./core/request/FetchRequest');
+  const { sendMessage } = require('./core/api/SendMessage');
 
   const crypt = require('./core/crypt/libs/aesCrypt');
 
@@ -36,9 +35,8 @@
       decryptMessage: crypt.decryptMessage,
     },
     Tran: {
-      tranMessage,
+       sendMessage,
     },
-    Fetch: FetchRequest,
   };
   return lib;
 

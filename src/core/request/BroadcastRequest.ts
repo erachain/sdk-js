@@ -7,11 +7,11 @@ export class BroadcastRequest extends NodeBaseRequest {
         super(baseUrl);
     }
 
-    broadcast(transaction: string): Promise<IBroadcastResponse | ResponseError> {
+    broadcast(transaction: string): Promise<IBroadcastResponse> {
         return this.fetchJSON(`broadcast/${transaction}`);
     }
 
-    broadcastPost(raw: string): Promise<IBroadcastResponse | ResponseError> {
+    broadcastPost(raw: string): Promise<IBroadcastResponse> {
         return this
             .fetchJSON(`broadcast`, "POST", raw, {"content-type": "application/x-www-form-urlencoded"});
     }

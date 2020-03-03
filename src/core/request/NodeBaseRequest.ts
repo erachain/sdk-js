@@ -20,7 +20,7 @@ export class NodeBaseRequest {
             })
             .catch((e: any) => {
                 //Log.error(e);
-                console.log(e);
+                throw new Error(e);
             });
     }
 
@@ -28,7 +28,6 @@ export class NodeBaseRequest {
         return this
             .fetch(url, method, body, headers)
             .then(r => {
-                //console.log(r);
                 const data = r.json();
                 //console.log(fullUrl,data);
                 if (data.error) {
