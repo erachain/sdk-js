@@ -111,7 +111,8 @@ npm publish
     // recipient address: 7GEebDVKj9eW1udSNqpAXJr8TMJR3HPsXK
     const head = "Заголовок";
     const message = "Здравствуй, Мир!";
-    const encrypted = true;
+    const encrypted = true; // encrypted = true, only if recipient is public key
+                            // encrypted = false, only if sender is certified persons
     const rpcPort = 9066; // 9066 - TestNET, 9046 - MainNET
 
     EraChain.Tran.sendMessage(url, keyPair, recipientPublicKeyOrAddress, head, message, encrypted, rpcPort)
