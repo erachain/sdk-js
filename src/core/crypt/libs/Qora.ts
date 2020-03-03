@@ -6,12 +6,16 @@ export class Qora {
   static ADDRESS_VERSION = 15; // 7
 
   static async getAccountAddressFromPublicKey(publicKey: Int8Array): Promise<string> {
+
+    //console.log("getAccountAddressFromPublicKey.publicKey: ", publicKey );
     // SHA256 PUBLICKEY FOR PROTECTION
     let publicKeyHash = AppCrypt.sha256(publicKey);
+    //console.log("getAccountAddressFromPublicKey.publicKeyHash: ", publicKeyHash );
 
     // RIPEMD160 TO CREATE A SHORTER ADDRESS
     const ripEmd160 = new RIPEMD160();
     publicKeyHash = ripEmd160.digest(publicKeyHash);
+    //console.log("getAccountAddressFromPublicKey.publicKeyHash.ripEmd160: ", publicKeyHash );
 
     // CONVERT TO LIST
     let addressList = new Int8Array(0);
@@ -30,6 +34,8 @@ export class Qora {
     addressList = appendBuffer(addressList, new Int8Array([checkSum[1]]));
     addressList = appendBuffer(addressList, new Int8Array([checkSum[2]]));
     addressList = appendBuffer(addressList, new Int8Array([checkSum[3]]));
+
+    //console.log("getAccountAddressFromPublicKey.addressList: ", addressList );
 
     //BASE58 ENCODE ADDRESS
     return await Base58.encode(addressList);

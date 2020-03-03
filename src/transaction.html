@@ -4,14 +4,32 @@
     <script type="text/javascript" src="js/erachainapi.js"></script>
     <script>
         
+        const url = "http://192.168.1.86:9067/api";
+
+        const request = new EraChain.Fetch(url)
+
+        console.log(request);
+
         async function onLoad() {
 
+            //2RSehSu6szKbhEap46fhLN4s2BCfD1N2PLqbKnVWCbPvzF9JRBJs8sbQFqqaGLs4x4TZZV8hD5irs2RiT7gsGVjq
+            //3jPhyhgqry3J95PHRLmH27UhKvn93y3x6Z748uv2vKoH
+            //7K8eqCRon1NKxnWn9o7dfbkTkL9zNEKCzR
+
             const recipientPublicKey = "3jPhyhgqry3J95PHRLmH27UhKvn93y3x6Z748uv2vKoH";
+            const publicKey = await EraChain.Base58.decode(recipientPublicKey);
 
             const recipient = { 
-                address: await EraChain.Crypt.addressByPublicKey(recipientPublicKey),
-                publicKey: await EraChain.Base58.decode(recipientPublicKey)
+                address: await EraChain.Crypt.addressByPublicKey(publicKey),
+                publicKey: publicKey
             };    
+
+            console.log(recipient);
+            //3jPhyhgqry3J95PHRLmH27UhKvn93y3x6Z748uv2vKoH
+            //7J2iZEMkS1ykbQPRux7tYkpG788rD7FYBr
+
+            //6jt933MGNLo8DFEtJX1HXsfu38h21PyWpBRstaNM1Q5q
+            //7MNeky11DNA3nCrDEbmudZeTwsEFgeAEjS
 
             const tranBody = {
                 head: "Test header",
@@ -29,7 +47,13 @@
             const keyPair = new EraChain.Crypt.KeyPair(keys1);
 
             const tran = await EraChain.Tran.tranMessage(recipient, keyPair, tranBody, port);
+            console.log(tran);
 
+            if (!tran.error) {
+                const data = await request.broadcast.broadcastPost(tran.raw);
+                console.log("broadcastPost", data);
+            }
+            
         }
 
     </script>

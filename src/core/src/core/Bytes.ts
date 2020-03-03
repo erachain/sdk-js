@@ -23,7 +23,6 @@ export class Bytes {
       byteArray.push((int32 >>> (24 - b % 32)) & 0xFF);
     }
     return new Int8Array(byteArray);
-
   }
 
   static async intFromByteArray(bytes: Int8Array): Promise<number> {

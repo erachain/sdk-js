@@ -2,7 +2,7 @@ import { Bytes } from '../core/src/core/Bytes';
 
 describe('Bytes', () => {
   it('Bytes.intToByteArray().intFromByteArray()', () => {
-    const i = -47;
+    const i = 47;
     expect.assertions(1);
     Bytes.intToByteArray(i).then(af => {
       Bytes.intFromByteArray(af).then(r => {
@@ -12,7 +12,7 @@ describe('Bytes', () => {
   });
 
   it('Bytes.longToByteArray().longFromByteArray()', () => {
-    const l = -(Number.MAX_SAFE_INTEGER - 1);
+    const l = Number.MAX_SAFE_INTEGER - 1;
     Bytes.longToByteArray(l).then(af => {
       Bytes.longFromByteArray(af).then(r => {
         expect(r).toEqual(l);
@@ -21,7 +21,7 @@ describe('Bytes', () => {
   });
 
   it('Bytes.floatToByteArray().floatFromByteArray()', () => {
-    const f = -521.736;
+    const f = 521.75;
     Bytes.floatToByteArray(f).then(af => {
       Bytes.floatFromByteArray(af).then(r => {
         expect(r).toEqual(f);
