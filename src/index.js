@@ -16,8 +16,7 @@
   const { Bytes } = require('./core/src/core/Bytes');
   const { AppCrypt } = require('./core/crypt/AppCrypt');
   const { KeyPair } = require('./core/src/core/account/KeyPair');
-  const { sendMessage } = require('./core/api/SendMessage');
-  const { sendAsset } = require('./core/api/SendAsset');
+  const { API } = require('./core/api/API');
   const { BigDecimal } = require('./core/src/BigDecimal');
 
   const crypt = require('./core/crypt/libs/aesCrypt');
@@ -37,10 +36,7 @@
       encryptMessage: crypt.encryptMessage,
       decryptMessage: crypt.decryptMessage,
     },
-    Tran: {
-      sendMessage,
-      sendAsset
-    },
+    API,
   };
   return lib;
 

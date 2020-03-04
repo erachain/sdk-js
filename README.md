@@ -40,7 +40,7 @@ npm publish
 
 ```
 
-### Crypto keys functions (address of wallet)
+### Create wallet
 
 ```javascript
 
@@ -50,10 +50,10 @@ npm publish
         [publicKey]: Int8Array
     } = await EraChain.Crypt.generateKeys();
 
-    // address of wallet
+    // address of wallet = f(public key)
     const address_string = await EraChain.Crypt.addressByPublicKey(publicKey_Int8Array);
 
-    // address of wallet
+    // address of wallet = f(secret key)
     const address_string = await EraChain.Crypt.addressBySecretKey(secretKey_Int8Array);
 
     const publicKey_Int8Array: Int8Array = await EraChain.Crypt.publicKeyBySecretKey(secretKey_Int8Array);
@@ -93,13 +93,22 @@ npm publish
 
 ```
 
-## API transactions
+## API
 
-### Send message to address or public key of recipient wallet
+### Init API
 
 ```javascript
 
     const url = "http://domain.com:9067/api"; // 9067 - TestNET, 9047 - MainNET
+    const rpcPort = 9066; // 9066 - TestNET, 9046 - MainNET
+
+    const api = new EraChain.API(url, rpcPort);
+
+```
+
+### Send message to address or public key of recipient wallet
+
+```javascript
 
     const keys = {
         // sender address: 7GtqHorKL6CDZW6T98C8aGFNJXc87xoivZ
@@ -115,9 +124,8 @@ npm publish
     const message = "Здравствуй, Мир!";
     const encrypted = true; // encrypted = true, only if recipient is public key
                             // encrypted = false, only if sender is certified persons
-    const rpcPort = 9066; // 9066 - TestNET, 9046 - MainNET
 
-    EraChain.Tran.sendMessage(url, keyPair, recipientPublicKeyOrAddress, head, message, encrypted, rpcPort)
+    api.sendMessage(url, keyPair, recipientPublicKeyOrAddress, head, message, encrypted)
         .then(data => {
             // data = {status: "ok"}
             console.log(data);
@@ -131,8 +139,6 @@ npm publish
 ### Send asset to address or public key of recipient wallet
 
 ```javascript
-
-    const url = "http://domain.com:9067/api"; // 9067 - TestNET, 9047 - MainNET
 
     const keys = {
         // sender address: 7GtqHorKL6CDZW6T98C8aGFNJXc87xoivZ
@@ -153,9 +159,8 @@ npm publish
     const message = "Здравствуй, Мир!";
     const encrypted = true; // encrypted = true, only if recipient is public key
                             // encrypted = false, only if sender is certified persons
-    const rpcPort = 9066; // 9066 - TestNET, 9046 - MainNET
 
-    EraChain.Tran.sendAsset(url, keyPair, recipientPublicKeyOrAddress, asset, head, message, encrypted, rpcPort)
+    api.Tran.sendAsset(url, keyPair, recipientPublicKeyOrAddress, asset, head, message, encrypted)
         .then(data => {
             // data = {status: "ok"}
             console.log(data);
@@ -165,4 +170,3 @@ npm publish
         });
 
 ```
-

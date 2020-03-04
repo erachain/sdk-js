@@ -28,7 +28,9 @@
                 amount: 5,
             };
 
-            EraChain.Tran.sendAsset(url, keyPair, asset, recipientPublicKeyOrAddress, head, message, encrypted, rpcPort)
+            const api = new EraChain.API(url, rpcPort);
+
+            api.sendAsset(url, keyPair, asset, recipientPublicKeyOrAddress, head, message, encrypted)
                 .then(data => {
                     // data = {status: "ok"}
                     console.log(data);

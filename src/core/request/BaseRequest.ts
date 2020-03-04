@@ -10,8 +10,8 @@ export class BaseRequest {
         console.log("BaseRequest.fetch",fullUrl);
         return fetch(fullUrl, { method, headers, body })
             .then((r: any) => {
-                if (r.respInfo.status < 200 || r.respInfo.status >= 300) {
-                    throw new Error(r.respInfo.status.toString());
+                if (r.status < 200 || r.status >= 300) {
+                    throw new Error(r.status.toString());
                 }
                 return r;
             })

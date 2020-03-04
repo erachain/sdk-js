@@ -21,6 +21,10 @@ export class AssetsRequest extends NodeBaseRequest {
         return this.fetchJSON(`addressassets/${address}`);
     }
 
+    assetBalance(address: string, assetKey: number): Promise<number[][]> {
+        return this.fetchJSON(`addressassetbalance/${address}/${assetKey}`);
+    }
+
     assetsfilter(filter: string): Promise<IEraAsset[]> {
         filter = encodeURI(filter);
         return this.fetchJSON(`assetsfilter/${filter}`);

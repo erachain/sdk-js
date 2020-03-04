@@ -1,4 +1,3 @@
-import {ResponseError} from "./ResponseError";
 import {NodeBaseRequest} from "./NodeBaseRequest";
 
 export class BroadcastRequest extends NodeBaseRequest {
@@ -16,11 +15,11 @@ export class BroadcastRequest extends NodeBaseRequest {
             .fetchJSON(`broadcast`, "POST", raw, {"content-type": "application/x-www-form-urlencoded"});
     }
 
-    telegram(transaction: string): Promise<IBroadcastResponse | ResponseError> {
+    telegram(transaction: string): Promise<IBroadcastResponse> {
         return this.fetchJSON(`broadcasttelegram/${transaction}`);
     }
 
-    telegramPost(raw: string): Promise<IBroadcastResponse | ResponseError> {
+    telegramPost(raw: string): Promise<IBroadcastResponse> {
         return this
             .fetchJSON(`broadcasttelegram`, "POST", raw, {"content-type": "application/x-www-form-urlencoded"});
     }
