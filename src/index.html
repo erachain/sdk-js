@@ -54,6 +54,26 @@
             var decrypted = await testCrypt(msg);
             document.getElementById("decrypted").innerHTML = "decrypted message: " + decrypted;
         }
+         
+
+
+        function onFileSelected(event) {
+            var selectedFile = event.target.files[0];
+            var reader = new FileReader();
+
+            var imgtag1 = document.getElementById("myimage1");
+            imgtag1.title = selectedFile.name;
+
+            var imgtag2 = document.getElementById("myimage2");
+            imgtag2.title = selectedFile.name;
+
+            reader.onload = async function(event) {
+                imgtag1.src = event.target.result;
+                imgtag2.src = await EraChain.resizeImage(imgtag1.src, 20480, 15360);
+            };
+
+            reader.readAsDataURL(selectedFile);
+        }
 
     </script>
 
@@ -92,5 +112,8 @@
     <div>Verify signature:</div>
     <br/>
     <div id="verifySignature"></div>
+    <input type="file" onchange="onFileSelected(event)">
+    <img id="myimage1" />
+    <img id="myimage2" />
     
 </body>
