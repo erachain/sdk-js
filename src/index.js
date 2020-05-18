@@ -31,6 +31,9 @@
     BigDecimal,
     resizeImage,
     Crypt: {
+      generateSeed: AppCrypt.generateSeed,
+      generateAccountSeed: AppCrypt.generateAccountSeed,
+      getKeyPairFromSeed: AppCrypt.getKeyPairFromSeed,
       generateKeys: AppCrypt.generateKeys,
       KeyPair,
       addressByPublicKey: AppCrypt.getAccountAddressFromPublicKey,

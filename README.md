@@ -3,17 +3,11 @@
 
 EraChain JS API
 
-## Install via npm
+## Install SDK via npm
 
 npm install --save erachain-js-api
 
-### Usage:
-
-```javascript
-    const EraChain =  require('erachain-js-api');
-```
-
-## Install for html
+## Install /jsfor html
 
 git clone https://lab.erachain.org/erachain/web-js-encrypt.git
 
@@ -21,15 +15,15 @@ npm run build
 
 npm run prodjs
 
-### Usage:
-
-    dist/index.html
-
-## Npm module publish
-
-npm publish
-
 ## API functions
+
+### Import
+
+```javascript
+
+const { EraChain } = require('erachain-js-api')
+
+```
 
 ### Base58 functions
 
@@ -125,7 +119,7 @@ npm publish
     const encrypted = true; // encrypted = true, only if recipient is public key
                             // encrypted = false, only if sender is certified persons
 
-    api.sendMessage(url, keyPair, recipientPublicKeyOrAddress, head, message, encrypted)
+    api.sendMessage(keyPair, recipientPublicKeyOrAddress, head, message, encrypted)
         .then(data => {
             // data = {status: "ok"}
             console.log(data);
@@ -160,7 +154,7 @@ npm publish
     const encrypted = true; // encrypted = true, only if recipient is public key
                             // encrypted = false, only if sender is certified persons
 
-    api.Tran.sendAsset(url, keyPair, recipientPublicKeyOrAddress, asset, head, message, encrypted)
+    api.Tran.sendAsset(keyPair, recipientPublicKeyOrAddress, asset, head, message, encrypted)
         .then(data => {
             // data = {status: "ok"}
             console.log(data);

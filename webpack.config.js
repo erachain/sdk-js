@@ -34,5 +34,6 @@ module.exports = {
           { from: 'src/index.html', to: '../index.html' },
           { from: 'src/transaction.html', to: '../transaction.html' },
         ]),
+        new webpack.IgnorePlugin(/^\.\/(?!english)/, /bip39\/src\/wordlists$/),
     ]
 }

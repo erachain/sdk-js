@@ -3,13 +3,34 @@ import { Qora } from './libs/Qora';
 import { sign, SignKeyPair } from 'tweetnacl';
 import { createHash } from 'crypto';
 
+const bip39 = require('bip39');
+
 export class AppCrypt {
   public static HASH_LENGTH = 32;
 
-  static async generateSeed(phrase: string): Promise<string> {
+  static generatePasscode(): string {
+    bip39.setDefaultWordlist('english');
+    return bip39.generateMnemonic();
+  }
+
+  static async generateSeed(): Promise<string> {
+    const phrase = AppCrypt.generatePasscode();
     const byteSeed = AppCrypt.sha256(AppCrypt.sha256(phrase));
 
     return await Base58.encode(byteSeed);
+  }
+
+  static async generateAccountSeed(seed: string | Int8Array, nonce: number) {
+    return Qora.generateAccountSeed(seed, nonce);
+  }
+
+  static async getKeyPairFromSeed(seed: string | Uint8Array): Promise<SignKeyPair>
+  {
+    if(typeof(seed) === "string") {
+      seed = new Uint8Array(await Base58.decode(seed));
+    }
+    
+    return sign.keyPair.fromSeed(seed);
   }
 
   static sha256(input: Buffer | string | Int8Array): Int8Array {

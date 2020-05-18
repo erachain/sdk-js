@@ -1,6 +1,6 @@
 {
     "name": "erachain-js-api",
-    "version": "1.0.1",
+    "version": "1.0.7",
     "description": "EraChain JS API",
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
@@ -24,6 +24,7 @@
     "dependencies": {
         "@types/node": "^13.7.6",
         "atob": "^2.1.2",
+        "bip39": "^3.0.2",
         "buffer-image-size": "^0.6.4",
         "crypto-js": "^3.1.9-1",
         "node-fetch": "^2.6.0",

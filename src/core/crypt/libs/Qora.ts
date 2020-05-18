@@ -1,9 +1,23 @@
 import { Base58 } from './Base58';
 import { RIPEMD160 } from './RIPEMD160';
 import { AppCrypt } from '../AppCrypt';
+import { int32ToBytes } from './convert';
 
 export class Qora {
   static ADDRESS_VERSION = 15; // 7
+
+  static async generateAccountSeed(seed: string | Int8Array, nonce: number) {
+    if(typeof(seed) === "string") {
+      seed = await Base58.decode(seed);
+    }
+    const nonceBytes = int32ToBytes(nonce);
+    let resultSeed = new Int8Array();
+    resultSeed = appendBuffer(resultSeed, nonceBytes);
+    resultSeed = appendBuffer(resultSeed, seed);
+    resultSeed = appendBuffer(resultSeed, nonceBytes);
+
+    return AppCrypt.sha256(AppCrypt.sha256(resultSeed));
+  }
 
   static async getAccountAddressFromPublicKey(publicKey: Int8Array): Promise<string> {
 
@@ -42,7 +56,7 @@ export class Qora {
   }
 }
 
-function appendBuffer(buffer1: Int8Array, buffer2: Int8Array): Int8Array {
+export function appendBuffer(buffer1: Int8Array, buffer2: Int8Array): Int8Array {
   buffer1 = new Int8Array(buffer1);
   buffer2 = new Int8Array(buffer2);
   const tmp = new Int8Array(buffer1.byteLength + buffer2.byteLength);
