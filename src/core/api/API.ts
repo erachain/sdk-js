@@ -58,7 +58,7 @@ export class API implements APIInterface {
         let strParams = "";
         if (params) {
             let sep = "?";
-            for (let [key, value] of Object.entries(params)) {
+            for (const [key, value] of Object.entries(params)) {
                 if (strParams.length > 0) {
                     sep = "&";
                 }

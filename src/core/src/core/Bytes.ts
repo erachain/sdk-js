@@ -32,8 +32,8 @@ export class Bytes {
     */
     let value = 0;
     const ubytes = new Uint8Array(bytes);
-    for ( let i = 0; i < ubytes.length; i++) {
-        value = (value * 256) + ubytes[i];
+    for (const n of ubytes) {
+        value = (value * 256) + n;
     }
     return value;
   }
@@ -62,8 +62,8 @@ export class Bytes {
     */
     let value = 0;
     const ubytes = new Uint8Array(bytes);
-    for ( let i = 0; i < ubytes.length; i++) {
-        value = (value * 256) + ubytes[i];
+    for ( const n of ubytes) {
+        value = (value * 256) + n;
     }
     return value;
 
@@ -81,7 +81,7 @@ export class Bytes {
     const buff = new Int8Array(farr.buffer);
     const out = [];
     let k = 3;
-    for (var i = 0; i < 4; i++){
+    for (let i = 0; i < 4; i += 1){
       out.push(buff[k]);
       k--;
     }
@@ -94,7 +94,7 @@ export class Bytes {
     const a = new Float64Array(bytes.buffer);
     return a[0];
     */
-    if ( bytes.length == 4 ) {
+    if ( bytes.length === 4 ) {
       const bytesArray = new DataView(new Uint8Array(bytes).buffer);
       return bytesArray.getFloat32(0);
     } else {

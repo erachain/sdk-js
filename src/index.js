@@ -9,7 +9,7 @@
     exports.EraChain = factory();
   } 
 
-})(window, function() {
+})(this, function() {
   'use strict'
 
   const { Base58 } = require('./core/crypt/libs/Base58');

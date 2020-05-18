@@ -7,7 +7,6 @@ export class BaseRequest {
 
     fetch(url: string, method: Methods = "GET", body?: any, headers?: { [key: string]: string }): Promise<any> {
         const fullUrl = `${this.baseUrl}/${url}`;
-        console.log("BaseRequest.fetch",fullUrl);
         return fetch(fullUrl, { method, headers, body })
             .then((r: any) => {
                 if (r.status < 200 || r.status >= 300) {

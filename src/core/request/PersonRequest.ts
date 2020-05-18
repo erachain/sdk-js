@@ -11,7 +11,8 @@ export class PersonRequest extends NodeBaseRequest {
         filter = encodeURI(filter);
         return this.fetchJSON(`personsfilter/${filter}`).then(p => {
             p.forEach((item: IEraPerson, i: number) => {
-                item.hairColor = p[i]["hairСolor"];
+                const key = "hairСolor";
+                item.hairColor = p[i][key];
             });
             return p;
         });
@@ -24,7 +25,8 @@ export class PersonRequest extends NodeBaseRequest {
     person(key: number): Promise<IEraPerson> {
         return this.fetchJSON(`person/${key}`)
             .then(p => {
-                p.hairColor = p["hairСolor"];
+                // const key = "hairСolor";
+                // p.hairColor = p[key];
                 return p;
             });
     }
@@ -32,7 +34,8 @@ export class PersonRequest extends NodeBaseRequest {
     personbyaddress(address: string): Promise<IEraPerson> {
         return this.fetchJSON(`personbyaddress/${address}`)
             .then(p => {
-                p.hairColor = p["hairСolor"];
+                const key = "hairСolor";
+                p.hairColor = p[key];
                 return p;
             });
     }

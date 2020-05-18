@@ -81,7 +81,7 @@ export async function resizeImage(imageBase64: string, maxImageSize: number, min
         while (length > maxImageSize || length < minImageSize) {
 
             base64 = await resizeBase64(base64, size.width, size.height);
-            let c = decodeBase64(base64);
+            const c = decodeBase64(base64);
             length = c.image.length;
             imageBase64 = base64;
 
@@ -91,7 +91,7 @@ export async function resizeImage(imageBase64: string, maxImageSize: number, min
         return imageBase64;
 
     } catch(e) {
-        console.log(e);
+        // console.log(e);
         return "";
     }
    

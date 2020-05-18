@@ -20,6 +20,7 @@
       "strictNullChecks": true,
       "skipLibCheck": true,
       "strictPropertyInitialization": false,
+      "downlevelIteration": true,
       "types": [
         "node",
         "jest"

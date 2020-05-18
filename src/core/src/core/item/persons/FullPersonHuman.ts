@@ -8,7 +8,7 @@ import {Bytes} from "../../Bytes";
 
 export class FullPersonHuman implements IRegistrationData {
     imageInfo: any; //image base64
-    geoData: Object;
+    geoData: object;
     geoDetails: any;
     date: Date;
     creator: string;
@@ -38,7 +38,7 @@ export class FullPersonHuman implements IRegistrationData {
     timestamp: number;
 
     async validate(): Promise<string[]> {
-        let error = await this.validateName();
+        const error = await this.validateName();
         return ([] as string[]).concat(
             error,
             this.validateImage(),
@@ -56,7 +56,7 @@ export class FullPersonHuman implements IRegistrationData {
             dt = new Date(this.date);
         }
         
-        let tzOffset = dt.getTimezoneOffset() * 60000;
+        const tzOffset = dt.getTimezoneOffset() * 60000;
        
         //приведение даты рождения и смерти к времени UTC + 0
         //const proxyDate = Date.UTC(this.date.getFullYear(), this.date.getUTCMonth(), this.date.getUTCDay(), 0, 0, 0, 0);

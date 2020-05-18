@@ -9,10 +9,8 @@ export class NodeBaseRequest {
 
     fetch(url: string, method: Methods = "GET", body?: any, headers?: { [key: string]: string }): Promise<any> {
         const fullUrl = `${this.baseUrl}/${url}`;
-        console.log("NodeBaseRequest.fetch", fullUrl);
         return fetch(fullUrl, { method, headers, body })
             .then((r: any) => {
-                console.log(r);
                 if (r.status < 200 || r.status >= 300) {
                     throw new Error(r.status.toString());
                 }

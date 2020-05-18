@@ -2,16 +2,6 @@ import {NodeBaseRequest} from "./NodeBaseRequest";
 import {IChatTransaction} from "../types/era/IChatTransaction";
 import {IOrderTransaction} from "../types/era/IOrderTransaction";
 
-export class ApiRecordRequest extends NodeBaseRequest {
-    constructor(protected baseUrl: string) {
-        super();
-    }
-
-    record(signature: string): Promise<IWalletHistoryRow> {
-        return this.fetchJSON(`record/${signature}`);
-    }
-}
-
 export class ApiRecordsRequest extends NodeBaseRequest {
     constructor(protected baseUrl: string) {
         super();
