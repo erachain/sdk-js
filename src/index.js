@@ -15,9 +15,8 @@
   const { Base58 } = require('./core/crypt/libs/Base58');
   const { Bytes } = require('./core/src/core/Bytes');
   const { AppCrypt } = require('./core/crypt/AppCrypt');
-  const { KeyPair } = require('./core/src/core/account/KeyPair');
   const { API } = require('./core/api/API');
-  const { BigDecimal } = require('./core/src/BigDecimal');
+  const { Type } = require('./core/api/Type');
 
   const { resizeImage } = require('./core/src/core/util/resizeImage');
 
@@ -28,14 +27,12 @@
   const lib = {
     Base58,
     Bytes,
-    BigDecimal,
     resizeImage,
     Crypt: {
       generateSeed: AppCrypt.generateSeed,
       generateAccountSeed: AppCrypt.generateAccountSeed,
       getKeyPairFromSeed: AppCrypt.getKeyPairFromSeed,
       generateKeys: AppCrypt.generateKeys,
-      KeyPair,
       addressByPublicKey: AppCrypt.getAccountAddressFromPublicKey,
       addressBySecretKey: AppCrypt.getAddressBySecretKey,
       publicKeyBySecretKey: AppCrypt.getPublicKeyBySecretKey,
@@ -45,6 +42,7 @@
       decryptMessage: crypt.decryptMessage,
     },
     API,
+    Type
   };
   return lib;
 

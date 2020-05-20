@@ -1,5 +1,4 @@
 import {FetchRequest} from "../request/FetchRequest";
-import {APIInterface, IAsset} from "./APIInterface";
 import {IWalletHistoryRow} from "../request/ApiRecordsRequest";
 import {tranSend} from "./TranSend";
 import {IBroadcastResponse} from "../request/BroadcastRequest";
@@ -10,6 +9,7 @@ import { ITranRecipient, ITranAsset } from "../src/core/transaction/TranTypes";
 import { BigDecimal } from "../src/BigDecimal";
 import {tranMessage} from "./TranMessage";
 import {tranPerson} from "./TranPerson";
+import {tranAsset} from "./TranAsset";
 import {tranVerifyPerson} from "./TranPersonVerify";
 import {IEraBlock} from "../types/era/IEraBlock";
 import {IEraFirstBlock} from "../types/era/IEraBlock";
@@ -34,7 +34,17 @@ enum TypeTransaction {
     CALC = 100,
 }
 
-export class API implements APIInterface {
+/**
+ * @type {Object} IAsset
+ * @property {number}  assetKey Asset key ID.
+ * @property {number}  amount Amount.
+ */
+export interface IAsset {
+    assetKey: number;
+    amount: number;
+}
+
+export class API {
 
     static TYPE_TRANSACTION: TypeTransaction;
 
@@ -166,152 +176,11 @@ export class API implements APIInterface {
     }
 
     async getTelegrams(address: string, fromTimestamp: number): Promise<ITelegramTransaction[]> {
-        const data = this.request.telegram.getfind(address, fromTimestamp)
+        const data = await this.request.telegram.getfind(address, fromTimestamp)
                 .catch(e => {
                     throw new Error(e);
                 });
         return data;
-    }
-
-    async sendAsset(keyPair: KeyPair, asset: IAsset, recipientPublicKey: string, head: string, message: string, encrypted: boolean): Promise<IBroadcastResponse> {
-
-        let recipient: ITranRecipient = { 
-            address: recipientPublicKey,
-            publicKey: null,
-        }; 
-    
-        if (recipientPublicKey.length === 44) {
-            const pk = await Base58.decode(recipientPublicKey);
-            recipient = { 
-                address: await Qora.getAccountAddressFromPublicKey(pk),
-                publicKey: pk
-            };   
-        } 
-
-        const tranBody = {
-            head,
-            message,
-            encrypted,
-        } 
-    
-        const transAsset: ITranAsset = {
-            assetKey: asset.assetKey,
-            amount: new BigDecimal(asset.amount),
-        }
-    
-        const tran = await tranSend(recipient, keyPair, transAsset, tranBody, this.rpcPort);
-        
-        if (!tran.error) {
-            const data = this.request.broadcast.broadcastPost(tran.raw)
-                            .catch(e => {
-                                throw new Error(e);
-                            });
-            return data;
-        } else {
-            throw new Error(tran.error);
-        }
-    }
-
-    async sendPerson(keyPair: KeyPair, person: PersonHuman): Promise<IBroadcastResponse> {
-        const tran = await tranPerson(keyPair, person, this.rpcPort);
-        if (!tran.error) {
-            const data = this.request.broadcast.broadcastPost(tran.raw)
-                            .catch(e => {
-                                throw new Error(e);
-                            });
-            return data;
-        } else {
-            throw new Error(tran.error);
-        }
-    }
-
-    async verifyPerson(keyPair: KeyPair, personKey: number, personPublicKey: Int8Array,): Promise<IBroadcastResponse> {
-
-        try {
-            const address = await AppCrypt.getAddressBySecretKey(keyPair.secretKey);
-            const reference = await this.request.address.lastReference(address);
-            const tran = await tranVerifyPerson(keyPair, personKey, personPublicKey, reference, this.rpcPort);
-            if (!tran.error) {
-                const data = this.request.broadcast.broadcastPost(tran.raw)
-                                .catch(e => {
-                                    throw new Error(e);
-                                });
-                return data;
-            } else {
-                throw new Error(tran.error);
-            }
-        } catch(e) {
-            throw new Error(e);
-        }
-        
-    }
-
-    async sendMessage(keyPair: KeyPair, recipientPublicKey: string, head: string, message: string, encrypted: boolean): Promise<IBroadcastResponse> {
-
-        let recipient: ITranRecipient = { 
-            address: recipientPublicKey,
-            publicKey: null,
-        }; 
-    
-        if (recipientPublicKey.length === 44) {
-            const pk = await Base58.decode(recipientPublicKey);
-            recipient = { 
-                address: await Qora.getAccountAddressFromPublicKey(pk),
-                publicKey: pk
-            };   
-        }
-
-        const tranBody = {
-            head,
-            message,
-            encrypted,
-        } 
-    
-        const tran = await tranMessage(recipient, keyPair, tranBody, this.rpcPort);
-        
-        if (!tran.error) {
-            const data = this.request.broadcast.broadcastPost(tran.raw)
-                            .catch(e => {
-                                throw new Error(e);
-                            });
-            return data;
-        } else {
-            throw new Error(tran.error);
-        }
-    }
-
-    async sendTelegram(keyPair: KeyPair, recipientPublicKey: string, message: string, encrypted: boolean): Promise<IBroadcastResponse> {
-
-        let recipient: ITranRecipient = { 
-            address: recipientPublicKey,
-            publicKey: null,
-        }; 
-    
-        if (recipientPublicKey.length === 44) {
-            const pk = await Base58.decode(recipientPublicKey);
-            recipient = { 
-                address: await Qora.getAccountAddressFromPublicKey(pk),
-                publicKey: pk
-            };   
-        }
-
-        const tranBody = {
-            head: "",
-            message,
-            encrypted,
-        } 
-    
-        const tran = await tranMessage(recipient, keyPair, tranBody, this.rpcPort);
-        
-        if (!tran.error) {
-            const data = this.request.broadcast.telegramPost(tran.raw)
-                            .catch(e => {
-                                throw new Error(e);
-                            });
-            return data;
-        } else {
-            throw new Error(tran.error);
-        }
     }
 
     async getPersonsByFilter(filter: string): Promise<IEraPerson[]> {
@@ -352,6 +221,228 @@ export class API implements APIInterface {
                 throw new Error(e);
             });
         return data;
+    }
+
+    // SDK
+
+    /** @description API send amount of asset to recipient.
+     * @param {KeyPair} keyPair Key pair.
+     * @param {IAsset} asset Amount and asset key.
+     * @param {string} recipientPublicKey Recipient public key.
+     * @param {string} head Title.
+     * @param {string} message Message.
+     * @param {boolean} encrypted Encryption flag.
+     * @return {Promise<IBroadcastResponse>}
+     */
+    async sendAsset(keyPair: KeyPair, asset: IAsset, recipientPublicKey: string, head: string, message: string, encrypted: boolean): Promise<IBroadcastResponse> {
+
+        let recipient: ITranRecipient = { 
+            address: recipientPublicKey,
+            publicKey: null,
+        }; 
+    
+        if (recipientPublicKey.length === 44) {
+            const pk = await Base58.decode(recipientPublicKey);
+            recipient = { 
+                address: await Qora.getAccountAddressFromPublicKey(pk),
+                publicKey: pk
+            };   
+        } 
+
+        const tranBody = {
+            head,
+            message,
+            encrypted,
+        } 
+    
+        const transAsset: ITranAsset = {
+            assetKey: asset.assetKey,
+            amount: new BigDecimal(asset.amount),
+        }
+    
+        const tran = await tranSend(recipient, keyPair, transAsset, tranBody, this.rpcPort);
+        
+        if (!tran.error) {
+            const data = await this.request.broadcast.broadcastPost(tran.raw)
+                            .catch(e => {
+                                throw new Error(e);
+                            });
+            return data;
+        } else {
+            throw new Error(tran.error);
+        }
+    }
+
+    /** @description API register person.
+     * @param {KeyPair} keyPair Key pair.
+     * @param {PersonHuman} person Person.
+     * @return {Promise<IBroadcastResponse>}
+     */
+    async registerPerson(keyPair: KeyPair, person: PersonHuman): Promise<IBroadcastResponse> {
+        const tran = await tranPerson(keyPair, person, this.rpcPort);
+        if (!tran.error) {
+            const data = await this.request.broadcast.broadcastPost(tran.raw)
+                            .catch(e => {
+                                throw new Error(e);
+                            });
+            return data;
+        } else {
+            throw new Error(tran.error);
+        }
+    }
+
+    /** @description API verify person.
+     * @param {KeyPair} keyPair Key pair.
+     * @param {number} personKey Person key ID.
+     * @param {Int8Array} personPublicKey Person public key.
+     * @return {Promise<IBroadcastResponse>}
+     */
+    async verifyPerson(keyPair: KeyPair, personKey: number, personPublicKey: Int8Array): Promise<IBroadcastResponse> {
+
+        try {
+            const address = await AppCrypt.getAddressBySecretKey(keyPair.secretKey);
+            const reference = await this.request.address.lastReference(address);
+            const tran = await tranVerifyPerson(keyPair, personKey, personPublicKey, reference, this.rpcPort);
+            if (!tran.error) {
+                const data = await this.request.broadcast.broadcastPost(tran.raw)
+                                .catch(e => {
+                                    throw new Error(e);
+                                });
+                return data;
+            } else {
+                throw new Error(tran.error);
+            }
+        } catch(e) {
+            throw new Error(e);
+        }
+        
+    }
+
+    /** @description API send message.
+     * @param {KeyPair} keyPair Key pair.
+     * @param {string} recipientPublicKey Recipient public key.
+     * @param {string} head Title.
+     * @param {string} message Message.
+     * @param {boolean} encrypted Encryption flag.
+     * @return {Promise<IBroadcastResponse>}
+     */
+    async sendMessage(keyPair: KeyPair, recipientPublicKey: string, head: string, message: string, encrypted: boolean): Promise<IBroadcastResponse> {
+
+        let recipient: ITranRecipient = { 
+            address: recipientPublicKey,
+            publicKey: null,
+        }; 
+    
+        if (recipientPublicKey.length === 44) {
+            const pk = await Base58.decode(recipientPublicKey);
+            recipient = { 
+                address: await Qora.getAccountAddressFromPublicKey(pk),
+                publicKey: pk
+            };   
+        }
+
+        const tranBody = {
+            head,
+            message,
+            encrypted,
+        } 
+    
+        const tran = await tranMessage(recipient, keyPair, tranBody, this.rpcPort);
+        
+        if (!tran.error) {
+            const data = await this.request.broadcast.broadcastPost(tran.raw)
+                            .catch(e => {
+                                throw new Error(e);
+                            });
+            return data;
+        } else {
+            throw new Error(tran.error);
+        }
+    }
+
+    /** @description API send telegram.
+     * @param {KeyPair} keyPair Key pair.
+     * @param {string} recipientPublicKey Recipient public key.
+     * @param {string} message Message.
+     * @param {boolean} encrypted Encryption flag.
+     * @return {Promise<IBroadcastResponse>}
+     */
+    async sendTelegram(keyPair: KeyPair, recipientPublicKey: string, message: string, encrypted: boolean): Promise<IBroadcastResponse> {
+
+        let recipient: ITranRecipient = { 
+            address: recipientPublicKey,
+            publicKey: null,
+        }; 
+    
+        if (recipientPublicKey.length === 44) {
+            const pk = await Base58.decode(recipientPublicKey);
+            recipient = { 
+                address: await Qora.getAccountAddressFromPublicKey(pk),
+                publicKey: pk
+            };   
+        }
+
+        const tranBody = {
+            head: "",
+            message,
+            encrypted,
+        } 
+    
+        const tran = await tranMessage(recipient, keyPair, tranBody, this.rpcPort);
+        
+        if (!tran.error) {
+            const data = await this.request.broadcast.telegramPost(tran.raw)
+                            .catch(e => {
+                                throw new Error(e);
+                            });
+            return data;
+        } else {
+            throw new Error(tran.error);
+        }
+    }
+
+    /** @description API register asset.
+     * @param {KeyPair} keyPair Key pair.
+     * @param {string} name Asset name.
+     * @param {number} assetType Asset type.
+     * @param {number} quantity Quantity.
+     * @param {number} scale Scale.
+     * @param {Int8Array} icon Icon.
+     * @param {Int8Array} image Image.
+     * @param {string} description Description.
+     * @return {Promise<IBroadcastResponse>}
+     */
+    async registerAsset(
+        keyPair: KeyPair, 
+        name: string,
+        assetType: number,
+        quantity: number,
+        scale: number,
+        icon: Int8Array,
+        image: Int8Array,
+        description: string
+    ): Promise<IBroadcastResponse> {
+
+        const tran = await tranAsset(
+            keyPair,
+            name,
+            assetType,
+            quantity,
+            scale,
+            icon,
+            image,
+            description,
+            this.rpcPort);
+        
+        if (!tran.error) {
+            const data = await this.request.broadcast.broadcastPost(tran.raw)
+                            .catch(e => {
+                                throw new Error(e);
+                            });
+            return data;
+        } else {
+            throw new Error(tran.error);
+        }
     }
 
 }

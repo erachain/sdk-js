@@ -8,9 +8,33 @@ import { BlockChain } from '../../BlockChain';
 import { Transaction } from '../../transaction/Transaction';
 import { DataWriter } from '../../DataWriter';
 
+
+/** 
+ * @class
+ * @classdesc PersonHuman class.
+ */
 export class PersonHuman extends PersonCls {
   ownerSignature: Int8Array;
 
+  /**
+   * Create instance of PersonHuman.
+   *
+   * @constructor
+   * @param {Object} owner - PublicKeyAccount.
+   * @param {string} name - Name.
+   * @param {number} birthday - Birthday.
+   * @param {number} deathday - Deathday.
+   * @param {number} gender - Gender.
+   * @param {number} birthLatitude - Latitude of birth place.
+   * @param {number} birthLongitude - Longitude of birth place.
+   * @param {string} skinColor - Skin color.
+   * @param {string} eyeColor - Eye color.
+   * @param {string} hairColor - Hair color.
+   * @param {number} height - Height.
+   * @param {Int8Array} icon - Icon.
+   * @param {Int8Array} image - Image.
+   * @param {string} description - Description.
+   */
   constructor(
     owner: PublicKeyAccount,
     name: string,

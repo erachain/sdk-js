@@ -8,9 +8,11 @@ const ed2curve = require('./ed2curve');
 
 const CryptoJS = require('crypto-js');
 
-// publicKey: Int8Array | string
-// privateKey: Int8Array | string
-// result : Int8Array
+/** @description Gets share key.
+ * @param {Int8Array | string} publicKey The radius of the circle.
+ * @param {Int8Array | string} privateKey The radius of the circle.
+ * @return {Promise<string>}
+ */
 export const getPassword = async (publicKey, privateKey) => {
   const key = typeof publicKey === 'string' ? new Buffer(await Base58.decode(publicKey)) : new Buffer(publicKey);
   const secret = typeof privateKey === 'string' ? new Buffer(await Base58.decode(privateKey)) : new Buffer(privateKey);
@@ -20,10 +22,12 @@ export const getPassword = async (publicKey, privateKey) => {
   return password;
 };
 
-// message: string
-// publicKey: Int8Array
-// privateKey: Int8Array
-// result : Int8Array
+/** @description Encrypt text.
+ * @param {string} message Text to encrypt.
+ * @param {Int8Array | string} publicKey The radius of the circle.
+ * @param {Int8Array | string} privateKey The radius of the circle.
+ * @return {Promise<int8Array | boolean>}
+ */
 export const encryptMessage = async (message, publicKey, privateKey) => {
   try {
     const iv = CryptoJS.enc.Hex.parse('06040308010201020702030805070101');
@@ -40,10 +44,12 @@ export const encryptMessage = async (message, publicKey, privateKey) => {
   }
 };
 
-// encryptedMessage: Int8Array
-// publicKey: Int8Array
-// privateKey: Int8Array
-// result : string
+/** @description Decrypt text to json.
+ * @param {string} encryptedMessage Encrypted text to decrypt.
+ * @param {Int8Array | string} publicKey The radius of the circle.
+ * @param {Int8Array | string} privateKey The radius of the circle.
+ * @return {Promise<string>}
+ */
 export const decryptJson = async (encryptedMessage, publicKey, privateKey) => {
   try {
     const iv = CryptoJS.enc.Hex.parse('06040308010201020702030805070101');
@@ -62,6 +68,12 @@ export const decryptJson = async (encryptedMessage, publicKey, privateKey) => {
   }
 };
 
+/** @description Decrypt text.
+ * @param {string} encryptedMessage Encrypted text to decrypt.
+ * @param {Int8Array | string} publicKey The radius of the circle.
+ * @param {Int8Array | string} privateKey The radius of the circle.
+ * @return {Promise<string | boolean>}
+ */
 export const decryptMessage = async (encryptedMessage, publicKey, privateKey) => {
   try {
     const iv = CryptoJS.enc.Hex.parse('06040308010201020702030805070101');

@@ -16,7 +16,7 @@ export class Qora {
     resultSeed = appendBuffer(resultSeed, seed);
     resultSeed = appendBuffer(resultSeed, nonceBytes);
 
-    return AppCrypt.sha256(AppCrypt.sha256(resultSeed));
+    return await Base58.encode(AppCrypt.sha256(AppCrypt.sha256(resultSeed)));
   }
 
   static async getAccountAddressFromPublicKey(publicKey: Int8Array): Promise<string> {

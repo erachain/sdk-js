@@ -1,10 +1,26 @@
 import { sign } from 'tweetnacl';
 import { Base58 } from '../../../crypt/libs/Base58';
 
+
+/** 
+ * @class
+ * @classdesc Key pair class.
+ */
 export class KeyPair {
+
+  /** @member {Int8Array} */
   secretKey: Int8Array;
+
+  /** @member {Int8Array} */
   publicKey: Int8Array;
 
+  /**
+   * Create instance of KeyPair.
+   *
+   * @constructor
+   * @param {KeyPair | Int8Array} secretKey - Private key or KeyPair (Optional).
+   * @param {Int8Array} publicKey - Public key (Optional).
+   */
   constructor();
   constructor(secretKey: Int8Array, publicKey: Int8Array);
   constructor(secretKey?: IKeyPair | Int8Array, publicKey?: Int8Array) {
@@ -31,6 +47,9 @@ export class KeyPair {
     };
   }
 
+  /** @description Convert keys to base58 string.
+   * @return {Promise<IKeyPairString>}
+   */
   async toString(): Promise<IKeyPairString> {
     return {
       secretKey: await Base58.encode(this.secretKey),

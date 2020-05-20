@@ -53,7 +53,6 @@ export function decodeBase64(imageBase64: string): IImageContainer {
         image: array.slice(),
         ...dim,
     };
-
 }
 
 function px(l: number, w: number, h: number): number {
@@ -68,6 +67,12 @@ function newSize(l: number, pl: number, rate: number): { width: number, height: 
     };
 }
 
+/** @description Resize image.
+ * @param {string} imageBase64 Base64 string.
+ * @param {number} maxImageSize Max size.
+ * @param {number} minImageSize Min size.
+ * @return {Promise<string>} Base64.
+ */
 export async function resizeImage(imageBase64: string, maxImageSize: number, minImageSize: number): Promise<string> {
     try {
         const imageContainer = decodeBase64(imageBase64);

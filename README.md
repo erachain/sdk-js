@@ -110,7 +110,7 @@ const { EraChain } = require('erachain-js-api')
         publicKey: await EraChain.Base58.decode("ESx4g78k72URJWW87M4vKbMCqQpChzLfQ5s8gJhsjB7B")
     };
 
-    const keyPair = new EraChain.Crypt.KeyPair(keys);
+    const keyPair = new EraChain.Types.KeyPair(keys);
 
     const recipientPublicKeyOrAddress = "2fGQhMDrZdeKnT83wFhjNVhJ7LrNA8faRzsfuihaN2T6";
     // recipient address: 7GEebDVKj9eW1udSNqpAXJr8TMJR3HPsXK
@@ -140,7 +140,7 @@ const { EraChain } = require('erachain-js-api')
         publicKey: await EraChain.Base58.decode("ESx4g78k72URJWW87M4vKbMCqQpChzLfQ5s8gJhsjB7B")
     };
 
-    const keyPair = new EraChain.Crypt.KeyPair(keys);
+    const keyPair = new EraChain.Types.KeyPair(keys);
 
     const asset = {
         assetKey: 2, // 1 = ERA, 2 = COMPU, etc.
