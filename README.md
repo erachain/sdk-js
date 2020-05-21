@@ -42,6 +42,25 @@ const { EraChain } = require('erachain-js-api')
 
 ```javascript
 
+    // With seed
+    EraChain.Crypt.generateSeed()
+        .then(seed => {
+            console.log('seed: ', seed);
+
+            EraChain.Crypt.generateAccountSeed(seed, 0)
+                .then(seedAccount => {
+                    console.log('seedAccount: ', seedAccount);
+
+                    EraChain.Crypt.getKeyPairFromSeed(seedAccount, 0)
+                        .then(async (keyPair) => {
+                            console.log('keyPair: ', {
+                                secretKey: await EraChain.Base58.encode(keyPair.secretKey),
+                                publicKey: await EraChain.Base58.encode(keyPair.publicKey),
+                            });
+                        });
+                });
+        });
+
     // Generate new key pair (secret key && public key)
     const keys: {
         [secretKey]: Int8Array,
@@ -104,33 +123,11 @@ const { EraChain } = require('erachain-js-api')
 
 ```
 
-### Send message to address or public key of recipient wallet
+### Base request
 
 ```javascript
 
-    const keys = {
-        // sender address: 7GtqHorKL6CDZW6T98C8aGFNJXc87xoivZ
-        secretKey: await EraChain.Base58.decode("5a4AabYQ54gdwYq83FNng96BTzzSL6bTxALcRFe9VZboLfzaUToZFnAdMsnNKM13NJZeCMJbykfQbNT9vryyhF4R"),
-        publicKey: await EraChain.Base58.decode("ESx4g78k72URJWW87M4vKbMCqQpChzLfQ5s8gJhsjB7B")
-    };
-
-    const keyPair = new EraChain.Types.KeyPair(keys);
-
-    const recipientPublicKeyOrAddress = "2fGQhMDrZdeKnT83wFhjNVhJ7LrNA8faRzsfuihaN2T6";
-    // recipient address: 7GEebDVKj9eW1udSNqpAXJr8TMJR3HPsXK
-    const head = "Заголовок";
-    const message = "Здравствуй, Мир!";
-    const encrypted = true; // encrypted = true, only if recipient is public key
-                            // encrypted = false, only if sender is certified persons
-
-    api.sendMessage(keyPair, recipientPublicKeyOrAddress, head, message, encrypted)
-        .then(data => {
-            // data = {status: "ok"}
-            console.log(data);
-        })
-        .catch(e => {
-            console.log(e);
-        });
+    api.query(method: string, path: string, params?: { [key: string]: string }, body?: any): Promise<any>
 
 ```
 
@@ -144,7 +141,7 @@ const { EraChain } = require('erachain-js-api')
         publicKey: await EraChain.Base58.decode("ESx4g78k72URJWW87M4vKbMCqQpChzLfQ5s8gJhsjB7B")
     };
 
-    const keyPair = new EraChain.Types.KeyPair(keys);
+    const keyPair = new EraChain.Type.KeyPair(keys);
 
     const asset = {
         assetKey: 2, // 1 = ERA, 2 = COMPU, etc.
@@ -181,20 +178,15 @@ const { EraChain } = require('erachain-js-api')
         publicKey: await EraChain.Base58.decode("ESx4g78k72URJWW87M4vKbMCqQpChzLfQ5s8gJhsjB7B")
     };
 
-    const keyPair = new EraChain.Types.KeyPair(keys);
-
-    const asset = {
-        assetKey: 2, // 1 = ERA, 2 = COMPU, etc.
-        amount: 1,   // amount of asset
-    }
+    const keyPair = new EraChain.Type.KeyPair(keys);
 
     const name = "Asset name";
     const description = "";
-    const assetType = 1;
-    const quantity = 1000;
-    const scale = 2;
-    const icon = ;
-    const image = ;
+    const assetType = 1; // цифровой актив
+    const quantity = 1000; // количество
+    const scale = 2; // дробность
+    const icon = EraChain.base64ToArray(icon_base64string);
+    const image = EraChain.base64ToArray(image_base64string);;
 
     api.registerAsset(keyPair, name, assetType, quantity, scale, icon, image, description)
         .then(data => {
@@ -204,5 +196,196 @@ const { EraChain } = require('erachain-js-api')
         .catch(e => {
             console.log(e);
         });
+
+```
+
+### Register person
+
+```javascript
+
+    const keys = {
+        // sender address: 7GtqHorKL6CDZW6T98C8aGFNJXc87xoivZ
+        secretKey: await EraChain.Base58.decode("5a4AabYQ54gdwYq83FNng96BTzzSL6bTxALcRFe9VZboLfzaUToZFnAdMsnNKM13NJZeCMJbykfQbNT9vryyhF4R"),
+        publicKey: await EraChain.Base58.decode("ESx4g78k72URJWW87M4vKbMCqQpChzLfQ5s8gJhsjB7B")
+    };
+
+    const keyPair = new EraChain.Type.KeyPair(keys);
+
+    const account = new EraChain.Type.PublicKeyAccount(keys.publicKey)
+
+    const person = new EraChain.Type.PersonHuman(
+        account,
+        name: string,
+        birthday: number,
+        deathday: number,
+        gender: number,
+        race: string,
+        birthLatitude: number,
+        birthLongitude: number,
+        skinColor: string,
+        eyeColor: string,
+        hairColor: string,
+        height: number,
+        icon: Int8Array,
+        image: Int8Array,
+        description: string,
+    );
+
+    api.registerPerson(keyPair, person)
+        .then(data => {
+            // data = {status: "ok"}
+            console.log(data);
+        })
+        .catch(e => {
+            console.log(e);
+        });
+
+```
+
+### Verify person
+
+```javascript
+
+    // Your key pair
+    const keys = {
+        secretKey: await EraChain.Base58.decode("5a4AabYQ54gdwYq83FNng96BTzzSL6bTxALcRFe9VZboLfzaUToZFnAdMsnNKM13NJZeCMJbykfQbNT9vryyhF4R"),
+        publicKey: await EraChain.Base58.decode("ESx4g78k72URJWW87M4vKbMCqQpChzLfQ5s8gJhsjB7B")
+    };
+
+    const keyPair = new EraChain.Type.KeyPair(keys);
+
+    // ID person for verify
+    const personKey = 1555;
+
+    api.verifyPerson(keyPair, personKey, keys.publicKey)
+        .then(data => {
+            // data = {status: "ok"}
+            console.log(data);
+        })
+        .catch(e => {
+            console.log(e);
+        });
+
+```
+
+### Send message to address or public key of recipient wallet
+
+```javascript
+
+    const keys = {
+        // sender address: 7GtqHorKL6CDZW6T98C8aGFNJXc87xoivZ
+        secretKey: await EraChain.Base58.decode("5a4AabYQ54gdwYq83FNng96BTzzSL6bTxALcRFe9VZboLfzaUToZFnAdMsnNKM13NJZeCMJbykfQbNT9vryyhF4R"),
+        publicKey: await EraChain.Base58.decode("ESx4g78k72URJWW87M4vKbMCqQpChzLfQ5s8gJhsjB7B")
+    };
+
+    const keyPair = new EraChain.Type.KeyPair(keys);
+
+    const recipientPublicKeyOrAddress = "2fGQhMDrZdeKnT83wFhjNVhJ7LrNA8faRzsfuihaN2T6";
+    // recipient address: 7GEebDVKj9eW1udSNqpAXJr8TMJR3HPsXK
+    const head = "Заголовок";
+    const message = "Здравствуй, Мир!";
+    const encrypted = true; // encrypted = true, only if recipient is public key
+                            // encrypted = false, only if sender is certified persons
+
+    api.sendMessage(keyPair, recipientPublicKeyOrAddress, head, message, encrypted)
+        .then(data => {
+            // data = {status: "ok"}
+            console.log(data);
+        })
+        .catch(e => {
+            console.log(e);
+        });
+
+```
+
+### Send telegram to address or public key of recipient wallet
+
+```javascript
+
+    const keys = {
+        // sender address: 7GtqHorKL6CDZW6T98C8aGFNJXc87xoivZ
+        secretKey: await EraChain.Base58.decode("5a4AabYQ54gdwYq83FNng96BTzzSL6bTxALcRFe9VZboLfzaUToZFnAdMsnNKM13NJZeCMJbykfQbNT9vryyhF4R"),
+        publicKey: await EraChain.Base58.decode("ESx4g78k72URJWW87M4vKbMCqQpChzLfQ5s8gJhsjB7B")
+    };
+
+    const keyPair = new EraChain.Type.KeyPair(keys);
+
+    const recipientPublicKey = "2fGQhMDrZdeKnT83wFhjNVhJ7LrNA8faRzsfuihaN2T6";
+    // recipient address: 7GEebDVKj9eW1udSNqpAXJr8TMJR3HPsXK
+    const head = "Заголовок";
+    const message = "Здравствуй, Мир!";
+    const encrypted = true; // encrypted = true, only if recipient is public key
+                            // encrypted = false, only if sender is certified persons
+
+    api.sendTelegram(keyPair, recipientPublicKey, head, message, encrypted)
+        .then(data => {
+            // data = {status: "ok"}
+            console.log(data);
+        })
+        .catch(e => {
+            console.log(e);
+        });
+
+```
+
+## Gets balance of asset
+
+```javascript
+
+    api.getBalance(address: string, assetKey: number): Promise<number>
+
+```
+
+## Gets transactions
+
+```javascript
+
+    api.getTransactions(address: string, heightOfBlock: number, offsetInBlock: number, pageSize: number): Promise<IWalletHistoryRow[]>
+
+```
+
+## Gets blocks
+
+```javascript
+
+    api.height(): Promise<any>
+
+    api.firstBlock(): Promise<IEraFirstBlock>
+
+    api.lastBlock(): Promise<IEraBlock>
+
+    api.blocksFromHeight(height: number, limit: number): Promise<{ blocks: IEraBlock[] }>
+
+```
+
+## Gets person data
+
+```javascript
+
+    api.getPersonsByFilter(filter: string): Promise<IEraPerson[]>
+
+    api.getPersonData(personKey: number): Promise<IEraPersonData>
+
+    api.getPerson(personKey: number): Promise<IEraPerson>
+  
+    api.getPersonByAddress(address: string): Promise<IEraPerson>
+
+    api.getPersonByPublicKey(base58key: string): Promise<IEraPerson>
+
+```
+
+## Gets asset data
+
+```javascript
+
+    api.getAllAssets(): Promise<IEraAssetsList>
+
+    api.getAssetTransactions(address: string, assetKey: number, offset: number, pageSize:  number, type: number): Promise<{ [id: string]: IWalletHistoryRow }>
+
+    api.getAsset(assetKey: number): Promise<IEraAsset>
+
+    api.getAssetData(assetKey: number): Promise<IEraAssetData>
+
+    api.getAssetImage(assetKey: number): Promise<string | null>
 
 ```

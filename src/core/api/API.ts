@@ -99,6 +99,10 @@ export class API {
         return await this.request.block.lastBlock();
     }
 
+    async blocksFromHeight(height: number, limit: number): Promise<{ blocks: IEraBlock[] }> {
+        return await this.request.blocks.blocksFromHeight(height, limit);
+    }
+
     async getLastReference(address: string): Promise<number> {
         return await this.request.address.lastReference(address);
     }
@@ -169,6 +173,14 @@ export class API {
 
     async getAssetImage(assetKey: number): Promise<string | null> {
         const data = await this.request.assets.assetimage(assetKey)
+            .catch(e => {
+                throw new Error(e);
+            });
+        return data;
+    }
+
+    async getAssetIcon(assetKey: number): Promise<string | null> {
+        const data = await this.request.assets.asseticon(assetKey)
             .catch(e => {
                 throw new Error(e);
             });

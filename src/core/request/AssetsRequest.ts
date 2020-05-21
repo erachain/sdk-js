@@ -37,4 +37,8 @@ export class AssetsRequest extends NodeBaseRequest {
     assetimage(key: number): Promise<string | null> {
         return this.fetch(`assetimage/${key}`);
     }
+
+    asseticon(key: number): Promise<string | null> {
+        return this.fetch(`asseticon/${key}`);
+    }
 }
