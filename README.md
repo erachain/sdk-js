@@ -328,7 +328,7 @@ const { EraChain } = require('erachain-js-api')
 
 ```
 
-## Get balance of asset
+### Get balance of asset
 
 ```javascript
 
@@ -336,7 +336,7 @@ const { EraChain } = require('erachain-js-api')
 
 ```
 
-## Get transactions
+### Get transactions
 
 ```javascript
 
@@ -344,7 +344,7 @@ const { EraChain } = require('erachain-js-api')
 
 ```
 
-## Get blocks
+### Get blocks
 
 ```javascript
 
@@ -358,7 +358,7 @@ const { EraChain } = require('erachain-js-api')
 
 ```
 
-## Get person data
+### Get person data
 
 ```javascript
 
@@ -374,7 +374,7 @@ const { EraChain } = require('erachain-js-api')
 
 ```
 
-## Get asset data
+### Get asset data
 
 ```javascript
 
