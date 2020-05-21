@@ -7,7 +7,7 @@ EraChain JS API
 
 npm install --save erachain-js-api
 
-## Install /jsfor html
+## Build js lib for html => /dist
 
 git clone https://lab.erachain.org/erachain/web-js-encrypt.git
 
@@ -15,7 +15,11 @@ npm run build
 
 npm run prodjs
 
-## API functions
+## Generate docs => /docs
+
+typedoc
+
+## Usage API
 
 ### Import
 
@@ -154,7 +158,45 @@ const { EraChain } = require('erachain-js-api')
     const encrypted = true; // encrypted = true, only if recipient is public key
                             // encrypted = false, only if sender is certified persons
 
-    api.Tran.sendAsset(keyPair, recipientPublicKeyOrAddress, asset, head, message, encrypted)
+    api.sendAsset(keyPair, recipientPublicKeyOrAddress, asset, head, message, encrypted)
+        .then(data => {
+            // data = {status: "ok"}
+            console.log(data);
+        })
+        .catch(e => {
+            console.log(e);
+        });
+
+```
+
+### Register new asset
+
+Asset types: [resources](assets.md)
+
+```javascript
+
+    const keys = {
+        // sender address: 7GtqHorKL6CDZW6T98C8aGFNJXc87xoivZ
+        secretKey: await EraChain.Base58.decode("5a4AabYQ54gdwYq83FNng96BTzzSL6bTxALcRFe9VZboLfzaUToZFnAdMsnNKM13NJZeCMJbykfQbNT9vryyhF4R"),
+        publicKey: await EraChain.Base58.decode("ESx4g78k72URJWW87M4vKbMCqQpChzLfQ5s8gJhsjB7B")
+    };
+
+    const keyPair = new EraChain.Types.KeyPair(keys);
+
+    const asset = {
+        assetKey: 2, // 1 = ERA, 2 = COMPU, etc.
+        amount: 1,   // amount of asset
+    }
+
+    const name = "Asset name";
+    const description = "";
+    const assetType = 1;
+    const quantity = 1000;
+    const scale = 2;
+    const icon = ;
+    const image = ;
+
+    api.registerAsset(keyPair, name, assetType, quantity, scale, icon, image, description)
         .then(data => {
             // data = {status: "ok"}
             console.log(data);
