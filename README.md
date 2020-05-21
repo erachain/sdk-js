@@ -171,7 +171,7 @@ const { EraChain } = require('erachain-js-api')
 
 ### Register new asset
 
-Asset types: [resources](assets.md)
+[Asset types](resources/assets.md)
 
 ```javascript
 
