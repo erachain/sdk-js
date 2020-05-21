@@ -3,11 +3,11 @@
 
 EraChain JS API
 
-## Install SDK via npm
+### Install SDK via npm
 
 npm install --save erachain-js-api
 
-## Build js lib for html => /dist
+### Build js lib for html => /dist
 
 git clone https://lab.erachain.org/erachain/web-js-encrypt.git
 
@@ -15,11 +15,11 @@ npm run build
 
 npm run prodjs
 
-## Generate docs => /docs
+### Generate docs => /docs
 
 typedoc
 
-## Usage API
+## Usage SDK
 
 ### Import
 
