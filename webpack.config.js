@@ -2,7 +2,7 @@ var path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-    entry: './lib/index.js',
+    entry: './lib/index.ts',
     output: {
         path: path.resolve(__dirname, 'dist/js'),
         filename: 'erachainapi.js'
