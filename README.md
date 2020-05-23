@@ -199,7 +199,7 @@ const { EraChain } = require('erachain-js-api')
 
 ```
 
-### Genereta raw of person, parse raw and register person
+### Generate raw of person, parse raw and register person
 
 ```javascript
 
