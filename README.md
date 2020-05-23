@@ -199,7 +199,7 @@ const { EraChain } = require('erachain-js-api')
 
 ```
 
-### Register person
+### Genereta raw of person, parse raw and register person
 
 ```javascript
 
@@ -231,7 +231,25 @@ const { EraChain } = require('erachain-js-api')
         description: string,
     );
 
-    api.registerPerson(keyPair, person)
+    // Gets raw of person
+    api.rawPerson(keyPair, person)
+        .then(result => {
+            /*
+                result: {
+                    raw: string;
+                    size: number;
+                    fee: number;
+                    error?: any;
+                }
+            */
+            console.log(result);
+        });
+
+    // Parse raw
+    const parsedPerson: EraChain.Type.PersonHuman = person.parse(result.raw);
+
+    // Register person in Erachain
+    api.registerPerson(result.raw)
         .then(data => {
             // data = {status: "ok"}
             console.log(data);

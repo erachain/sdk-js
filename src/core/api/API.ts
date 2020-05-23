@@ -5,7 +5,7 @@ import {IBroadcastResponse} from "../request/BroadcastRequest";
 import {Base58} from "../crypt/libs/Base58";
 import {Qora} from "../crypt/libs/Qora";
 import {KeyPair} from "../src/core/account/KeyPair";
-import { ITranRecipient, ITranAsset } from "../src/core/transaction/TranTypes";
+import { ITranRecipient, ITranAsset, ITranRaw } from "../src/core/transaction/TranTypes";
 import { BigDecimal } from "../src/BigDecimal";
 import {tranMessage} from "./TranMessage";
 import {tranPerson} from "./TranPerson";
@@ -285,22 +285,24 @@ export class API {
         }
     }
 
-    /** @description API register person.
+    /** @description API get raw of person.
      * @param {KeyPair} keyPair Key pair.
      * @param {PersonHuman} person Person.
+     * @return {Promise<ITranRaw>}
+     */
+    async rawPerson(keyPair: KeyPair, person: PersonHuman): Promise<ITranRaw> {
+        return await tranPerson(keyPair, person, this.rpcPort);
+    }
+
+    /** @description API register person.
+     * @param {string} raw Base58 string raw of person.
      * @return {Promise<IBroadcastResponse>}
      */
-    async registerPerson(keyPair: KeyPair, person: PersonHuman): Promise<IBroadcastResponse> {
-        const tran = await tranPerson(keyPair, person, this.rpcPort);
-        if (!tran.error) {
-            const data = await this.request.broadcast.broadcastPost(tran.raw)
-                            .catch(e => {
-                                throw new Error(e);
-                            });
-            return data;
-        } else {
-            throw new Error(tran.error);
-        }
+    async registerPerson(raw: string): Promise<IBroadcastResponse> {
+        return await this.request.broadcast.broadcastPost(raw)
+                        .catch(e => {
+                            throw new Error(e);
+                        });
     }
 
     /** @description API verify person.
