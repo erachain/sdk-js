@@ -246,7 +246,7 @@ const { EraChain } = require('erachain-js-api')
         });
 
     // Parse raw
-    const parsedPerson: EraChain.Type.PersonHuman = person.parse(result.raw);
+    const parsedPerson: EraChain.Type.PersonHuman = EraChain.Type.PersonHuman.parse(result.raw);
 
     // Register person in Erachain
     api.registerPerson(result.raw)
