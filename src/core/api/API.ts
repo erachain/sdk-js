@@ -59,23 +59,28 @@ export class API {
     }
 
     // APIInterface
-
-    async query(method: string, path: string, params?: { [key: string]: string }, body?: any): Promise<any> {
+            
+    async query(method: string, path: string, headers?: { [key: string]: string }, params?: { [key: string]: string }, body?: any): Promise<any> {
         path = path.trim();
         if (!path.startsWith("/")) {
             path = `/${path}`;
         }
         let strParams = "";
         if (params) {
-            let sep = "?";
-            for (const [key, value] of Object.entries(params)) {
-                if (strParams.length > 0) {
-                    sep = "&";
+            if (method === "post" || method === "POST") {
+                body = JSON.stringify(params);
+            } else {
+                let sep = "?";
+                for (const [key, value] of Object.entries(params)) {
+                    if (strParams.length > 0) {
+                        sep = "&";
+                    }
+                    strParams += `${sep}${key}=${encodeURIComponent(value)}`;
                 }
-                strParams += `${sep}${key}=${value}`;
             }
         }
-        return fetch(`${this.url.host}${path}${encodeURIComponent(strParams)}`, { method, body })
+
+        return fetch(`${this.url.protocol}//${this.url.host}${path}${strParams}`, { method, headers, body })
             .then((r: any) => {
                 if (r.status < 200 || r.status >= 300) {
                     throw new Error(r.status.toString());

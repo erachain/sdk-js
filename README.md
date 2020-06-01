@@ -127,7 +127,39 @@ const { EraChain } = require('erachain-js-api')
 
 ```javascript
 
-    api.query(method: string, path: string, params?: { [key: string]: string }, body?: any): Promise<any>
+    // query(
+    //      method: string,
+    //      path: string,
+    //      headers?: { [key: string]: string },
+    //      params?: { [key: string]: string },
+    //      body?: any): Promise<any>
+
+    api.query(
+        "GET" or "POST",
+        "api/assets",
+        { "Content-Type": "application/json" },
+        { param1: "Hello", param2: 100 }
+    )
+        .then( data => {
+            console.log(data);
+            return data.json();
+        })
+        .then(data => console.log(data))
+        .catch(e => console.log(e))
+
+    api.query(
+        "POST",
+        "any_path_with_params",
+        { "Content-Type": "application/json" },
+        undefined,
+        raw
+    )
+        .then( data => {
+            console.log(data);
+            return data.json();
+        })
+        .then(data => console.log(data))
+        .catch(e => console.log(e))
 
 ```
 
