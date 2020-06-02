@@ -384,6 +384,12 @@ const { EraChain } = require('erachain-js-api')
 
     api.getBalance(address: string, assetKey: number): Promise<number>
 
+    interface IEraBalance {
+        [id: number]: number[][];
+    }
+
+    api.getAllBalance(address: string): Promise<IEraBalance>
+
 ```
 
 ### Get transactions
@@ -391,6 +397,47 @@ const { EraChain } = require('erachain-js-api')
 ```javascript
 
     api.getTransactions(address: string, heightOfBlock: number, offsetInBlock: number, pageSize: number): Promise<IWalletHistoryRow[]>
+
+    interface IEraParams {
+        type?: number;
+        address?: string;
+        sender?: string;
+        recipient?: string;
+        offset?: number;
+        limit?: number;
+        desc?: string; // des / asc
+    }
+
+    api.find(args: IEraParams): Promise<IWalletHistoryRow[]>
+
+    interface IWalletHistoryRow {
+        action_key: number,
+        amount: string,
+        asset: number,
+        confirmations: number,
+        creator: string,
+        data: string,
+        encrypted: boolean,
+        fee: string,
+        head: string,
+        height: number,
+        isText: boolean,
+        property1: number,
+        property2: number,
+        recipient: string,
+        record_type: string,
+        reference: string,
+        sequence: number,
+        signature: string,
+        size: number
+        sub_type_name: string,
+        timestamp: number,
+        type: number,
+        type_name: string,
+        version: number,
+        publickey: string,
+        message: string,
+    }
 
 ```
 
@@ -403,6 +450,8 @@ const { EraChain } = require('erachain-js-api')
     api.firstBlock(): Promise<IEraFirstBlock>
 
     api.lastBlock(): Promise<IEraBlock>
+
+    api.blockByHeight(height: number): Promise<IEraBlock>
 
     api.blocksFromHeight(height: number, limit: number): Promise<{ blocks: IEraBlock[] }>
 
@@ -437,5 +486,9 @@ const { EraChain } = require('erachain-js-api')
     api.getAssetData(assetKey: number): Promise<IEraAssetData>
 
     api.getAssetImage(assetKey: number): Promise<string | null>
+
+    api.getAssetIcon(assetKey: number): Promise<string | null>
+
+    api.getAssetsByFilter(filter: string): Promise<IEraAsset[]>
 
 ```

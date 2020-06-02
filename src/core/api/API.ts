@@ -20,6 +20,8 @@ import {IEraAssetsList} from "../types/era/IEraAssetsList";
 import {PersonHuman} from '../src/core/item/persons/PersonHuman';
 import {IEraPerson} from "../types/era/IEraPerson";
 import {IEraPersonData} from "../types/era/IEraPersonData";
+import {IEraBalance} from "../types/era/IEraBalanse";
+import {IEraParams} from "../types/era/IEraParams";
 import {AppCrypt} from "../crypt/AppCrypt";
 
 const fetch = require("node-fetch");
@@ -108,6 +110,10 @@ export class API {
         return await this.request.blocks.blocksFromHeight(height, limit);
     }
 
+    async blockByHeight(height: number): Promise<IEraBlock> {
+        return await this.request.block.blockByHeight(height);
+    }
+
     async getLastReference(address: string): Promise<number> {
         return await this.request.address.lastReference(address);
     }
@@ -122,6 +128,10 @@ export class API {
                             throw new Error(e);
                         });
         return data;
+    }
+
+    async find(args: IEraParams): Promise<IWalletHistoryRow[]> {
+        return await this.request.records.find(args);
     }
 
     async getAssetTransactions(address: string, assetKey: number, offset: number, pageSize: number, type: number): Promise<{ [id: string]: IWalletHistoryRow }> {
@@ -145,6 +155,14 @@ export class API {
             .catch(e => {
                 throw new Error(e);
             });
+        return data;
+    }
+
+    async getAllBalance(address: string): Promise<IEraBalance> {
+        const data = await this.request.assets.addressassets(address)
+                        .catch(e => {
+                            throw new Error(e);
+                        });
         return data;
     }
 
@@ -190,6 +208,10 @@ export class API {
                 throw new Error(e);
             });
         return data;
+    }
+
+    async getAssetsByFilter(filter: string): Promise<IEraAsset[]> {
+        return await this.request.assets.assetsfilter(filter);
     }
 
     async getTelegrams(address: string, fromTimestamp: number): Promise<ITelegramTransaction[]> {

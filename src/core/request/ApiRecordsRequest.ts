@@ -1,6 +1,7 @@
 import {NodeBaseRequest} from "./NodeBaseRequest";
 import {IChatTransaction} from "../types/era/IChatTransaction";
 import {IOrderTransaction} from "../types/era/IOrderTransaction";
+import {IEraParams} from "../types/era/IEraParams";
 
 export class ApiRecordsRequest extends NodeBaseRequest {
     constructor(protected baseUrl: string) {
@@ -33,6 +34,53 @@ export class ApiRecordsRequest extends NodeBaseRequest {
 
     orderTransaction(seqNo: string): Promise<IOrderTransaction> {
         return this.fetchJSON(`getbynumber/${seqNo}`);
+    }
+
+    find(args: IEraParams): Promise<IWalletHistoryRow[]> {
+        let sep = "";
+        let params = "";
+
+        if (args.type) {
+            params = `type=${args.type}`;
+        }
+
+        sep = params.length > 0 ? "&" : "";
+        if (args.address) {
+            params += `${sep}address=${args.address}`;
+        }
+
+        sep = params.length > 0 ? "&" : "";
+        if (args.sender) {
+            params += `${sep}sender=${args.sender}`;
+        }
+
+        sep = params.length > 0 ? "&" : "";
+        if (args.recipient) {
+            params += `${sep}recipient=${args.recipient}`;
+        }
+
+        sep = params.length > 0 ? "&" : "";
+        if (args.offset && args.offset >= 0) {
+            params += `${sep}offset=${args.offset}`;
+        }
+
+        sep = params.length > 0 ? "&" : "";
+        if (args.limit && args.limit >= 0) {
+            params += `${sep}limit=${args.limit}`;
+        }
+
+        sep = params.length > 0 ? "&" : "";
+        if (args.desc) {
+            if (
+                args.desc === "des"
+                || args.desc === "asc"
+            ) {
+                params += `${sep}desc=${args.desc}`;
+            }
+        }
+
+        sep = params.length > 0 ? "?" : "";
+        return this.fetchJSON(`find?${sep}${params}`);
     }
 }
 
