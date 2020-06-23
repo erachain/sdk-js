@@ -14,6 +14,7 @@ export const tranSend = async (
   asset: ITranAsset,
   body: ITranMessage,
   port: number,
+  genesis_sign: Int8Array
 ): Promise<ITranRaw> => {
   try {
     const feePow = 0;
@@ -47,6 +48,7 @@ export const tranSend = async (
       timestamp,
       reference,
       port,
+      genesis_sign
     );
     await tx.sign(privateAccount, false);
     const raw = await Base58.encode(await tx.toBytes(true, null));

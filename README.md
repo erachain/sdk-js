@@ -116,8 +116,8 @@ const { EraChain } = require('erachain-js-api')
 
 ```javascript
 
-    const url = "http://domain.com:9067/api"; // 9067 - TestNET, 9047 - MainNET
-    const rpcPort = 9066; // 9066 - TestNET, 9046 - MainNET
+    const url = "http://domain.com:9067/api"; // 9067 - TestNET, 9047 - MainNET, 905X - Sidechain
+    const rpcPort = 9066; // 9066 - TestNET, 9046 - MainNET, 905X - Sidechain
 
     const api = new EraChain.API(url, rpcPort);
 
@@ -405,10 +405,12 @@ const { EraChain } = require('erachain-js-api')
         recipient?: string;
         offset?: number;
         limit?: number;
-        desc?: string; // des / asc
+        desc?: booelan;
     }
 
     api.find(args: IEraParams): Promise<IWalletHistoryRow[]>
+
+    api.tranBySeq(seqNo: string): Promise<IWalletHistoryRow>
 
     interface IWalletHistoryRow {
         action_key: number,
@@ -465,6 +467,13 @@ const { EraChain } = require('erachain-js-api')
 
     api.getPersonData(personKey: number): Promise<IEraPersonData>
 
+    api.getPersonImage(key: number)
+        .then(res=>{return res.blob()})
+        .then(blob=>{
+            var img = URL.createObjectURL(blob);
+            document.getElementById('img').setAttribute('src', img);
+        });
+
     api.getPerson(personKey: number): Promise<IEraPerson>
   
     api.getPersonByAddress(address: string): Promise<IEraPerson>
@@ -485,9 +494,19 @@ const { EraChain } = require('erachain-js-api')
 
     api.getAssetData(assetKey: number): Promise<IEraAssetData>
 
-    api.getAssetImage(assetKey: number): Promise<string | null>
+    api.getAssetImage(assetKey: number)
+        .then(res=>{return res.blob()})
+        .then(blob=>{
+            var img = URL.createObjectURL(blob);
+            document.getElementById('img').setAttribute('src', img);
+        });
 
-    api.getAssetIcon(assetKey: number): Promise<string | null>
+    api.getAssetIcon(assetKey: number)
+        .then(res=>{return res.blob()})
+        .then(blob=>{
+            var img = URL.createObjectURL(blob);
+            document.getElementById('img').setAttribute('src', img);
+        });
 
     api.getAssetsByFilter(filter: string): Promise<IEraAsset[]>
 

@@ -24,11 +24,12 @@ export class R_SertifyPubKeys extends Transaction {
     timestamp: number,
     reference: number,
     port: number,
+    genesis_sign: Int8Array
   ) {
     const verions = 0;
     const sertifiedPublicKeysCount = 1;
     const typeArray = new Int8Array([R_SertifyPubKeys.TYPE_ID, verions, sertifiedPublicKeysCount, 0]);
-    super(typeArray, R_SertifyPubKeys.NAME_ID, creator, feePow, timestamp, reference, port);
+    super(typeArray, R_SertifyPubKeys.NAME_ID, creator, feePow, timestamp, reference, port, genesis_sign);
 
     this.key = key;
     this.sertifiedPublicKey = sertifiedPublicKey;

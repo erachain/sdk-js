@@ -14,6 +14,7 @@ export class IssueAsset extends Issue_ItemRecord {
     timestamp: number,
     reference: number,
     port: number,
+    genesis_sign: Int8Array
   ) {
     super(
       new Int8Array([IssueAsset.TYPE_ID, 0, 0, 0]),
@@ -24,6 +25,7 @@ export class IssueAsset extends Issue_ItemRecord {
       timestamp,
       reference,
       port,
+      genesis_sign
     );
   }
 }

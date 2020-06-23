@@ -9,6 +9,7 @@ export const rawPerson = async (
   keyPair: KeyPair,
   person: PersonHuman,
   port: number,
+  genesis_sign: Int8Array
 ): Promise<ITranRaw> => {
   try {
 
@@ -17,7 +18,7 @@ export const rawPerson = async (
     const date = new Date();
     const timestamp = date.getTime();
     const reference = 1;
-    const tx = new IssuePersonRecord(privateAccount, person, 0, timestamp, reference, port);
+    const tx = new IssuePersonRecord(privateAccount, person, 0, timestamp, reference, port, genesis_sign);
 
     await tx.sign(privateAccount, false);
     const raw = await Base58.encode(await tx.toBytes(true, null));
@@ -46,6 +47,7 @@ export const tranPerson = async (
   keyPair: KeyPair,
   person: PersonHuman,
   port: number,
+  genesis_sign: Int8Array
 ): Promise<ITranRaw> => {
   try {
 
@@ -54,7 +56,7 @@ export const tranPerson = async (
     const date = new Date();
     const timestamp = date.getTime();
     const reference = 1;
-    const tx = new IssuePersonRecord(privateAccount, person, 0, timestamp, reference, port);
+    const tx = new IssuePersonRecord(privateAccount, person, 0, timestamp, reference, port, genesis_sign);
 
     await tx.sign(privateAccount, false);
     const raw = await Base58.encode(await tx.toBytes(true, null));

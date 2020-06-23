@@ -13,6 +13,7 @@ export const tranMessage = async (
   keyPair: KeyPair,
   body: ITranMessage,
   port: number,
+  genesis_sign: Int8Array
 ): Promise<ITranRaw> => {
   try {
     const account = new Account(recipient.address);
@@ -49,6 +50,7 @@ export const tranMessage = async (
       isEncripted,
       isText,
       port,
+      genesis_sign
     );
     await tx.sign(privateOwner, false);
 

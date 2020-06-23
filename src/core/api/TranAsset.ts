@@ -16,6 +16,7 @@ export const tranAsset = async (
   image: Int8Array,
   description: string,
   port: number,
+  genesis_sign: Int8Array
 ): Promise<ITranRaw> => {
   try {
     const feePow = 0;
@@ -27,7 +28,7 @@ export const tranAsset = async (
     const reference = 1;
     const asset = new Asset(owner, quantity, scale, assetType, name, icon, image, description);
 
-    const tx = new IssueAsset(privateAccount, asset, feePow, timestamp, reference, port);
+    const tx = new IssueAsset(privateAccount, asset, feePow, timestamp, reference, port, genesis_sign);
     await tx.sign(privateAccount, false);
     const raw = await Base58.encode(await tx.toBytes(true, null));
     let size = await tx.getDataLength(false);

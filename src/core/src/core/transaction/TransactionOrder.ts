@@ -24,6 +24,7 @@ export class TransactionOrder extends Transaction {
     haveAmount: number,
     wantAmount: number,
     port: number,
+    genesis_sign: Int8Array
   ) {
     super(
       new Int8Array([
@@ -38,6 +39,7 @@ export class TransactionOrder extends Transaction {
       timestamp,
       reference,
       port,
+      genesis_sign
     );
 
     this.haveAssetKey = haveAssetKey;

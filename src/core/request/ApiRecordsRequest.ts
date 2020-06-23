@@ -36,6 +36,10 @@ export class ApiRecordsRequest extends NodeBaseRequest {
         return this.fetchJSON(`getbynumber/${seqNo}`);
     }
 
+    getTransaction(seqNo: string): Promise<IWalletHistoryRow> {
+        return this.fetchJSON(`getbynumber/${seqNo}`);
+    }
+
     find(args: IEraParams): Promise<IWalletHistoryRow[]> {
         let sep = "";
         let params = "";
@@ -71,16 +75,14 @@ export class ApiRecordsRequest extends NodeBaseRequest {
 
         sep = params.length > 0 ? "&" : "";
         if (args.desc) {
-            if (
-                args.desc === "des"
-                || args.desc === "asc"
-            ) {
-                params += `${sep}desc=${args.desc}`;
-            }
+            params += `${sep}desc=${args.desc}`;
         }
 
         sep = params.length > 0 ? "?" : "";
-        return this.fetchJSON(`find?${sep}${params}`);
+
+        // console.log(`find?${sep}${params}`);
+
+        return this.fetchJSON(`find${sep}${params}`);
     }
 }
 

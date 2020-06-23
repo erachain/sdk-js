@@ -30,9 +30,10 @@ export class R_Send extends TransactionAmount {
     timestamp: number,
     reference: number,
     port: number,
+    genesis_sign: Int8Array
   ) {
     const typeBytes = new Int8Array([R_Send.TYPE_ID, 0, 0, 0]);
-    super(typeBytes, R_Send.NAME_ID, creator, feePow, recipient, amount, key, timestamp, reference, port);
+    super(typeBytes, R_Send.NAME_ID, creator, feePow, recipient, amount, key, timestamp, reference, port, genesis_sign);
 
     this.head = head || '';
 

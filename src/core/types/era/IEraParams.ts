@@ -5,5 +5,5 @@ export interface IEraParams {
     recipient?: string;
     offset?: number;
     limit?: number;
-    desc?: string;
+    desc?: boolean;
 }

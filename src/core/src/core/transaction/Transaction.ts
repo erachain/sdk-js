@@ -73,6 +73,8 @@ export abstract class Transaction {
 
   private port: number;
 
+  private genesis_sign: Int8Array;
+
   static diffScale(v: number) {
     const n = new BigDecimal(v);
     let diffScale = n.getScale() - Transaction.AMOUNT_DEFAULT_SCALE;
@@ -92,6 +94,7 @@ export abstract class Transaction {
     timestamp: number,
     reference: number,
     port: number,
+    genesis_sign: Int8Array
   ) {
     this.typeBytes = typeBytes;
     this.port = port;
@@ -99,6 +102,7 @@ export abstract class Transaction {
     //this.props = props;
     this.timestamp = timestamp;
     this.reference = reference;
+    this.genesis_sign = genesis_sign;
     if (feePow < 0) {
       feePow = 0;
     } else if (feePow > BlockChain.FEE_POW_MAX) {
@@ -116,11 +120,21 @@ export abstract class Transaction {
     // but not with SIGN
     const data = new DataWriter();
     data.set(await this.toBytes(false, null));
+    
+    if (this.genesis_sign.length > 0) {
 
-    // all test a not valid for main test
-    // all other network must be invalid here!
-    //Если не ходят тразакции то возможно неверно указан порт. сейчас ок высчитывается при добавлении новой ноды как порт -1
-    data.set(await Bytes.intToByteArray(this.port));
+      // sidechain mode
+
+      data.set(this.genesis_sign);
+    } else {
+
+      // all test a not valid for main test
+      // all other network must be invalid here!
+      //Если не ходят тразакции то возможно неверно указан порт. сейчас ок высчитывается при добавлении новой ноды как порт -1
+
+      data.set(await Bytes.intToByteArray(this.port));
+    }
+
     this.signature = AppCrypt.sign(data.data, creator.getSecretKey());
     if (!asPack) {
       // need for recalc! if not as a pack

@@ -22,6 +22,7 @@ import {IEraPerson} from "../types/era/IEraPerson";
 import {IEraPersonData} from "../types/era/IEraPersonData";
 import {IEraBalance} from "../types/era/IEraBalanse";
 import {IEraParams} from "../types/era/IEraParams";
+import {IEraInfo} from "../types/era/IEraInfo";
 import {AppCrypt} from "../crypt/AppCrypt";
 
 const fetch = require("node-fetch");
@@ -53,11 +54,32 @@ export class API {
     private request: FetchRequest;
     private rpcPort: number;
     private url: any;
+    private genesis_sign: Int8Array;
 
     constructor(baseUrl: string, rpcPort: number) {
         this.request = new FetchRequest(baseUrl);
         this.rpcPort = rpcPort;
+        this.genesis_sign = new Int8Array([]);
         this.url = url.parse(baseUrl);
+    }
+
+    get sidechainMode(): boolean {
+        return Math.trunc(this.rpcPort / 10) === 905;
+    }
+
+    async genesisSignature(): Promise<Int8Array> {
+        if (this.genesis_sign.length > 0) {
+            return this.genesis_sign;
+        }
+        try {
+            const block: IEraFirstBlock = await this.request.block.firstBlock();
+            const sign = block.signatures[0];
+            this.genesis_sign = await Base58.decode(sign);
+        } catch (e) {
+            this.genesis_sign = new Int8Array([]);
+            console.log(e);
+        }
+        return this.genesis_sign;
     }
 
     // APIInterface
@@ -92,6 +114,10 @@ export class API {
             .catch((e: any) => {
                 throw new Error(e);
             });
+    }
+
+    async getInfo(): Promise<IEraInfo> {
+        return await this.request.block.info();
     }
 
     async height(): Promise<any> {
@@ -133,6 +159,11 @@ export class API {
     async find(args: IEraParams): Promise<IWalletHistoryRow[]> {
         return await this.request.records.find(args);
     }
+
+    async tranBySeq(seqNo: string): Promise<IWalletHistoryRow> {
+        return await this.request.records.getTransaction(seqNo);
+    }
+    
 
     async getAssetTransactions(address: string, assetKey: number, offset: number, pageSize: number, type: number): Promise<{ [id: string]: IWalletHistoryRow }> {
         const data = await this.request.records.getbyaddressfromtransactionlimit(address, assetKey, offset, offset + pageSize, type)
@@ -194,7 +225,7 @@ export class API {
         return data;
     }
 
-    async getAssetImage(assetKey: number): Promise<string | null> {
+    async getAssetImage(assetKey: number): Promise<any> {
         const data = await this.request.assets.assetimage(assetKey)
             .catch(e => {
                 throw new Error(e);
@@ -202,7 +233,7 @@ export class API {
         return data;
     }
 
-    async getAssetIcon(assetKey: number): Promise<string | null> {
+    async getAssetIcon(assetKey: number): Promise<any> {
         const data = await this.request.assets.asseticon(assetKey)
             .catch(e => {
                 throw new Error(e);
@@ -236,6 +267,10 @@ export class API {
                 throw new Error(e);
             });
         return data;
+    }
+
+    async getPersonImage(key: number): Promise<any> {
+        return await this.request.person.getPersonImage(key);
     }
     
     async getPerson(personKey: number): Promise<IEraPerson> {
@@ -299,7 +334,9 @@ export class API {
             amount: new BigDecimal(asset.amount),
         }
     
-        const tran = await tranSend(recipient, keyPair, transAsset, tranBody, this.rpcPort);
+        const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
+
+        const tran = await tranSend(recipient, keyPair, transAsset, tranBody, this.rpcPort, genesis_sign);
         
         if (!tran.error) {
             const data = await this.request.broadcast.broadcastPost(tran.raw)
@@ -318,7 +355,9 @@ export class API {
      * @return {Promise<ITranRaw>}
      */
     async rawPerson(keyPair: KeyPair, person: PersonHuman): Promise<ITranRaw> {
-        return await tranPerson(keyPair, person, this.rpcPort);
+        const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
+
+        return await tranPerson(keyPair, person, this.rpcPort, genesis_sign);
     }
 
     /** @description API register person.
@@ -343,7 +382,9 @@ export class API {
         try {
             const address = await AppCrypt.getAddressBySecretKey(keyPair.secretKey);
             const reference = await this.request.address.lastReference(address);
-            const tran = await tranVerifyPerson(keyPair, personKey, personPublicKey, reference, this.rpcPort);
+            const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
+
+            const tran = await tranVerifyPerson(keyPair, personKey, personPublicKey, reference, this.rpcPort, genesis_sign);
             if (!tran.error) {
                 const data = await this.request.broadcast.broadcastPost(tran.raw)
                                 .catch(e => {
@@ -387,8 +428,10 @@ export class API {
             message,
             encrypted,
         } 
+
+        const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
     
-        const tran = await tranMessage(recipient, keyPair, tranBody, this.rpcPort);
+        const tran = await tranMessage(recipient, keyPair, tranBody, this.rpcPort, genesis_sign);
         
         if (!tran.error) {
             const data = await this.request.broadcast.broadcastPost(tran.raw)
@@ -427,9 +470,11 @@ export class API {
             head: "",
             message,
             encrypted,
-        } 
+        }
+
+        const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
     
-        const tran = await tranMessage(recipient, keyPair, tranBody, this.rpcPort);
+        const tran = await tranMessage(recipient, keyPair, tranBody, this.rpcPort, genesis_sign);
         
         if (!tran.error) {
             const data = await this.request.broadcast.telegramPost(tran.raw)
@@ -464,6 +509,8 @@ export class API {
         description: string
     ): Promise<IBroadcastResponse> {
 
+        const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
+
         const tran = await tranAsset(
             keyPair,
             name,
@@ -473,7 +520,8 @@ export class API {
             icon,
             image,
             description,
-            this.rpcPort);
+            this.rpcPort,
+            genesis_sign);
         
         if (!tran.error) {
             const data = await this.request.broadcast.broadcastPost(tran.raw)

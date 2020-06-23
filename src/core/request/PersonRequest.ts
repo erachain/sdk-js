@@ -31,6 +31,10 @@ export class PersonRequest extends NodeBaseRequest {
             });
     }
 
+    getPersonImage(key: number): Promise<any> {
+        return this.fetch(`personimage/${key}`);
+    }
+
     personbyaddress(address: string): Promise<IEraPerson> {
         return this.fetchJSON(`personbyaddress/${address}`)
             .then(p => {

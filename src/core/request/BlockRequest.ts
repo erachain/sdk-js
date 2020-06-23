@@ -1,5 +1,6 @@
-import {IEraBlock} from "../types/era/IEraBlock";
-import {IEraFirstBlock} from "../types/era/IEraBlock";
+import { IEraBlock, IEraFirstBlock } from "../types/era/IEraBlock";
+import { IEraInfo } from "../types/era/IEraInfo";
+
 import {NodeBaseRequest} from "./NodeBaseRequest";
 
 export class BlockRequest extends NodeBaseRequest {
@@ -33,5 +34,9 @@ export class BlockRequest extends NodeBaseRequest {
 
     async childBlock(signature: string): Promise<IEraBlock> {
         return await this.fetchJSON(`childblock/${signature}`);
+    }
+
+    async info(): Promise<IEraInfo> {
+        return this.fetchJSON("info");
     }
 }
