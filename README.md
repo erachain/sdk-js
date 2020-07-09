@@ -121,6 +121,11 @@ const { EraChain } = require('erachain-js-api')
 
     const api = new EraChain.API(url, rpcPort);
 
+    // Sidechain mode: boolean
+    if (api.sidechainMode) {
+        console.log("Sidechain mode")
+    }
+
 ```
 
 ### Base request
@@ -264,7 +269,20 @@ const { EraChain } = require('erachain-js-api')
     );
 
     // Gets raw of person
-    api.rawPerson(keyPair, person)
+    person.raw(keyPair.secretKey)
+        .then(raw => {
+            /*
+                raw: string
+            */
+            console.log(raw);
+
+            // Parse raw
+            const parsedPerson: EraChain.Type.PersonHuman = EraChain.Type.PersonHuman.parse(raw);
+
+        });
+
+    // Register person
+    api.tranRawPerson(keyPair, person)
         .then(result => {
             /*
                 result: {
@@ -275,19 +293,17 @@ const { EraChain } = require('erachain-js-api')
                 }
             */
             console.log(result);
-        });
 
-    // Parse raw
-    const parsedPerson: EraChain.Type.PersonHuman = EraChain.Type.PersonHuman.parse(result.raw);
+            // Register person in Erachain
+            api.registerPerson(result.raw)
+                .then(data => {
+                    // data = {status: "ok"}
+                    console.log(data);
+                })
+                .catch(e => {
+                    console.log(e);
+                });
 
-    // Register person in Erachain
-    api.registerPerson(result.raw)
-        .then(data => {
-            // data = {status: "ok"}
-            console.log(data);
-        })
-        .catch(e => {
-            console.log(e);
         });
 
 ```
@@ -448,6 +464,8 @@ const { EraChain } = require('erachain-js-api')
 ```javascript
 
     api.height(): Promise<any>
+
+    api.genesisSignature(): Promise<Int8Array>
 
     api.firstBlock(): Promise<IEraFirstBlock>
 

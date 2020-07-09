@@ -74,6 +74,7 @@ export class PersonHuman extends PersonCls {
 
   /* tslint:disable-next-line */
   static async parse(rowData: string, includeReference: boolean = false): Promise<PersonHuman> {
+    
     const data = await Base58.decode(rowData);
 
     // READ TYPE
@@ -275,5 +276,12 @@ export class PersonHuman extends PersonCls {
     }
 
     return data.data;
+  }
+
+  async raw(secretKey: Int8Array): Promise<string> {
+    await this.sign(secretKey);
+    const bytes = await this.toBytes(false, false);
+    const raw = await Base58.encode(new Int8Array(bytes));
+    return raw.trim();
   }
 }

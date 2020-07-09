@@ -349,23 +349,23 @@ export class API {
         }
     }
 
-    /** @description API get raw of person.
+    /** @description API get transaction raw of person.
      * @param {KeyPair} keyPair Key pair.
      * @param {PersonHuman} person Person.
      * @return {Promise<ITranRaw>}
      */
-    async rawPerson(keyPair: KeyPair, person: PersonHuman): Promise<ITranRaw> {
+    async tranRawPerson(keyPair: KeyPair, person: PersonHuman): Promise<ITranRaw> {
         const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
 
         return await tranPerson(keyPair, person, this.rpcPort, genesis_sign);
     }
 
     /** @description API register person.
-     * @param {string} raw Base58 string raw of person.
+     * @param {string} tranRaw Base58 string tran raw of person see tranRawPerson.
      * @return {Promise<IBroadcastResponse>}
      */
-    async registerPerson(raw: string): Promise<IBroadcastResponse> {
-        return await this.request.broadcast.broadcastPost(raw)
+    async registerPerson(tranRaw: string): Promise<IBroadcastResponse> {
+        return await this.request.broadcast.broadcastPost(tranRaw)
                         .catch(e => {
                             throw new Error(e);
                         });
