@@ -124,14 +124,14 @@ export abstract class Transaction {
     if (this.genesis_sign.length > 0) {
 
       // sidechain mode
-
+      // console.log("transaction.sidechain");
       data.set(this.genesis_sign);
     } else {
 
       // all test a not valid for main test
       // all other network must be invalid here!
       //Если не ходят тразакции то возможно неверно указан порт. сейчас ок высчитывается при добавлении новой ноды как порт -1
-
+      // console.log("transaction.no_sidechain");
       data.set(await Bytes.intToByteArray(this.port));
     }
 

@@ -164,7 +164,6 @@ export class API {
         return await this.request.records.getTransaction(seqNo);
     }
     
-
     async getAssetTransactions(address: string, assetKey: number, offset: number, pageSize: number, type: number): Promise<{ [id: string]: IWalletHistoryRow }> {
         const data = await this.request.records.getbyaddressfromtransactionlimit(address, assetKey, offset, offset + pageSize, type)
                         .catch(e => {

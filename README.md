@@ -269,20 +269,12 @@ const { EraChain } = require('erachain-js-api')
     );
 
     // Gets raw of person
-    person.raw(keyPair.secretKey)
-        .then(raw => {
-            /*
-                raw: string
-            */
-            console.log(raw);
+    const raw = await person.raw(keyPair.secretKey);
 
-            // Parse raw
-            const parsedPerson: EraChain.Type.PersonHuman = EraChain.Type.PersonHuman.parse(raw);
-
-        });
+    const parsedPerson = EraChain.Type.PersonHuman.parse(raw);
 
     // Register person
-    api.tranRawPerson(keyPair, person)
+    api.tranRawPerson(keyPair, parsedPerson)
         .then(result => {
             /*
                 result: {
