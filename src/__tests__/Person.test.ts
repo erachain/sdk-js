@@ -14,10 +14,13 @@ describe('Person', () => {
 
     const account = new EraChain.Type.PublicKeyAccount(keys.publicKey)
 
+    const date = new Date('1946-06-14T00:00:00');
+    const birthday = date.getTime();
+
     const person = new EraChain.Type.PersonHuman(
         account,
         'Donald Trump', // ФИО персоны
-        1594286104000, // День рождения персоны
+        birthday, // День рождения персоны
         0, // День смерти персоны
         0, // Пол персоны
         'Белый', // Раса персоны
@@ -38,14 +41,15 @@ describe('Person', () => {
 
     it('PersonHuman.raw', async () => {
         const raw = await person.raw(keyPair.secretKey);
-        expect(raw).toEqual("A4mLGRx7dLiBYeh96XFy5ahRG6TyHEXvfrcfrXzs8n1RfhfnTXUod3NepzWWJvUoWA5u1yRUcTPmr79Y39cnUGehbcbakkip7UYY1G83xj2ra1yxjAtrY8zfsP29f76HLhFZirpsTbScQrM1nei9m5rWefZLjFZwDQunP9GYbz5v8792u7Mbq3W8bLVx6SbUx3ZnP27AVmyi5vwQKNzm1ucnjXqNMRhUo5ScZG75Lc68ipTE13VEQAT9HmnZMVNDMBHoTf5vT8dgAyn2eo9Lg8HecL1cwgaB22xJWaQcuTnQxJ6tN");
+        expect(raw).toEqual("A4mLGRx7dLiBYeh96XFy5ahRG6TyHEXvfrcfrXzs8n1RfhfnTXUod3NepzWWJvUoWA5u1yRUcTPmr79Y39cnUGehbcbakkip7UYY1G83xj2ra1zhEeL7KSVvU21ZGnXiv7HE5JjGUnEDrt4cjfTMygELe9Hs5Bm4CvZN5sMUYV1vC7dxeZZ1n4XH5T4siWLo1F1xrCwxaTTz5xTc6zxSpti6ZbznPxLUo4gGQzaBnEZMJAvYRq98X9qjcAb5q555N4KDWHWaDjhXE6TUH9QHqfJffn56WG611odi6qVmigWnXPQom");
     });
 
     it('PersonHuman.parse', async () => {
         const raw = await person.raw(keyPair.secretKey);
         const p = await EraChain.Type.PersonHuman.parse(raw);
+        
         expect(p.name).toEqual("Donald Trump");
-        expect(p.birthday).toEqual(1594286104000);
+        expect(p.birthday).toEqual(18446743330464352000); // отрицательный timestamp
         expect(p.deathday).toEqual(0);
         expect(p.gender).toEqual(0);
         expect(p.race).toEqual('Белый');
@@ -68,7 +72,8 @@ describe('Person', () => {
         const tranRaw = await testTranPerson(keyPair, p, timestamp, 9066, new Int8Array([]));
 
         expect(tranRaw.size).toEqual(199);
-        expect(tranRaw.raw).toEqual("2YNgcLFSGeA1mRVxUGWhFbhoGnBR9AM8fPp3Y4RDWjn4gNQvLmLEFBojYte6Hu79fNwn3xQMQnGL5wph7FGGsw2KN7YNaorke6UdWqHu3wcwsLGKRq5Srqnxn6PhHDJYr75KLCTiraC92PpsQm5xMqp8A1NwepPGqJGb6K2fss7pfYr9j1HwG7dZo4kQ1XPBPmHUJxtAXhJ2ckrSbYqXPJGV9pVfvHac4wLRHiJL1EXWGYQ83f2fMqBxuEgV5ADT8Wg9pa2QrJKjUEPq5AmjACaLTRkLj6sR3zU9apRUrP9jVtVUxweWnpXHigrw4oBwTbG5Q997sPZTbyLkh4Rgfps81vmZywL1zALxuiiYxLuUCXd8ofwnfqyu9B362jGNkK3wXFxcDumf8QSi99MMefLffTLCjcyCeb52HbkhF9MzJLGSg1UXW7hCeDTUackZymv8Ephn3tCZJj29v6");
+
+        expect(tranRaw.raw).toEqual("2YNgcLFSGeA1mRVxUGWhFbhoGnBR9AM8fPp3Y4RDWjn4gNQvLmLEFBojYte6Hu79fNwn3xQMPwSbECoybS6dUQocmAdHwECnZ7korzaj3KweL8fRXygp9Pm8GYPc7QaJnEQFYx7JK41h1QECgTmkNNh7Y3Bf8MSc6HwVkjjcQHDm12iBomTesARBWCW6aUu3KLNWJij4GvCcqvRbgniEoNcUCrGKmptTfy634PiChAyQxW9gh4Ryq7okZLoAVNYBs83ED384AWk6gVdimpGx6Ch3qv6FnsUsg19UwnTZjm4Q4tS5txTtS6Z2FpzSgQWqUkHkmwZjg9CtfsezZkedWkeBvbKtFBxGdkpNrcMYRhJ6LNPaW21iRq52m5xkZtNnRaeeJYauAj7YZaTxRpE8GjkPmGhM4jpthsv7uzDeaCyDLgAwzS7fXL22obgAnpGH68N79CGZvuK5zt394P");
     });
     
 });
