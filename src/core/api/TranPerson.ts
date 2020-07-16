@@ -5,12 +5,13 @@ import { ITranRaw } from '../src/core/transaction/TranTypes';
 import { Base58 } from '../crypt/libs/Base58';
 import {PersonHuman} from '../src/core/item/persons/PersonHuman';
 
-export const rawPerson = async (
+export const tranPerson = async (
   keyPair: KeyPair,
   person: PersonHuman,
   port: number,
   genesis_sign: Int8Array
 ): Promise<ITranRaw> => {
+
   try {
 
     const privateAccount = new PrivateKeyAccount(keyPair);
@@ -43,18 +44,18 @@ export const rawPerson = async (
 };
 
 
-export const tranPerson = async (
+export const testTranPerson = async (
   keyPair: KeyPair,
   person: PersonHuman,
+  timestamp: number,
   port: number,
   genesis_sign: Int8Array
 ): Promise<ITranRaw> => {
+
   try {
 
     const privateAccount = new PrivateKeyAccount(keyPair);
 
-    const date = new Date();
-    const timestamp = date.getTime();
     const reference = 1;
     const tx = new IssuePersonRecord(privateAccount, person, 0, timestamp, reference, port, genesis_sign);
 

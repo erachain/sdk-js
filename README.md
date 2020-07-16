@@ -223,7 +223,7 @@ const { EraChain } = require('erachain-js-api')
     const quantity = 1000; // количество
     const scale = 2; // дробность
     const icon = EraChain.base64ToArray(icon_base64string);
-    const image = EraChain.base64ToArray(image_base64string);;
+    const image = EraChain.base64ToArray(image_base64string);
 
     api.registerAsset(keyPair, name, assetType, quantity, scale, icon, image, description)
         .then(data => {
