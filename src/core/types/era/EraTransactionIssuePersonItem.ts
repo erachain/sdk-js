@@ -1,3 +1,3 @@
 export interface EraTransactionIssuePersonItem {
-    creator: string;
+  creator: string;
 }

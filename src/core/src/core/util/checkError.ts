@@ -1,9 +1,8 @@
-
 export const checkProp = (obj: any, name: string): boolean => {
   if (!obj) {
-      return false;
+    return false;
   }
-  return ({}.hasOwnProperty.call(obj, name));
+  return {}.hasOwnProperty.call(obj, name);
 };
 
 export const checkError = (e: any): string => {

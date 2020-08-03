@@ -1,4 +1,4 @@
 export interface IEraPersonData {
-    image: string;
-    icon: string;
+  image: string;
+  icon: string;
 }

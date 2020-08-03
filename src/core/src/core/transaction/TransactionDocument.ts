@@ -1,12 +1,12 @@
 import { Transaction } from './Transaction';
 import { DataWriter } from '../DataWriter';
+import { Bytes } from '../Bytes';
 import { PrivateKeyAccount } from '../account/PrivateKeyAccount';
-import { Base58 } from '../../../crypt/libs/Base58';
 
-export class CancelOrder extends Transaction {
+export class TransactionDocument extends Transaction {
   protected static BASE_LENGTH = Transaction.BASE_LENGTH;
 
-  private signatureOrder: string;
+  private exData: Int8Array;
 
   constructor(
     name: string,
@@ -14,12 +14,12 @@ export class CancelOrder extends Transaction {
     feePow: number,
     timestamp: number,
     reference: number,
+    exData: Int8Array,
     port: number,
-    signatureOrder: string,
     genesis_sign: Int8Array,
   ) {
     super(
-      new Int8Array([Transaction.ORDER_TRANSACTION_CANCEL, 0, 0, 0]),
+      new Int8Array([Transaction.DOCUMENT_TRANSACTION, 3, 0, -1]),
       name,
       creator,
       feePow,
@@ -29,24 +29,26 @@ export class CancelOrder extends Transaction {
       genesis_sign,
     );
 
-    this.signatureOrder = signatureOrder;
+    this.exData = exData;
   }
 
   async toBytes(withSign: boolean, releaserReference: number | null): Promise<Int8Array> {
     const data = new DataWriter();
     data.set(await super.toBytes(withSign, releaserReference));
 
-    await this.signToBytes(data);
+    await this.lengthToBytes(this.exData.length, data);
+    data.set(this.exData);
 
     return data.data;
   }
 
-  async signToBytes(dataWriter: DataWriter): Promise<void> {
-    const bytes = await Base58.decode(this.signatureOrder);
+  async lengthToBytes(length: number, dataWriter: DataWriter): Promise<void> {
+    const bytes = await Bytes.intToByteArray(length);
     dataWriter.set(bytes);
   }
 
-  async getDataLength(includeReference: boolean): Promise<number> {
-    return CancelOrder.BASE_LENGTH + Transaction.SIGNATURE_LENGTH;
+  async getDataLength(): Promise<number> {
+    return Transaction.DATA_SIZE_LENGTH + this.exData.length;
   }
+
 }

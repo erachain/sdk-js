@@ -15,7 +15,7 @@ export class Issue_ItemRecord extends Transaction {
     timestamp: number,
     reference: number,
     port: number,
-    genesis_sign: Int8Array
+    genesis_sign: Int8Array,
   ) {
     super(typeBytes, NAME_ID, creator, feePow, timestamp, reference, port, genesis_sign);
     this.item = item;

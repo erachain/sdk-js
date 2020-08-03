@@ -8,8 +8,7 @@ import { BlockChain } from '../../BlockChain';
 import { Transaction } from '../../transaction/Transaction';
 import { DataWriter } from '../../DataWriter';
 
-
-/** 
+/**
  * @class
  * @classdesc PersonHuman class.
  */
@@ -74,7 +73,6 @@ export class PersonHuman extends PersonCls {
 
   /* tslint:disable-next-line */
   static async parse(rowData: string, includeReference: boolean = false): Promise<PersonHuman> {
-    
     const data = await Base58.decode(rowData);
 
     // READ TYPE

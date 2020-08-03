@@ -34,7 +34,7 @@ export class TransactionAmount extends Transaction {
     timestamp: number,
     reference: number,
     port: number,
-    genesis_sign: Int8Array
+    genesis_sign: Int8Array,
   ) {
     super(typeBytes, name, creator, feePow, timestamp, reference, port, genesis_sign);
 

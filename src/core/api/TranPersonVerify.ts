@@ -11,10 +11,9 @@ export const tranVerifyPerson = async (
   personPublicKey: Int8Array,
   reference: number,
   port: number,
-  genesis_sign: Int8Array
+  genesis_sign: Int8Array,
 ): Promise<ITranRaw> => {
   try {
-
     const privateAccount = new PrivateKeyAccount(keyPair);
 
     const date = new Date();
@@ -22,7 +21,17 @@ export const tranVerifyPerson = async (
 
     const publicKeyAccount = new PublicKeyAccount(personPublicKey);
 
-    const tx = new R_SertifyPubKeys(privateAccount, 0, personKey, publicKeyAccount, 0, timestamp, reference, port, genesis_sign);
+    const tx = new R_SertifyPubKeys(
+      privateAccount,
+      0,
+      personKey,
+      publicKeyAccount,
+      0,
+      timestamp,
+      reference,
+      port,
+      genesis_sign,
+    );
 
     await tx.sign(privateAccount, false);
     const raw = await Base58.encode(await tx.toBytes(true, null));

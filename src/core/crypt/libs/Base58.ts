@@ -1,7 +1,6 @@
 const RNBase58 = require('./Base58_');
 
 export class Base58 {
-
   /** @description Base58 encode.
    * @param {Int8Array} input Input value to encode.
    * @return {Promise<string>} Base58.

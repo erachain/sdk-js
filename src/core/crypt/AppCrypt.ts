@@ -16,7 +16,6 @@ export class AppCrypt {
     return bip39.generateMnemonic();
   }
 
-  
   /** @description Generate seed.
    * @return {Promise<string>}
    */
@@ -40,12 +39,11 @@ export class AppCrypt {
    * @param {string | Int8Array} seed Seed.
    * @return {Promise<SignKeyPair>} Tweetnacl type.
    */
-  static async getKeyPairFromSeed(seed: string | Uint8Array): Promise<SignKeyPair>
-  {
-    if(typeof(seed) === "string") {
+  static async getKeyPairFromSeed(seed: string | Uint8Array): Promise<SignKeyPair> {
+    if (typeof seed === 'string') {
       seed = new Uint8Array(await Base58.decode(seed));
     }
-    
+
     return sign.keyPair.fromSeed(seed);
   }
 

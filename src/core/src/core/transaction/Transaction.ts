@@ -24,6 +24,8 @@ export abstract class Transaction {
 
   static ORDER_TRANSACTION = 50;
 
+  static DOCUMENT_TRANSACTION = 35;
+
   static ORDER_TRANSACTION_CANCEL = 51;
 
   static KEY_LENGTH = 8;
@@ -94,7 +96,7 @@ export abstract class Transaction {
     timestamp: number,
     reference: number,
     port: number,
-    genesis_sign: Int8Array
+    genesis_sign: Int8Array,
   ) {
     this.typeBytes = typeBytes;
     this.port = port;
@@ -120,14 +122,12 @@ export abstract class Transaction {
     // but not with SIGN
     const data = new DataWriter();
     data.set(await this.toBytes(false, null));
-    
-    if (this.genesis_sign.length > 0) {
 
+    if (this.genesis_sign.length > 0) {
       // sidechain mode
       // console.log("transaction.sidechain");
       data.set(this.genesis_sign);
     } else {
-
       // all test a not valid for main test
       // all other network must be invalid here!
       //Если не ходят тразакции то возможно неверно указан порт. сейчас ок высчитывается при добавлении новой ноды как порт -1
@@ -156,7 +156,7 @@ export abstract class Transaction {
       let timestampBytes = await Bytes.longToByteArray(this.timestamp);
       //console.log({ timestamp: this.timestamp, timestampBytes, ts2: await Bytes.longFromByteArray(timestampBytes)});
       timestampBytes = Bytes.ensureCapacity(timestampBytes, Transaction.TIMESTAMP_LENGTH, 0);
-      
+
       data.set(timestampBytes);
       //console.log("Transaction2", { data });
     }

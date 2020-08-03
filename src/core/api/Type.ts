@@ -1,12 +1,15 @@
-
 import { PersonHuman } from '../src/core/item/persons/PersonHuman';
 import { PublicKeyAccount } from '../src/core/account/PublicKeyAccount';
 import { KeyPair } from '../src/core/account/KeyPair';
 import { BigDecimal } from '../src/BigDecimal';
+import { Documents } from '../src/core/item/documents/Documents';
+import { ExData } from '../src/core/item/documents/ExData';
 
 export const Type = {
-    BigDecimal,
-    PersonHuman,
-    PublicKeyAccount,
-    KeyPair,
-}
+  BigDecimal,
+  PersonHuman,
+  PublicKeyAccount,
+  KeyPair,
+  Documents,
+  ExData
+};

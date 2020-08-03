@@ -1,13 +1,11 @@
 import { sign } from 'tweetnacl';
 import { Base58 } from '../../../crypt/libs/Base58';
 
-
-/** 
+/**
  * @class
  * @classdesc Key pair class.
  */
 export class KeyPair {
-
   /** @member {Int8Array} */
   secretKey: Int8Array;
 

@@ -1,9 +1,9 @@
-export * from "../types/era/IEraBlock";
-export * from "../types/era/IEraBlock";
-export * from "../types/era/IEraAsset";
-export * from "../types/era/IEraAssetData";
-export * from "../types/era/IEraAssetsList";
-export * from "../types/era/IEraPerson";
-export * from "../types/era/IEraPersonData";
-export * from "../types/era/IEraInfo";
+export * from '../types/era/IEraBlock';
+export * from '../types/era/IEraBlock';
+export * from '../types/era/IEraAsset';
+export * from '../types/era/IEraAssetData';
+export * from '../types/era/IEraAssetsList';
+export * from '../types/era/IEraPerson';
+export * from '../types/era/IEraPersonData';
+export * from '../types/era/IEraInfo';
 export { ITranRecipient, ITranMessage, ITranRaw } from '../src/core/transaction/TranTypes';

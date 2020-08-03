@@ -1,5 +1,3 @@
 export interface IEraBalance {
-    [id: number]: number [][];
+  [id: number]: number[][];
 }
-
-

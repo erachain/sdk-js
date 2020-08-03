@@ -7,7 +7,7 @@ export class Qora {
   static ADDRESS_VERSION = 15; // 7
 
   static async generateAccountSeed(seed: string | Int8Array, nonce: number) {
-    if(typeof(seed) === "string") {
+    if (typeof seed === 'string') {
       seed = await Base58.decode(seed);
     }
     const nonceBytes = int32ToBytes(nonce);
@@ -20,7 +20,6 @@ export class Qora {
   }
 
   static async getAccountAddressFromPublicKey(publicKey: Int8Array): Promise<string> {
-
     //console.log("getAccountAddressFromPublicKey.publicKey: ", publicKey );
     // SHA256 PUBLICKEY FOR PROTECTION
     let publicKeyHash = AppCrypt.sha256(publicKey);

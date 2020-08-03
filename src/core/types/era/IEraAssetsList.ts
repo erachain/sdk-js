@@ -1,3 +1,3 @@
 export interface IEraAssetsList {
-    [id: number]: string
+  [id: number]: string;
 }

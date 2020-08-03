@@ -24,7 +24,7 @@ export class R_SertifyPubKeys extends Transaction {
     timestamp: number,
     reference: number,
     port: number,
-    genesis_sign: Int8Array
+    genesis_sign: Int8Array,
   ) {
     const verions = 0;
     const sertifiedPublicKeysCount = 1;

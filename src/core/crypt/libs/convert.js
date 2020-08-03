@@ -25,11 +25,10 @@ export const trimString = str => {
   return str.replace(/[\u0001-\u0010]+$/gm, '');
 };
 
-
-export const int32ToBytes = (word) => {
-	var byteArray = [];
-	for (var b = 0; b < 32; b += 8) {
-		byteArray.push((word >>> (24 - b % 32)) & 0xFF);
-	}
-	return new Int8Array(byteArray);
-}
+export const int32ToBytes = word => {
+  var byteArray = [];
+  for (var b = 0; b < 32; b += 8) {
+    byteArray.push((word >>> (24 - (b % 32))) & 0xff);
+  }
+  return new Int8Array(byteArray);
+};

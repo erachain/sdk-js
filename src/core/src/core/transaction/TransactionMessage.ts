@@ -32,7 +32,7 @@ export class TransactionMessage extends Transaction {
     encrypted: Int8Array,
     isText: Int8Array,
     port: number,
-    genesis_sign: Int8Array
+    genesis_sign: Int8Array,
   ) {
     super(typeBytes, name, creator, feePow, timestamp, reference, port, genesis_sign);
     this.typeBytes[2] = typeBytes[2] | -128;

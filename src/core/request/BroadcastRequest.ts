@@ -1,30 +1,27 @@
-import {NodeBaseRequest} from "./NodeBaseRequest";
+import { NodeBaseRequest } from './NodeBaseRequest';
 
 export class BroadcastRequest extends NodeBaseRequest {
+  constructor(baseUrl: string) {
+    super(baseUrl);
+  }
 
-    constructor(baseUrl: string) {
-        super(baseUrl);
-    }
+  broadcast(transaction: string): Promise<IBroadcastResponse> {
+    return this.fetchJSON(`broadcast/${transaction}`);
+  }
 
-    broadcast(transaction: string): Promise<IBroadcastResponse> {
-        return this.fetchJSON(`broadcast/${transaction}`);
-    }
+  broadcastPost(raw: string): Promise<IBroadcastResponse> {
+    return this.fetchJSON(`broadcast`, 'POST', raw, { 'content-type': 'application/x-www-form-urlencoded' });
+  }
 
-    broadcastPost(raw: string): Promise<IBroadcastResponse> {
-        return this
-            .fetchJSON(`broadcast`, "POST", raw, {"content-type": "application/x-www-form-urlencoded"});
-    }
+  telegram(transaction: string): Promise<IBroadcastResponse> {
+    return this.fetchJSON(`broadcasttelegram/${transaction}`);
+  }
 
-    telegram(transaction: string): Promise<IBroadcastResponse> {
-        return this.fetchJSON(`broadcasttelegram/${transaction}`);
-    }
-
-    telegramPost(raw: string): Promise<IBroadcastResponse> {
-        return this
-            .fetchJSON(`broadcasttelegram`, "POST", raw, {"content-type": "application/x-www-form-urlencoded"});
-    }
+  telegramPost(raw: string): Promise<IBroadcastResponse> {
+    return this.fetchJSON(`broadcasttelegram`, 'POST', raw, { 'content-type': 'application/x-www-form-urlencoded' });
+  }
 }
 
 export interface IBroadcastResponse {
-    status: "ok";
+  status: 'ok';
 }
