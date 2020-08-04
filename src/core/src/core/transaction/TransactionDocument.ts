@@ -19,7 +19,7 @@ export class TransactionDocument extends Transaction {
     genesis_sign: Int8Array,
   ) {
     super(
-      new Int8Array([Transaction.DOCUMENT_TRANSACTION, 3, 0, -1]),
+      new Int8Array([Transaction.DOCUMENT_TRANSACTION, 3, 0, exData.length > 0 ? -1 : 0]),
       name,
       creator,
       feePow,
@@ -28,8 +28,7 @@ export class TransactionDocument extends Transaction {
       port,
       genesis_sign,
     );
-
-    this.exData = exData;
+    this.exData = exData ? exData : new Int8Array([]);
   }
 
   async toBytes(withSign: boolean, releaserReference: number | null): Promise<Int8Array> {
@@ -37,7 +36,9 @@ export class TransactionDocument extends Transaction {
     data.set(await super.toBytes(withSign, releaserReference));
 
     await this.lengthToBytes(this.exData.length, data);
-    data.set(this.exData);
+    if (this.exData.length > 0) {
+      data.set(this.exData);
+    }
 
     return data.data;
   }
@@ -48,7 +49,7 @@ export class TransactionDocument extends Transaction {
   }
 
   async getDataLength(): Promise<number> {
-    return Transaction.DATA_SIZE_LENGTH + this.exData.length;
+    return TransactionDocument.BASE_LENGTH + Transaction.DATA_SIZE_LENGTH + this.exData.length;
   }
 
 }

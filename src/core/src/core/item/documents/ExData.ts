@@ -6,8 +6,6 @@ import { Base58 } from '../../../../crypt/libs/Base58';
 import { AppCrypt } from '../../../../crypt/AppCrypt';
 import { encryptMessage } from '../../../../crypt/libs/aesCrypt';
 
-const maxRecipients = 20;
-
 export class ExData {
   static RECIPIENTS_LENGTH_SIZE = 3;
 
@@ -36,10 +34,6 @@ export class ExData {
   }
 
   async addRecipient(recipient: Int8Array | string): Promise<void> {
-    const count = this.recipients.length;
-    if (count > maxRecipients) {
-      throw new Error(`The maximum number of recipients is ${maxRecipients}`);
-    }
     const addressOrPublic = typeof recipient === 'string' ? await Base58.decode(recipient) : recipient;
     const length = addressOrPublic.length;
     if (this.secretFlags[0] > 0 && length !== 32) {
@@ -48,14 +42,15 @@ export class ExData {
     if (length === 32) {
       this.publics.push(addressOrPublic);
       const address = await AppCrypt.getAddressByPublicKey(addressOrPublic);
-      this.recipients.push(await Base58.decode(address));
+      const arr_address = await Base58.decode(address);
+      this.recipients.push(arr_address.slice(1, 21));
       const stringShare = await Base58.encode(this.shareKeys.secretKey);
       const secret = await encryptMessage(stringShare, addressOrPublic, this.keys.secretKey);
       const l = new Int8Array([0]);
       l[0] = secret.length;
       this.secrets.push(new Int8Array([l[0], ...secret]));
     } else {
-      this.recipients.push(addressOrPublic);
+      this.recipients.push(addressOrPublic.slice(1, 21));
     }
     this.flags[1] = this.flags[1] | 64;
   }
@@ -65,24 +60,27 @@ export class ExData {
 
     data.set(this.flags);
 
-    this.stringToBytes(this.title, data, true);
+    await this.stringToBytes(this.title, data, true);
 
-    data.set(this.recipientFlags);
+    if ((this.flags[1] & 64) === 64) {
+      data.set(this.recipientFlags);
 
-    this.recipientsLengthToBytes(data);
-
-    this.recipients.forEach(bytes => data.set(bytes));
-
-    data.set(this.secretFlags);
-
-    this.secrets.forEach(bytes => data.set(bytes));
-
-    let bytesData = await this.data.toBytes();
+      await this.recipientsLengthToBytes(data);
+  
+      this.recipients.forEach(bytes => data.set(bytes));
+    }
 
     if ((this.flags[1] & 32) === 32) {
-      const stringData = await Base58.encode(bytesData);
-      bytesData = await encryptMessage(stringData, this.keys.publicKey, this.shareKeys.secretKey);
-    }
+      data.set(this.secretFlags);
+      this.secrets.forEach(bytes => data.set(bytes));
+    }    
+
+    const bytesData = await this.data.toBytes();
+
+    //if ((this.flags[1] & 32) === 32) {
+    //  const stringData = await Base58.encode(bytesData);
+    //  bytesData = await encryptMessage(stringData, this.keys.publicKey, this.shareKeys.secretKey);
+    //}
 
     data.set(bytesData);
 
@@ -90,9 +88,11 @@ export class ExData {
   }
 
   async recipientsLengthToBytes(dataWriter: DataWriter): Promise<void> {
-    const lengthBytes = await Bytes.intToByteArray(this.recipients.length);
-    const bytes = Bytes.ensureCapacity(lengthBytes, ExData.RECIPIENTS_LENGTH_SIZE, 0);
-    dataWriter.set(bytes);
+    const lengthBytes = await Bytes.intToByteArray3(this.recipients.length);
+    console.log("stringToBytes", {
+      recipientsLength: lengthBytes,
+    });
+    dataWriter.set(lengthBytes);
   }
 
   async stringToBytes(str: string, dataWriter: DataWriter, preLength: boolean): Promise<void> {
@@ -104,4 +104,5 @@ export class ExData {
     }
     dataWriter.set(bytes);
   }
+
 }

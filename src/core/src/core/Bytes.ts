@@ -11,6 +11,14 @@ export class Bytes {
     return new Int8Array(array);
   }
 
+  static async intToByteArray3(int32: number): Promise<Int8Array> {
+    const byteArray = [];
+    for (let b = 8; b < 32; b += 8) {
+      byteArray.push((int32 >>> (24 - (b % 32))) & 0xff);
+    }
+    return new Int8Array(byteArray);
+  }
+
   static async intToByteArray(int32: number): Promise<Int8Array> {
     /*
     const buffer = new ArrayBuffer(4);
@@ -170,4 +178,5 @@ export class Bytes {
       words,
     };
   }
+
 }
