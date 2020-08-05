@@ -108,6 +108,15 @@ const { EraChain } = require('erachain-js-api')
     // Decrypt
     const decrypted_string = await EraChain.Crypt.decryptMessage(encrypted_string_base58, keys1.publicKey_Int8Array, keys2.secretKey_Int8Array);
 
+    // By 32-byte's secret
+    // Encrypt
+    const encrypted_Int8Array = await EraChain.Crypt.encrypt32(msg_string, secret32);
+
+    const encrypted_string_base58 = await EraChain.Base58.encode(encrypted_Int8Array);
+
+    // Decrypt
+    const decrypted_string = await EraChain.Crypt.decrypt32(encrypted_string_base58, secret32);
+
 ```
 
 ## API
@@ -201,6 +210,34 @@ const { EraChain } = require('erachain-js-api')
             console.log(e);
         });
 
+    // With raw code
+
+    api.tranRawSendAsset(keyPair, recipientPublicKeyOrAddress, asset, head, message, encrypted)
+        .then(result => {
+            /*
+                result: {
+                    raw: string;
+                    size: number;
+                    fee: number;
+                    error?: any;
+                }
+            */
+            if (!result.error) {
+                api.broadcast(result.raw)
+                    .then(data => {
+                        // data = {status: "ok"}
+                        console.log(data);
+                    })
+                    .catch(e => {
+                        console.log(e);
+                    });
+            }
+        })
+        .catch(e => {
+            console.log(e);
+        });
+
+
 ```
 
 ### Register new asset
@@ -233,6 +270,34 @@ const { EraChain } = require('erachain-js-api')
         .catch(e => {
             console.log(e);
         });
+
+    // With raw code
+
+    api.tranRawAsset(keyPair, name, assetType, quantity, scale, icon, image, description)
+        .then(result => {
+            /*
+                result: {
+                    raw: string;
+                    size: number;
+                    fee: number;
+                    error?: any;
+                }
+            */
+            if (!result.error) {
+                api.broadcast(result.raw)
+                    .then(data => {
+                        // data = {status: "ok"}
+                        console.log(data);
+                    })
+                    .catch(e => {
+                        console.log(e);
+                    });
+            }
+        })
+        .catch(e => {
+            console.log(e);
+        });
+
 
 ```
 
@@ -287,7 +352,7 @@ const { EraChain } = require('erachain-js-api')
             console.log(result);
 
             // Register person in Erachain
-            api.registerPerson(result.raw)
+            api.broadcast(result.raw)
                 .then(data => {
                     // data = {status: "ok"}
                     console.log(data);
@@ -354,6 +419,33 @@ const { EraChain } = require('erachain-js-api')
             console.log(e);
         });
 
+    // With raw code
+
+    api.tranRawMessage(keyPair, recipientPublicKeyOrAddress, head, message, encrypted)
+        .then(result => {
+            /*
+                result: {
+                    raw: string;
+                    size: number;
+                    fee: number;
+                    error?: any;
+                }
+            */
+            if (!result.error) {
+                api.broadcast(result.raw)
+                    .then(data => {
+                        // data = {status: "ok"}
+                        console.log(data);
+                    })
+                    .catch(e => {
+                        console.log(e);
+                    });
+            }
+        })
+        .catch(e => {
+            console.log(e);
+        });
+
 ```
 
 ### Send telegram to address or public key of recipient wallet
@@ -383,6 +475,34 @@ const { EraChain } = require('erachain-js-api')
         .catch(e => {
             console.log(e);
         });
+
+    // With raw code
+
+    api.tranRawTelegram(keyPair, recipientPublicKey, head, message, encrypted)
+        .then(result => {
+            /*
+                result: {
+                    raw: string;
+                    size: number;
+                    fee: number;
+                    error?: any;
+                }
+            */
+            if (!result.error) {
+                api.broadcast(result.raw)
+                    .then(data => {
+                        // data = {status: "ok"}
+                        console.log(data);
+                    })
+                    .catch(e => {
+                        console.log(e);
+                    });
+            }
+        })
+        .catch(e => {
+            console.log(e);
+        });
+
 
 ```
 
@@ -519,5 +639,49 @@ const { EraChain } = require('erachain-js-api')
         });
 
     api.getAssetsByFilter(filter: string): Promise<IEraAsset[]>
+
+```
+
+### Create documents
+
+```javascript
+
+    const ms = "Уникальный текст 10001"; // any text
+    const msu = true; // if yes, then a unique message (a hash is created and entered into the blockchain database for search)
+    const tm = 4; // Template key number
+    const tmu = true; // if yes, then a unique template with parameters (a hash is created from the template number and parameter values and entered into the blockchain database for search)
+    const hsu = true; // if yes, then each hash is unique and it is entered into the blockchain database for search
+    const pr = { "param.1": "Уникальный" }; // List of parameters for the template
+    const fu = true; // if yes, then each file is unique and the hash from it is entered into the blockchain database for search with a uniqueness check
+
+    const docs = new EraChain.Type.Documents(ms, msu, tm, tmu, pr, hsu, fu);
+
+    // Adding hash and path
+    docs.addHash("C:/Erachains/IMG/TMP/EDS.gif", "FxAtYi5PY48VvakTsfMcZhb36rYorpGoUHwX2T2FBd6V");
+
+    /** Example only for node.js **/
+    const fileContent = fs.readFileSync("./src/assets/erachain.png");
+
+    // Adding the file
+    docs.addFile("erachain.png", false, new Int8Array(fileContent.buffer));
+
+    //const fileContent = fs.readFileSync("./src/assets/document.pdf");
+    //docs.addFile("document2.pdf", false, new Int8Array(fileContent.buffer));
+
+
+    const exData = new EraChain.Type.ExData(keyPair, "Documents" /* title */, docs, true /* encrypt */);
+
+    // Add address if not encrypted transaction
+    // await exData.addRecipient("7NTqnGWgzGHDvSD5FHw5AjHqCXg3gZcFTU");
+    // OR
+    // Add public key if encrypted transaction
+    await exData.addRecipient("HuuDEwczAdckBc7vspVswYbhgoo5zTsVtSPC4wkHrETY");
+
+    const tx = await api.tranRawDocuments(keyPair, exData);
+
+    const response = await api.broadcast(tx.raw);
+
+    console.log(response);
+
 
 ```

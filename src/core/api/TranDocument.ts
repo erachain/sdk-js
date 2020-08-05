@@ -17,13 +17,13 @@ export const tranDocument = async (
     const date = new Date();
     const timestamp = date.getTime();
     const reference = 0;
-    console.log("tranDocument.start");
+    //console.log("tranDocument.start");
     const tx = new TransactionDocument("Note", privateAccount, feePow, timestamp, reference, exData, port, genesis_sign);
-    console.log("tranDocument.tx");
+    //console.log("tranDocument.tx");
     await tx.sign(privateAccount, false);
-    console.log("tranDocument.sign");
+    //console.log("tranDocument.sign");
     const raw = await Base58.encode(await tx.toBytes(true, null));
-    console.log("tranDocument.base58encode");
+    //console.log("tranDocument.base58encode");
     let size = await tx.getDataLength();
 
     const fee = (size * 100.0) / Math.pow(10, 8);

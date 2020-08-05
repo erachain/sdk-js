@@ -11,7 +11,7 @@ const CryptoJS = require('crypto-js');
 /** @description Gets share key.
  * @param {Int8Array | string} publicKey The radius of the circle.
  * @param {Int8Array | string} privateKey The radius of the circle.
- * @return {Promise<string>}
+ * @return {Promise<Uint8Array>}
  */
 export const getPassword = async (publicKey, privateKey) => {
   const key = typeof publicKey === 'string' ? new Buffer(await Base58.decode(publicKey)) : new Buffer(publicKey);
@@ -19,6 +19,7 @@ export const getPassword = async (publicKey, privateKey) => {
   const theirDHPublicKey = ed2curve.convertPublicKey(key);
   const myDHSecretKey = ed2curve.convertSecretKey(secret);
   const password = SHA256.digest(scalarMult(myDHSecretKey, theirDHPublicKey));
+
   return password;
 };
 
@@ -32,8 +33,8 @@ export const encryptMessage = async (message, publicKey, privateKey) => {
   try {
     const iv = CryptoJS.enc.Hex.parse('06040308010201020702030805070101');
     const password = await getPassword(publicKey, privateKey);
+    
     const sharedKey = CryptoJS.lib.WordArray.create(password);
-
     const encrypted = CryptoJS.AES.encrypt(message, sharedKey, { iv });
     const int8Array0 = wordsToByteArray(encrypted.ciphertext);
     const int8Array = new Int8Array([0x01, ...int8Array0]);
@@ -136,4 +137,51 @@ export const testDecrypt = async () => {
 
 export const decrypt = async (str, public1, secret2) => {
   return await decryptMessage(str, public1, secret2);
+};
+
+
+/** @description Encrypt text.
+ * @param {string} message Text to encrypt.
+ * @param {Int8Array | string} secret32 The shared secret key.
+ * @return {Promise<int8Array | boolean>}
+ */
+export const encrypt32 = async (message, secret32) => {
+  try {
+    const secret = typeof secret32 === 'string' ? await Base58.decode(secret32) : secret32;
+    const iv = CryptoJS.enc.Hex.parse('06040308010201020702030805070101');
+    const password = new Uint8Array(secret);
+
+    const sharedKey = CryptoJS.lib.WordArray.create(password);
+    const encrypted = CryptoJS.AES.encrypt(message, sharedKey, { iv });
+    const int8Array0 = wordsToByteArray(encrypted.ciphertext);
+    const int8Array = new Int8Array([0x01, ...int8Array0]);
+    return int8Array;
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
+};
+
+/** @description Decrypt text to json.
+ * @param {string} encryptedMessage Encrypted text to decrypt.
+ * @param {Int8Array | string} secret32 The shared secret key.
+ * @return {Promise<string>}
+ */
+export const decrypt32 = async (encryptedMessage, secret32) => {
+  try {
+    const iv = CryptoJS.enc.Hex.parse('06040308010201020702030805070101');
+    const secret = typeof secret32 === 'string' ? await Base58.decode(secret32) : secret32;
+    const password = new Uint8Array(secret);
+    const sharedKey = CryptoJS.lib.WordArray.create(password);
+
+    const arrayMessage = await Base58.decode(encryptedMessage);
+    const message = arrayMessage.slice(1);
+    const words = CryptoJS.lib.WordArray.create(message);
+    const decrypted = CryptoJS.AES.decrypt({ ciphertext: words }, sharedKey, { iv });
+    const jsonString = await Bytes.stringFromByteArray(prepareAfterDecrypt(wordsToByteArray(decrypted)));
+    return jsonString;
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
 };

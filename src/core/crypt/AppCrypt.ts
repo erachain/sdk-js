@@ -77,6 +77,15 @@ export class AppCrypt {
     return Qora.getAccountAddressFromPublicKey(new Int8Array(keys.publicKey));
   }
 
+  /** @description Gets short address.
+   * @param {Int8Array | string} address Address.
+   * @return {Promise<Int8Array>}
+   */
+  static async shortAddress(address: Int8Array | string): Promise<Int8Array> {
+    const array_addr = typeof address === 'string' ? await Base58.decode(address) : address;
+    return array_addr.slice(1, 21);
+  }
+
   /** @description Gets address from public key.
    * @param {Int8Array} key Public key.
    * @return {Promise<string>}

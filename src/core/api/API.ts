@@ -184,9 +184,9 @@ export class API {
   ): Promise<{ [id: string]: IWalletHistoryRow }> {
     const data = await this.request.records
       .getbyaddressfromtransactionlimit(address, assetKey, offset, offset + pageSize, type)
-      .catch(e => {
-        throw new Error(e);
-      });
+        .catch(e => {
+          throw new Error(e);
+        });
     return data;
   }
 
@@ -298,6 +298,67 @@ export class API {
 
   // SDK
 
+  /** @description API broadcast.
+   * @param {string} raw Raw data.
+   * @return {Promise<IBroadcastResponse>}
+   */
+  async broadcast(raw: string): Promise<IBroadcastResponse> {
+
+      return await this.request.broadcast.broadcastPost(raw)
+        .catch(e => {
+          throw new Error(e);
+        });
+
+  }
+
+  /** @description API raw data for sending asset.
+   * @param {KeyPair} keyPair Key pair.
+   * @param {IAsset} asset Amount and asset key.
+   * @param {string} recipientPublicKey Recipient public key.
+   * @param {string} head Title.
+   * @param {string} message Message.
+   * @param {boolean} encrypted Encryption flag.
+   * @return {Promise<ITranRaw>}
+   */
+  async tranRawSendAsset(
+    keyPair: KeyPair,
+    asset: IAsset,
+    recipientPublicKey: string,
+    head: string,
+    message: string,
+    encrypted: boolean,
+  ): Promise<ITranRaw> {
+    let recipient: ITranRecipient = {
+      address: recipientPublicKey,
+      publicKey: null,
+    };
+
+    if (recipientPublicKey.length === 44) {
+      const pk = await Base58.decode(recipientPublicKey);
+      recipient = {
+        address: await Qora.getAccountAddressFromPublicKey(pk),
+        publicKey: pk,
+      };
+    }
+
+    const tranBody = {
+      head,
+      message,
+      encrypted,
+    };
+
+    const transAsset: ITranAsset = {
+      assetKey: asset.assetKey,
+      amount: new BigDecimal(asset.amount),
+    };
+
+    const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
+
+    return await tranSend(recipient, keyPair, transAsset, tranBody, this.rpcPort, genesis_sign);
+
+  }
+
+
   /** @description API send amount of asset to recipient.
    * @param {KeyPair} keyPair Key pair.
    * @param {IAsset} asset Amount and asset key.
@@ -364,16 +425,6 @@ export class API {
     return await tranPerson(keyPair, person, this.rpcPort, genesis_sign);
   }
 
-  /** @description API register person.
-   * @param {string} tranRaw Base58 string tran raw of person see tranRawPerson.
-   * @return {Promise<IBroadcastResponse>}
-   */
-  async registerPerson(tranRaw: string): Promise<IBroadcastResponse> {
-    return await this.request.broadcast.broadcastPost(tranRaw).catch(e => {
-      throw new Error(e);
-    });
-  }
-
   /** @description API verify person.
    * @param {KeyPair} keyPair Key pair.
    * @param {number} personKey Person key ID.
@@ -398,6 +449,46 @@ export class API {
     } catch (e) {
       throw new Error(e);
     }
+  }
+
+  /** @description API raw data for sending message.
+   * @param {KeyPair} keyPair Key pair.
+   * @param {string} recipientPublicKey Recipient public key.
+   * @param {string} head Title.
+   * @param {string} message Message.
+   * @param {boolean} encrypted Encryption flag.
+   * @return {Promise<ITranRaw>}
+   */
+  async tranRawMessage(
+    keyPair: KeyPair,
+    recipientPublicKey: string,
+    head: string,
+    message: string,
+    encrypted: boolean,
+  ): Promise<ITranRaw> {
+    let recipient: ITranRecipient = {
+      address: recipientPublicKey,
+      publicKey: null,
+    };
+
+    if (recipientPublicKey.length === 44) {
+      const pk = await Base58.decode(recipientPublicKey);
+      recipient = {
+        address: await Qora.getAccountAddressFromPublicKey(pk),
+        publicKey: pk,
+      };
+    }
+
+    const tranBody = {
+      head,
+      message,
+      encrypted,
+    };
+
+    const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
+
+    return await tranMessage(recipient, keyPair, tranBody, this.rpcPort, genesis_sign);
+
   }
 
   /** @description API send message.
@@ -448,6 +539,44 @@ export class API {
     }
   }
 
+  /** @description API raw data for sending telegram.
+   * @param {KeyPair} keyPair Key pair.
+   * @param {string} recipientPublicKey Recipient public key.
+   * @param {string} message Message.
+   * @param {boolean} encrypted Encryption flag.
+   * @return {Promise<ITranRaw>}
+   */
+  async tranRawTelegram(
+    keyPair: KeyPair,
+    recipientPublicKey: string,
+    message: string,
+    encrypted: boolean,
+  ): Promise<ITranRaw> {
+    let recipient: ITranRecipient = {
+      address: recipientPublicKey,
+      publicKey: null,
+    };
+
+    if (recipientPublicKey.length === 44) {
+      const pk = await Base58.decode(recipientPublicKey);
+      recipient = {
+        address: await Qora.getAccountAddressFromPublicKey(pk),
+        publicKey: pk,
+      };
+    }
+
+    const tranBody = {
+      head: '',
+      message,
+      encrypted,
+    };
+
+    const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
+
+    return await tranMessage(recipient, keyPair, tranBody, this.rpcPort, genesis_sign);
+
+  }
+
   /** @description API send telegram.
    * @param {KeyPair} keyPair Key pair.
    * @param {string} recipientPublicKey Recipient public key.
@@ -493,6 +622,45 @@ export class API {
       throw new Error(tran.error);
     }
   }
+
+  /** @description API raw data for registering asset.
+   * @param {KeyPair} keyPair Key pair.
+   * @param {string} name Asset name.
+   * @param {number} assetType Asset type.
+   * @param {number} quantity Quantity.
+   * @param {number} scale Scale.
+   * @param {Int8Array} icon Icon.
+   * @param {Int8Array} image Image.
+   * @param {string} description Description.
+   * @return {Promise<ITranRaw>}
+   */
+  async tranRawAsset(
+    keyPair: KeyPair,
+    name: string,
+    assetType: number,
+    quantity: number,
+    scale: number,
+    icon: Int8Array,
+    image: Int8Array,
+    description: string,
+  ): Promise<ITranRaw> {
+    const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
+
+    return await tranAsset(
+      keyPair,
+      name,
+      assetType,
+      quantity,
+      scale,
+      icon,
+      image,
+      description,
+      this.rpcPort,
+      genesis_sign,
+    );
+
+  }
+
 
   /** @description API register asset.
    * @param {KeyPair} keyPair Key pair.
@@ -564,6 +732,23 @@ export class API {
     } else {
       throw new Error(tran.error);
     }
+  }
+
+  /** @description API: gets raw of documents.
+   * @param {KeyPair} keyPair Key pair.
+   * @param {string} exData Metadata of documents.
+   * @return {Promise<string>}
+   */
+  async tranRawDocuments(
+    keyPair: KeyPair,
+    exData: ExData,
+  ): Promise<ITranRaw> {
+
+    const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
+
+    const dataBytes = await exData.toBytes();
+
+    return await tranDocument(keyPair, dataBytes, this.rpcPort, genesis_sign);
   }
 
 }
