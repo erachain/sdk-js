@@ -42,22 +42,18 @@ export class Bytes {
     const ubytes = new Uint8Array(bytes);
     for (const n of ubytes) {
       value = value * 256 + n;
+      //value = (value << 8) | n;
     }
     return value;
   }
 
   static async longToByteArray(int64: number): Promise<Int8Array> {
-    /*
-    const buffer = new ArrayBuffer(8);
-    const int64View = new BigInt64Array(buffer);
-    int64View[0] = BigInt(int64);
-    return new Int8Array(int64View.buffer, 0, 8);
-    */
     const byteArray = [0, 0, 0, 0, 0, 0, 0, 0];
     for (let index = 0; index < byteArray.length; index++) {
       const byte = int64 & 0xff;
       byteArray[byteArray.length - index - 1] = byte;
       int64 = (int64 - byte) / 256;
+      //int64 = int64 >> 8;
     }
     return new Int8Array(byteArray);
   }
@@ -71,6 +67,7 @@ export class Bytes {
     const ubytes = new Uint8Array(bytes);
     for (const n of ubytes) {
       value = value * 256 + n;
+      // value = (value << 8) | n;
     }
     return value;
   }

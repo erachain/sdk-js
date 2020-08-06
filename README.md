@@ -659,7 +659,7 @@ const { EraChain } = require('erachain-js-api')
     // Adding hash and path
     docs.addHash("C:/Erachains/IMG/TMP/EDS.gif", "FxAtYi5PY48VvakTsfMcZhb36rYorpGoUHwX2T2FBd6V");
 
-    /** Example only for node.js **/
+    /** Example only for node.js (not for browser) **/
     const fileContent = fs.readFileSync("./src/assets/erachain.png");
 
     // Adding the file
@@ -683,5 +683,49 @@ const { EraChain } = require('erachain-js-api')
 
     console.log(response);
 
+
+```
+
+### Read transaction with documents
+
+```javascript
+
+    const keyPair = new EraChain.Type.KeyPair(keys);
+
+    // recipient address
+    const address = "7NTqnGWgzGHDvSD5FHw5AjHqCXg3gZcFTU";
+
+    // only for example
+    // reading the transaction with encrypted documents
+    api.query("GET", `apirecords/unconfirmedincomes/${address}`, undefined, { type: 35, from: 0, count: 20 }, undefined)
+        .then(async (response) => {
+            const data = await response.json();
+            if (data.length === 0) {
+                throw new Error("Transactions not found");
+            }
+
+            const transaction = data[0];
+            console.log(transaction);
+
+            const creatorPublicKey = transaction.publickey;
+            const recipients = transaction.exData.recipients;
+            const idx = recipients.indexOf(address);
+            if (idx >= 0) {
+                const encryptedSecret = transaction.exData.secrets[idx];
+                const secret = await EraChain.Crypt.decryptMessage(encryptedSecret, creatorPublicKey, keys.secretKey);
+
+                const data64 = transaction.exData.encryptedData64;
+                const decoded = EraChain.base64ToArray(data64);
+                const encryptedData = await EraChain.Base58.encode(decoded);
+                const decryptedData = await EraChain.Crypt.decrypt32(encryptedData, secret);
+
+                const doc = await EraChain.Type.Documents.parse(decryptedData);
+                console.log(doc.json());
+                // doc.json().F - meta data of files
+                // doc.files: Int8Array[] - array of files
+            }
+
+        })
+        .catch(e => console.log(e));
 
 ```

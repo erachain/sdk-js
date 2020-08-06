@@ -36,6 +36,11 @@ export function base64ToArray(imageBase64: string): Int8Array {
 
 export function decodeBase64(imageBase64: string): IImageContainer {
   const imageURIarray = imageBase64.split(',');
+  if (imageURIarray.length === 1) {
+    imageURIarray.push(imageBase64);
+    imageURIarray[0] = 'base64';
+  }
+  
   if (imageURIarray.length !== 2) {
     throw new Error('Base64 failed');
   }

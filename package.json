@@ -1,6 +1,6 @@
 {
     "name": "erachain-js-api",
-    "version": "1.8.0",
+    "version": "1.8.6",
     "description": "EraChain JS API",
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
@@ -22,6 +22,7 @@
     ],
     "author": "iv_avdeev@mail.ru",
     "dependencies": {
+        "@types/lodash": "^4.14.159",
         "@types/node": "^13.7.6",
         "atob": "^2.1.2",
         "bip39": "^3.0.2",

@@ -1,7 +1,7 @@
 import { scalarMult } from 'tweetnacl';
 import { Base58 } from './Base58';
 import SHA256 from './SHA256';
-import { wordsToByteArray, prepareAfterDecrypt } from './convert';
+import { wordsToByteArray, prepareAfterDecrypt, trimString } from './convert';
 import { Bytes } from '../../src/core/Bytes';
 
 const ed2curve = require('./ed2curve');
@@ -62,7 +62,7 @@ export const decryptJson = async (encryptedMessage, publicKey, privateKey) => {
     const words = CryptoJS.lib.WordArray.create(message);
     const decrypted = CryptoJS.AES.decrypt({ ciphertext: words }, sharedKey, { iv });
     const jsonString = await Bytes.stringFromByteArray(prepareAfterDecrypt(wordsToByteArray(decrypted)));
-    return jsonString;
+    return trimString(jsonString);
   } catch (e) {
     console.log(e);
     return false;
@@ -92,7 +92,7 @@ export const decryptMessage = async (encryptedMessage, publicKey, privateKey) =>
     const jsonString = decrypted.toString(CryptoJS.enc.Utf8);
     //const jsonString = await Bytes.stringFromByteArray(wordsToByteArray(decrypted));
     //console.log({ jsonString });
-    return jsonString;
+    return trimString(jsonString);
   } catch (e) {
     console.log(e);
     return false;
@@ -179,7 +179,7 @@ export const decrypt32 = async (encryptedMessage, secret32) => {
     const words = CryptoJS.lib.WordArray.create(message);
     const decrypted = CryptoJS.AES.decrypt({ ciphertext: words }, sharedKey, { iv });
     const jsonString = await Bytes.stringFromByteArray(prepareAfterDecrypt(wordsToByteArray(decrypted)));
-    return jsonString;
+    return trimString(jsonString);
   } catch (e) {
     console.log(e);
     return false;
