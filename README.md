@@ -389,6 +389,33 @@ const { EraChain } = require('erachain-js-api')
             console.log(e);
         });
 
+    // With raw code
+
+    api.tranRawVerifyPerson(keyPair, personKey, keys.publicKey)
+        .then(result => {
+            /*
+                result: {
+                    raw: string;
+                    size: number;
+                    fee: number;
+                    error?: any;
+                }
+            */
+            if (!result.error) {
+                api.broadcast(result.raw)
+                    .then(data => {
+                        // data = {status: "ok"}
+                        console.log(data);
+                    })
+                    .catch(e => {
+                        console.log(e);
+                    });
+            }
+        })
+        .catch(e => {
+            console.log(e);
+        });
+
 ```
 
 ### Send message to address or public key of recipient wallet
@@ -707,22 +734,30 @@ const { EraChain } = require('erachain-js-api')
             const transaction = data[0];
             console.log(transaction);
 
-            const creatorPublicKey = transaction.publickey;
-            const recipients = transaction.exData.recipients;
-            const idx = recipients.indexOf(address);
-            if (idx >= 0) {
-                const encryptedSecret = transaction.exData.secrets[idx];
-                const secret = await EraChain.Crypt.decryptMessage(encryptedSecret, creatorPublicKey, keys.secretKey);
+            if (transaction.exData.encryptedData64) {
 
-                const data64 = transaction.exData.encryptedData64;
-                const decoded = EraChain.base64ToArray(data64);
-                const encryptedData = await EraChain.Base58.encode(decoded);
-                const decryptedData = await EraChain.Crypt.decrypt32(encryptedData, secret);
+                // Decrypting
 
-                const doc = await EraChain.Type.Documents.parse(decryptedData);
-                console.log(doc.json());
-                // doc.json().F - meta data of files
-                // doc.files: Int8Array[] - array of files
+                const creatorPublicKey = transaction.publickey;
+                const recipients = transaction.exData.recipients;
+                const idx = recipients.indexOf(address);
+                if (idx >= 0) {
+                    const encryptedSecret = transaction.exData.secrets[idx];
+                    const secret = await EraChain.Crypt.decryptMessage(encryptedSecret, creatorPublicKey, keys.secretKey);
+
+                    const data64 = transaction.exData.encryptedData64;
+                    const decoded = EraChain.base64ToArray(data64);
+                    const encryptedData = await EraChain.Base58.encode(decoded);
+                    const decryptedData = await EraChain.Crypt.decrypt32(encryptedData, secret);
+
+                    const doc = await EraChain.Type.Documents.parse(decryptedData);
+                    console.log(doc.json());
+                    // doc.json().F - meta data of files
+                    // doc.files: Int8Array[] - array of files
+                }
+            } else {
+                console.log(data[0].exData.json);
+                // data[0].exData.files: Int8Array[] - array of files
             }
 
         })

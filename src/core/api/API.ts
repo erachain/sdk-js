@@ -429,6 +429,25 @@ export class API {
    * @param {KeyPair} keyPair Key pair.
    * @param {number} personKey Person key ID.
    * @param {Int8Array} personPublicKey Person public key.
+   * @return {Promise<ITranRaw>}
+   */
+  async tranRawVerifyPerson(keyPair: KeyPair, personKey: number, personPublicKey: Int8Array): Promise<ITranRaw> {
+    try {
+      const address = await AppCrypt.getAddressBySecretKey(keyPair.secretKey);
+      const reference = await this.request.address.lastReference(address);
+      const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
+
+      return await tranVerifyPerson(keyPair, personKey, personPublicKey, reference, this.rpcPort, genesis_sign);
+
+    } catch (e) {
+      throw new Error(e);
+    }
+  }
+
+  /** @description API verify person.
+   * @param {KeyPair} keyPair Key pair.
+   * @param {number} personKey Person key ID.
+   * @param {Int8Array} personPublicKey Person public key.
    * @return {Promise<IBroadcastResponse>}
    */
   async verifyPerson(keyPair: KeyPair, personKey: number, personPublicKey: Int8Array): Promise<IBroadcastResponse> {
