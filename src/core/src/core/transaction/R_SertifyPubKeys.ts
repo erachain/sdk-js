@@ -41,7 +41,7 @@ export class R_SertifyPubKeys extends Transaction {
 
   async getDataLength(asPack: boolean): Promise<number> {
     // not include note reference
-    let len = asPack ? R_SertifyPubKeys.BASE_LENGTH_AS_PACK : R_SertifyPubKeys.BASE_LENGTH;
+    let len = asPack ? R_SertifyPubKeys.BASE_LENGTH_AS_PACK : R_SertifyPubKeys.BASE_LENGTH + R_SertifyPubKeys.SELF_LENGTH;
     const accountsSize = 1;
     len += accountsSize * PublicKeyAccount.PUBLIC_KEY_LENGTH;
 
