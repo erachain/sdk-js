@@ -6,25 +6,22 @@ export interface IMetadata {
   [key: string]: string;
 }
 
-export interface IFiles {
-  [key: string]: IMetaFile;
-}
-
 export interface IMetaFile {
   FN: string; // имя файла
   ZP: boolean; // архив
   SZ: number; // размер в байтах в данных
 }
+
 export interface IDocuments {
   MS: string;
   MSU: boolean;
   TM: number;
   TMU: boolean;
-  PR: IMetadata;
-  HS: IMetadata;
+  PR?: IMetadata;
+  HS?: IMetadata;
   HSU: boolean;
   FU: boolean;
-  F: IFiles;
+  F: IMetaFile[];
 }
 
 export class Documents {
@@ -35,11 +32,11 @@ export class Documents {
   msu: boolean;
   tm: number;
   tmu: boolean;
-  pr: IMetadata;
-  hs: IMetadata;
+  pr?: IMetadata;
+  hs?: IMetadata;
   hsu: boolean;
   fu: boolean;
-  f: IFiles;
+  f: IMetaFile[];
   files: Int8Array[];
 
   constructor(ms: string, msu: boolean, tm: number, tmu: boolean, pr: IMetadata, hsu: boolean, fu: boolean) {
@@ -50,27 +47,26 @@ export class Documents {
     this.pr = pr;
     this.hsu = hsu;
     this.fu = fu;
-    this.hs = {};
-    this.f = {};
+    this.hs = undefined;
+    this.f = [];
     this.files = [];
   }
 
   addFile(name: string, compressed: boolean, data: Int8Array) {
-    const size = Object.values(this.f).length;
-    const key = size.toString();
-
     const meta = {
       FN: name,
       ZP: compressed,
       SZ: data.length,
     };
-    this.f[key] = meta;
+    this.f.push(meta);
 
     this.files.push(data);
-
   }
 
   addHash(path: string, hash: string) {
+    if (!this.hs) {
+      this.hs = {};
+    }
     this.hs[hash] = path;
   }
 
@@ -80,10 +76,10 @@ export class Documents {
       MSU: this.msu,
       TM: this.tm,
       TMU: this.tmu,
-      PR: { ...this.pr },
-      HS: { ...this.hs },
+      PR: this.pr,
+      HS: this.hs,
       HSU: this.hsu,
-      F: { ...this.f },
+      F: [ ...this.f ],
       FU: this.fu,
     };
   }
@@ -132,8 +128,8 @@ export class Documents {
 
     const { MS, MSU, TM, TMU, PR, HSU, FU } = json;
     const documents = new Documents(MS, MSU, TM, TMU, PR, HSU, FU);
-    documents.hs = { ...json.HS };
-    documents.f = { ...json.F };
+    documents.hs = json.HS;
+    documents.f = json.F;
   
     Object.values(json.F).forEach((meta: any) => {
       // READ FILE

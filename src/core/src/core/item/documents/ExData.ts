@@ -6,6 +6,21 @@ import { Base58 } from '../../../../crypt/libs/Base58';
 import { AppCrypt } from '../../../../crypt/AppCrypt';
 import { encryptMessage, encrypt32, getPassword } from '../../../../crypt/libs/aesCrypt';
 
+export const TYPE_LINK = {
+  NONE: 0,
+  APPENDIX: 1,
+  REPLY_COMMENT: 2,
+  SURELY: 3
+};
+
+export interface ExLink {
+  type: number; // byte
+  flags: number; // byte
+  value_1: number; // byte
+  value_2: number; // byte
+  link: number; // long
+} 
+
 export class ExData {
   static RECIPIENTS_LENGTH_SIZE = 3;
 
@@ -14,6 +29,7 @@ export class ExData {
   private _password32: string | null;
   flags: Int8Array;
   title: string;
+  exLink: ExLink;
   recipientFlags: Int8Array;
   recipients: Int8Array[];
   secretFlags: Int8Array;

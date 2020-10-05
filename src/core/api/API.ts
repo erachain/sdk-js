@@ -333,7 +333,7 @@ export class API {
       publicKey: null,
     };
 
-    if (recipientPublicKey.length === 44) {
+    if (recipientPublicKey.length >= 43) {
       const pk = await Base58.decode(recipientPublicKey);
       recipient = {
         address: await Qora.getAccountAddressFromPublicKey(pk),
@@ -381,7 +381,7 @@ export class API {
       publicKey: null,
     };
 
-    if (recipientPublicKey.length === 44) {
+    if (recipientPublicKey.length >= 43) {
       const pk = await Base58.decode(recipientPublicKey);
       recipient = {
         address: await Qora.getAccountAddressFromPublicKey(pk),
@@ -490,7 +490,7 @@ export class API {
       publicKey: null,
     };
 
-    if (recipientPublicKey.length === 44) {
+    if (recipientPublicKey.length >= 43) {
       const pk = await Base58.decode(recipientPublicKey);
       recipient = {
         address: await Qora.getAccountAddressFromPublicKey(pk),
@@ -530,7 +530,7 @@ export class API {
       publicKey: null,
     };
 
-    if (recipientPublicKey.length === 44) {
+    if (recipientPublicKey.length >= 43) {
       const pk = await Base58.decode(recipientPublicKey);
       recipient = {
         address: await Qora.getAccountAddressFromPublicKey(pk),
@@ -576,7 +576,7 @@ export class API {
       publicKey: null,
     };
 
-    if (recipientPublicKey.length === 44) {
+    if (recipientPublicKey.length >= 43) {
       const pk = await Base58.decode(recipientPublicKey);
       recipient = {
         address: await Qora.getAccountAddressFromPublicKey(pk),
@@ -614,7 +614,7 @@ export class API {
       publicKey: null,
     };
 
-    if (recipientPublicKey.length === 44) {
+    if (recipientPublicKey.length >= 43) {
       const pk = await Base58.decode(recipientPublicKey);
       recipient = {
         address: await Qora.getAccountAddressFromPublicKey(pk),

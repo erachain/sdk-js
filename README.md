@@ -752,7 +752,12 @@ const { EraChain } = require('erachain-js-api')
 
                     const doc = await EraChain.Type.Documents.parse(decryptedData);
                     console.log(doc.json());
-                    // doc.json().F - meta data of files
+                    // doc.json().F - array of meta file
+                    // {
+                        // FN: string; // name of file
+                        // ZP: boolean; // compress flag,
+                        // SZ: number; // size
+                    // }
                     // doc.files: Int8Array[] - array of files
                 }
             } else {
