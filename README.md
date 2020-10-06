@@ -695,8 +695,18 @@ const { EraChain } = require('erachain-js-api')
     //const fileContent = fs.readFileSync("./src/assets/document.pdf");
     //docs.addFile("document2.pdf", false, new Int8Array(fileContent.buffer));
 
+    const { ExLink } = EraChain.Type;
+    /*
+        ExLink.TYPE_NONE - normal, basic
+        ExLink.TYPE_APPENDIX - this application, supplement
+        ExLink.TYPE_REPLY_COMMENT - this is a Reply or Message (Note).
+                                    If there are no Recipients - then this is a Comment (COMMENT), otherwise - a response (REPLY)
+        ExLink.TYPE_SURELY - Guarantee for other info
+    */
 
-    const exData = new EraChain.Type.ExData(keyPair, "Documents" /* title */, docs, true /* encrypt */);
+    const exLink = new ExLink(ExLink.TYPE_APPENDIX, "433997-1");
+
+    const exData = new EraChain.Type.ExData(keyPair, "Documents" /* title */, docs, true /* encrypt */, exLink /* default: undefined */);
 
     // Add address if not encrypted transaction
     // await exData.addRecipient("7NTqnGWgzGHDvSD5FHw5AjHqCXg3gZcFTU");
@@ -767,5 +777,23 @@ const { EraChain } = require('erachain-js-api')
 
         })
         .catch(e => console.log(e));
+
+```
+
+### Sign transaction
+
+```javascript
+
+    const keyPair = new EraChain.Type.KeyPair(keys);
+
+    const seqNo = "433997-1";
+
+    const tx = await api.tranRawSign(keyPair, seqNo);
+
+    console.log("raw", tx);
+
+    const response = await api.broadcast(tx.raw);
+
+    console.log("response", response);
 
 ```

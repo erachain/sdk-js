@@ -5,21 +5,7 @@ import { Documents } from './Documents';
 import { Base58 } from '../../../../crypt/libs/Base58';
 import { AppCrypt } from '../../../../crypt/AppCrypt';
 import { encryptMessage, encrypt32, getPassword } from '../../../../crypt/libs/aesCrypt';
-
-export const TYPE_LINK = {
-  NONE: 0,
-  APPENDIX: 1,
-  REPLY_COMMENT: 2,
-  SURELY: 3
-};
-
-export interface ExLink {
-  type: number; // byte
-  flags: number; // byte
-  value_1: number; // byte
-  value_2: number; // byte
-  link: number; // long
-} 
+import { IExLink } from './ExLink';
 
 export class ExData {
   static RECIPIENTS_LENGTH_SIZE = 3;
@@ -29,7 +15,7 @@ export class ExData {
   private _password32: string | null;
   flags: Int8Array;
   title: string;
-  exLink: ExLink;
+  exLink?: IExLink;
   recipientFlags: Int8Array;
   recipients: Int8Array[];
   secretFlags: Int8Array;
@@ -37,9 +23,9 @@ export class ExData {
   data: Documents;
   publics: Int8Array[];
 
-  constructor(keys: KeyPair, title: string, data: Documents, encrypted: boolean) {
+  constructor(keys: KeyPair, title: string, data: Documents, encrypted: boolean, exLink: IExLink | undefined) {
     this.keys = keys;
-    this.flags = new Int8Array([0, encrypted ? 32 : 0, 0, 0]);
+    this.flags = new Int8Array([0, encrypted ? 32 : (exLink ? -1 : 0), 0, 0]);
     this.title = title;
     this.data = data;
     this.recipientFlags = new Int8Array([0]);
@@ -48,6 +34,7 @@ export class ExData {
     this.secrets = [];
     this.publics = [];
     this.shareKeys = new KeyPair();
+    this.exLink = exLink;
   }
 
   async password32(): Promise<string> {
@@ -75,17 +62,22 @@ export class ExData {
       const l = new Int8Array([0]);
       l[0] = secret.length;
       this.secrets.push(new Int8Array([l[0], ...secret]));
-      console.log("secrets", this.secrets);
+      // console.log("secrets", this.secrets);
     } else {
       const short = await AppCrypt.shortAddress(addressOrPublic);
       this.recipients.push(short);
     }
     this.flags[1] = this.flags[1] | 64;
   }
-
+  
   async selfShortAddress(): Promise<Int8Array> {
     const address = await AppCrypt.getAddressByPublicKey(this.keys.publicKey);
     return await AppCrypt.shortAddress(address);
+  }
+
+  async linkToBytes(link: number, dataWriter: DataWriter): Promise<void> {
+    const bytes = await Bytes.longToByteArray(link);
+    dataWriter.set(bytes);
   }
 
   async toBytes(): Promise<Int8Array> {
@@ -94,6 +86,20 @@ export class ExData {
     data.set(this.flags);
 
     await this.stringToBytes(this.title, data, true);
+
+    if (this.flags[1] < 0) {
+
+      if (!this.exLink) {
+        throw new Error("The 'exLink' parameter not found");
+      }
+
+      data.setNumber(this.exLink.type);
+      data.setNumber(this.exLink.flags);
+      data.setNumber(this.exLink.value_1);
+      data.setNumber(this.exLink.value_2);
+
+      await this.linkToBytes(this.exLink.link, data);
+    }
 
     if ((this.flags[1] & 64) === 64) {
       data.set(this.recipientFlags);

@@ -26,6 +26,7 @@ import { IEraInfo } from '../types/era/IEraInfo';
 import { AppCrypt } from '../crypt/AppCrypt';
 import { ExData } from '../src/core/item/documents/ExData';
 import { tranDocument } from './TranDocument';
+import { tranSign } from './TranSign';
 
 const fetch = require('node-fetch');
 const url = require('url');
@@ -768,6 +769,22 @@ export class API {
     const dataBytes = await exData.toBytes();
 
     return await tranDocument(keyPair, dataBytes, this.rpcPort, genesis_sign);
+  }
+
+
+  /** @description API: Sign other transaction.
+   * @param {KeyPair} keyPair Key pair.
+   * @param {string} seqNo String format - `Height of block-Number in block`.
+   * @return {Promise<string>}
+   */
+  async tranRawSign(
+    keyPair: KeyPair,
+    seqNo: string,
+  ): Promise<ITranRaw> {
+
+    const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
+
+    return await tranSign(keyPair, seqNo, this.rpcPort, genesis_sign);
   }
 
 }

@@ -4,6 +4,7 @@ import { KeyPair } from '../src/core/account/KeyPair';
 import { BigDecimal } from '../src/BigDecimal';
 import { Documents } from '../src/core/item/documents/Documents';
 import { ExData } from '../src/core/item/documents/ExData';
+import { ExLink } from '../src/core/item/documents/ExLink';
 
 export const Type = {
   BigDecimal,
@@ -11,5 +12,6 @@ export const Type = {
   PublicKeyAccount,
   KeyPair,
   Documents,
-  ExData
+  ExData,
+  ExLink
 };

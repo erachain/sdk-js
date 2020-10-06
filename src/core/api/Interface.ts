@@ -7,3 +7,4 @@ export * from '../types/era/IEraPerson';
 export * from '../types/era/IEraPersonData';
 export * from '../types/era/IEraInfo';
 export { ITranRecipient, ITranMessage, ITranRaw } from '../src/core/transaction/TranTypes';
+export { IExLink } from '../src/core/item/documents/ExLink';
