@@ -797,3 +797,93 @@ const { EraChain } = require('erachain-js-api')
     console.log("response", response);
 
 ```
+
+### Create a unique imprint
+
+```javascript
+
+    const keys = {
+        // sender address: 7GtqHorKL6CDZW6T98C8aGFNJXc87xoivZ
+        secretKey: await EraChain.Base58.decode("5a4AabYQ54gdwYq83FNng96BTzzSL6bTxALcRFe9VZboLfzaUToZFnAdMsnNKM13NJZeCMJbykfQbNT9vryyhF4R"),
+        publicKey: await EraChain.Base58.decode("ESx4g78k72URJWW87M4vKbMCqQpChzLfQ5s8gJhsjB7B")
+    };
+
+    const keyPair = new EraChain.Type.KeyPair(keys);
+
+    const names = ["Imprint", "word 1", "word 2"];
+    const description = "My imprint";
+    const icon = EraChain.base64ToArray(icon_base64string);
+    const image = EraChain.base64ToArray(image_base64string);
+
+    api.tranRawImprint(keyPair, name, icon, image, description)
+        .then(result => {
+            /*
+                result: {
+                    raw: string;
+                    size: number;
+                    fee: number;
+                    error?: any;
+                }
+            */
+            if (!result.error) {
+                api.broadcast(result.raw)
+                    .then(data => {
+                        // data = {status: "ok"}
+                        console.log(data);
+                    })
+                    .catch(e => {
+                        console.log(e);
+                    });
+            }
+        })
+        .catch(e => {
+            console.log(e);
+        });
+
+
+```
+
+### Create a template
+
+```javascript
+
+    const keys = {
+        // sender address: 7GtqHorKL6CDZW6T98C8aGFNJXc87xoivZ
+        secretKey: await EraChain.Base58.decode("5a4AabYQ54gdwYq83FNng96BTzzSL6bTxALcRFe9VZboLfzaUToZFnAdMsnNKM13NJZeCMJbykfQbNT9vryyhF4R"),
+        publicKey: await EraChain.Base58.decode("ESx4g78k72URJWW87M4vKbMCqQpChzLfQ5s8gJhsjB7B")
+    };
+
+    const keyPair = new EraChain.Type.KeyPair(keys);
+
+    const name = "Template 1234"; // MIN length 12 symbols
+    const description = "My template";
+    const icon = EraChain.base64ToArray(icon_base64string);
+    const image = EraChain.base64ToArray(image_base64string);
+
+    api.tranRawTemplate(keyPair, name, icon, image, description)
+        .then(result => {
+            /*
+                result: {
+                    raw: string;
+                    size: number;
+                    fee: number;
+                    error?: any;
+                }
+            */
+            if (!result.error) {
+                api.broadcast(result.raw)
+                    .then(data => {
+                        // data = {status: "ok"}
+                        console.log(data);
+                    })
+                    .catch(e => {
+                        console.log(e);
+                    });
+            }
+        })
+        .catch(e => {
+            console.log(e);
+        });
+
+
+```

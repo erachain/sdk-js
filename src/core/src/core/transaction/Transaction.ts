@@ -71,7 +71,7 @@ export abstract class Transaction {
 
   private timestamp: number;
 
-  private reference: number;
+  private reference: number | null;
 
   private port: number;
 
@@ -94,7 +94,7 @@ export abstract class Transaction {
     creator: PrivateKeyAccount,
     feePow: number,
     timestamp: number,
-    reference: number,
+    reference: number | null,
     port: number,
     genesis_sign: Int8Array,
   ) {
@@ -144,7 +144,7 @@ export abstract class Transaction {
 
   async toBytes(withSign: boolean, releaserReference: number | null): Promise<Int8Array> {
     const asPack = releaserReference != null;
-    //console.log("Transaction", { withSign, releaserReference, asPack });
+    // console.log("Transaction", { withSign, releaserReference, asPack });
     const data = new DataWriter();
 
     //WRITE TYPE
@@ -179,7 +179,6 @@ export abstract class Transaction {
       const feePowBytes = new Int8Array([0]);
       feePowBytes[0] = this.feePow;
       data.set(feePowBytes);
-      //console.log("Transaction5", { data });
     }
     //SIGNATURE
     if (withSign) {

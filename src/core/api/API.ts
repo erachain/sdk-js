@@ -27,6 +27,8 @@ import { AppCrypt } from '../crypt/AppCrypt';
 import { ExData } from '../src/core/item/documents/ExData';
 import { tranDocument } from './TranDocument';
 import { tranSign } from './TranSign';
+import { tranImprint } from './TranImprint';
+import { tranTemplate } from './TranTemplate';
 
 const fetch = require('node-fetch');
 const url = require('url');
@@ -787,5 +789,64 @@ export class API {
     return await tranSign(keyPair, seqNo, this.rpcPort, genesis_sign);
   }
 
-}
+/** @description API: Gets raw data for create a unique imprint.
+ * @param {KeyPair} keyPair Key pair.
+ * @param {string} name Imprint name.
+ * @param {Int8Array} icon Icon.
+ * @param {Int8Array} image Image.
+ * @param {string} description Description.
+ * @return {Promise<ITranRaw>}
+ */
+async tranRawImprint(
+  keyPair: KeyPair,
+  names: string[],
+  icon: Int8Array,
+  image: Int8Array,
+  description: string,
+): Promise<ITranRaw> {
 
+    const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
+
+    return await tranImprint(
+      keyPair,
+      names,
+      icon,
+      image,
+      description,
+      this.rpcPort,
+      genesis_sign,
+    );
+
+  }
+
+/** @description API: Gets raw data for create a template.
+ * @param {KeyPair} keyPair Key pair.
+ * @param {string} name Template name.
+ * @param {Int8Array} icon Icon.
+ * @param {Int8Array} image Image.
+ * @param {string} description Description.
+ * @return {Promise<ITranRaw>}
+ */
+async tranRawTemplate(
+  keyPair: KeyPair,
+  name: string,
+  icon: Int8Array,
+  image: Int8Array,
+  description: string,
+): Promise<ITranRaw> {
+
+    const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
+
+    return await tranTemplate(
+      keyPair,
+      name,
+      icon,
+      image,
+      description,
+      this.rpcPort,
+      genesis_sign,
+    );
+
+  }
+  
+}

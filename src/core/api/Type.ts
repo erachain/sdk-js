@@ -5,6 +5,8 @@ import { BigDecimal } from '../src/BigDecimal';
 import { Documents } from '../src/core/item/documents/Documents';
 import { ExData } from '../src/core/item/documents/ExData';
 import { ExLink } from '../src/core/item/documents/ExLink';
+import { Imprint } from '../src/core/item/imprint/Imprint';
+import { Template } from '../src/core/item/template/Template';
 
 export const Type = {
   BigDecimal,
@@ -13,5 +15,7 @@ export const Type = {
   KeyPair,
   Documents,
   ExData,
-  ExLink
+  ExLink,
+  Imprint,
+  Template
 };
