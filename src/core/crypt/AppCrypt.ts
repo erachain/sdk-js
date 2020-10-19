@@ -69,6 +69,33 @@ export class AppCrypt {
     return new Int8Array(hash.read());
   }
 
+  /** @description SHA256 algorithm.
+   * @param {Buffer | string | Int8Array} input Input value.
+   * @return {Promise<Int8Array>}
+   */
+  static sha256big(input: Buffer | Int8Array | string): Int8Array {
+    //console.log({ input });
+    const hash = createHash('SHA256');
+
+    let position = 0;
+    const bufferSize = 1048576;
+    const size = input.length;
+    while (position < size) {
+      
+      const unitsize = size - position >= bufferSize ? bufferSize : size - position;
+      
+      const buffer = input.slice(position, position + unitsize);
+      //console.log({ size, position, unitsize, buffer });
+      hash.update(buffer);
+      position += unitsize;
+    }
+
+    hash.end();
+
+    return new Int8Array(hash.read());
+  }
+
+
   /** @description Create new erachain address.
    * @return {Promise<string>}
    */

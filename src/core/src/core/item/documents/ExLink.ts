@@ -31,8 +31,8 @@ export class ExLink implements IExLink {
         this.memo = memo ? memo : undefined;
         if (this.type === ExLink.TYPE_AUTHOR) {
             this.link = Number(seqNo);
-            if (isNaN(Number(this.link))) {
-                throw new Error('Error format SeqNo');
+            if (isNaN(this.link)) {
+                throw new Error('ID Person not number');
             }
         } else {
             const s = seqNo.split('-');

@@ -11,6 +11,7 @@ export class Crypt {
   static addressBySecretKey = AppCrypt.getAddressBySecretKey;
   static publicKeyBySecretKey = AppCrypt.getPublicKeyBySecretKey;
   static sign = AppCrypt.sign;
+  static sha256 = AppCrypt.sha256big;
   static encrypt32 = crypt.encrypt32;
   static decrypt32 = crypt.decrypt32;
   static decryptMessage = crypt.decryptMessage;

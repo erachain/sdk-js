@@ -683,8 +683,12 @@ const { EraChain } = require('erachain-js-api')
 
     const docs = new EraChain.Type.Documents(ms, msu, tm, tmu, pr, hsu, fu);
 
+    const fileContent: Int8Array | string = "Content of file";
+
+    const hash = await EraChain.Base58.encode(EraChain.Crypt.sha256(fileContent));
+
     // Adding hash and path
-    docs.addHash("C:/Erachains/IMG/TMP/EDS.gif", "FxAtYi5PY48VvakTsfMcZhb36rYorpGoUHwX2T2FBd6V");
+    docs.addHash("C:/Erachains/IMG/TMP/EDS.gif", hash);
 
     /** Example only for node.js (not for browser) **/
     const fileContent = fs.readFileSync("./src/assets/erachain.png");
@@ -702,11 +706,28 @@ const { EraChain } = require('erachain-js-api')
         ExLink.TYPE_REPLY_COMMENT - this is a Reply or Message (Note).
                                     If there are no Recipients - then this is a Comment (COMMENT), otherwise - a response (REPLY)
         ExLink.TYPE_SURELY - Guarantee for other info
+        ExLink.TYPE_SOURCE - Source with weight and note
+        ExLink.TYPE_AUTHOR - Author with weight and note
     */
 
     const exLink = new ExLink(ExLink.TYPE_APPENDIX, "433997-1");
 
-    const exData = new EraChain.Type.ExData(keyPair, "Documents" /* title */, docs, true /* encrypt */, exLink /* default: undefined */);
+    const exData = new EraChain.Type.ExData(keyPair, "Documents" /* title */, docs, true /* encrypt */, exLink /* default: undefined */, /* onlyRecipients: boolean = undefined */);
+
+    // Add author
+    const id = 2; // ID of Person
+    let weight = 10;
+    let note = "Anything";
+    exData.addAuthor(id, weight, note);
+
+    // Add source
+    const seqNo = "433997-1"; // ID of Person
+    weight = 10;
+    note = "Anything";
+    exData.addSource(seqNo, weight, note);
+
+    // Add tags
+    exData.addTags(["Tag1", "Tag2"]);
 
     // Add address if not encrypted transaction
     // await exData.addRecipient("7NTqnGWgzGHDvSD5FHw5AjHqCXg3gZcFTU");

@@ -157,7 +157,7 @@ export class ExData {
 
     if (this.sources) {
       data.setNumber(0); // SOURCES FLAGS
-      await this.authorsLengthToBytes(data);
+      await this.sourcesLengthToBytes(data);
       this.sources.every(async (exLink) => {
         data.setNumber(exLink.type);
         data.setNumber(exLink.flags);
