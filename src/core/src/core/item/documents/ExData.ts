@@ -144,29 +144,35 @@ export class ExData {
     if (this.authors) {
       data.setNumber(0); // AUTHORS FLAGS
       await this.authorsLengthToBytes(data);
-      this.authors.every(async (exLink) => {
+      // tslint:disable-next-line: prefer-for-of
+      for (let i = 0; i < this.authors.length; i += 1) {
+        const exLink = this.authors[i];
         data.setNumber(exLink.type);
         data.setNumber(exLink.flags);
-        const weight = await Bytes.intToByteArray2((exLink.value_1));
+        const weight = await Bytes.intToByteArray2(exLink.value_1);
         data.set(weight);
+        await this.linkToBytes(exLink.link, data);
         const memo = await Bytes.stringToByteArray(exLink.memo!);
         data.setNumber(memo.length);
         data.set(memo);
-      });
+      }
     }
 
     if (this.sources) {
       data.setNumber(0); // SOURCES FLAGS
       await this.sourcesLengthToBytes(data);
-      this.sources.every(async (exLink) => {
+      // tslint:disable-next-line: prefer-for-of
+      for (let i = 0; i < this.sources.length; i += 1) {
+        const exLink = this.sources[i];
         data.setNumber(exLink.type);
         data.setNumber(exLink.flags);
-        const weight = await Bytes.intToByteArray2((exLink.value_1));
+        const weight = await Bytes.intToByteArray2(exLink.value_1);
         data.set(weight);
+        await this.linkToBytes(exLink.link, data);
         const memo = await Bytes.stringToByteArray(exLink.memo!);
         data.setNumber(memo.length);
         data.set(memo);
-      });
+      }
     }
 
     if (this.tags) {

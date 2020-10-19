@@ -12,9 +12,9 @@ export class ExLink implements IExLink {
     public static TYPE_NONE = 0;
     public static TYPE_APPENDIX = 1;
     public static TYPE_REPLY_COMMENT = 2;
-    public static TYPE_SURELY = 3;
-    public static TYPE_SOURCE = 4;
-    public static TYPE_AUTHOR = 5;
+    public static TYPE_SURELY = 5;
+    public static TYPE_SOURCE = 6;
+    public static TYPE_AUTHOR = 7;
 
     type: number; // byte
     flags: number; // byte
