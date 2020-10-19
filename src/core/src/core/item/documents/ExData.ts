@@ -5,7 +5,7 @@ import { Documents } from './Documents';
 import { Base58 } from '../../../../crypt/libs/Base58';
 import { AppCrypt } from '../../../../crypt/AppCrypt';
 import { encryptMessage, encrypt32, getPassword } from '../../../../crypt/libs/aesCrypt';
-import { IExLink } from './ExLink';
+import { ExLink, IExLink } from './ExLink';
 
 export class ExData {
   static RECIPIENTS_LENGTH_SIZE = 3;
@@ -22,13 +22,16 @@ export class ExData {
   secrets: Int8Array[];
   data: Documents;
   publics: Int8Array[];
+  authors?: IExLink[];
+  sources?: IExLink[];
+  tags?: string[];
 
-  constructor(keys: KeyPair, title: string, data: Documents, encrypted: boolean, exLink: IExLink | undefined) {
+  constructor(keys: KeyPair, title: string, data: Documents, encrypted: boolean, exLink: IExLink | undefined, onlyRecipients: boolean | undefined = false) {
     this.keys = keys;
     this.flags = new Int8Array([0, encrypted ? 32 : (exLink ? -1 : 0), 0, 0]);
     this.title = title;
     this.data = data;
-    this.recipientFlags = new Int8Array([0]);
+    this.recipientFlags = onlyRecipients ? new Int8Array([1]) : new Int8Array([0]);
     this.recipients = [];
     this.secretFlags = new Int8Array([0]);
     this.secrets = [];
@@ -68,6 +71,35 @@ export class ExData {
       this.recipients.push(short);
     }
     this.flags[1] = this.flags[1] | 64;
+  }
+
+  addAuthor(id: number, weight: number, desc: string): void {
+    if (weight < 0 || weight > 1000) {
+      throw new Error("The weight must be in the range from 0 to 1000");
+    }
+    const exLink = new ExLink(ExLink.TYPE_AUTHOR, id.toString(), 0, weight, 0, desc);
+    if (!this.authors) {
+      this.authors = [];
+    }
+    this.authors.push(exLink);
+    this.flags[1] = this.flags[1] | 16;
+  }
+
+  addSource(seqNo: string, weight: number, desc: string): void {
+    if (weight < 0 || weight > 1000) {
+      throw new Error("The weight must be in the range from 0 to 1000");
+    }
+    const exLink = new ExLink(ExLink.TYPE_SOURCE, seqNo, 0, weight, 0, desc);
+    if (!this.sources) {
+      this.sources = [];
+    }
+    this.sources.push(exLink);
+    this.flags[1] = this.flags[1] | 8;
+  }
+
+  addTags(tags: string[]): void {
+    this.tags = tags;
+    this.flags[1] = this.flags[1] | 4;
   }
   
   async selfShortAddress(): Promise<Int8Array> {
@@ -109,6 +141,40 @@ export class ExData {
       this.recipients.forEach(bytes => data.set(bytes));
     }
 
+    if (this.authors) {
+      data.setNumber(0); // AUTHORS FLAGS
+      await this.authorsLengthToBytes(data);
+      this.authors.every(async (exLink) => {
+        data.setNumber(exLink.type);
+        data.setNumber(exLink.flags);
+        const weight = await Bytes.intToByteArray2((exLink.value_1));
+        data.set(weight);
+        const memo = await Bytes.stringToByteArray(exLink.memo!);
+        data.setNumber(memo.length);
+        data.set(memo);
+      });
+    }
+
+    if (this.sources) {
+      data.setNumber(0); // SOURCES FLAGS
+      await this.authorsLengthToBytes(data);
+      this.sources.every(async (exLink) => {
+        data.setNumber(exLink.type);
+        data.setNumber(exLink.flags);
+        const weight = await Bytes.intToByteArray2((exLink.value_1));
+        data.set(weight);
+        const memo = await Bytes.stringToByteArray(exLink.memo!);
+        data.setNumber(memo.length);
+        data.set(memo);
+      });
+    }
+
+    if (this.tags) {
+      const tags = await Bytes.stringToByteArray(this.tags.join(","));
+      data.setNumber(tags.length);
+      data.set(tags);
+    }
+
     if ((this.flags[1] & 32) === 32) {
       data.set(this.secretFlags);
       this.secrets.forEach(bytes => data.set(bytes));
@@ -133,9 +199,16 @@ export class ExData {
 
   async recipientsLengthToBytes(dataWriter: DataWriter): Promise<void> {
     const lengthBytes = await Bytes.intToByteArray3(this.recipients.length);
-    console.log("stringToBytes", {
-      recipientsLength: lengthBytes,
-    });
+    dataWriter.set(lengthBytes);
+  }
+
+  async authorsLengthToBytes(dataWriter: DataWriter): Promise<void> {
+    const lengthBytes = await Bytes.intToByteArray3(this.authors!.length);
+    dataWriter.set(lengthBytes);
+  }
+
+  async sourcesLengthToBytes(dataWriter: DataWriter): Promise<void> {
+    const lengthBytes = await Bytes.intToByteArray3(this.sources!.length);
     dataWriter.set(lengthBytes);
   }
 
