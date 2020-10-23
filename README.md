@@ -774,14 +774,24 @@ const { EraChain } = require('erachain-js-api')
                 const idx = recipients.indexOf(address);
                 if (idx >= 0) {
                     const encryptedSecret = transaction.exData.secrets[idx];
-                    const secret = await EraChain.Crypt.decryptMessage(encryptedSecret, creatorPublicKey, keys.secretKey);
+                    const sharedKey = await EraChain.Crypt.passwordAES(creatorPublicKey, keys.secretKey);
 
-                    const data64 = transaction.exData.encryptedData64;
-                    const decoded = EraChain.base64ToArray(data64);
-                    const encryptedData = await EraChain.Base58.encode(decoded);
-                    const decryptedData = await EraChain.Crypt.decrypt32(encryptedData, secret);
+                    const secret = await EraChain.Crypt.decryptAES(encryptedSecret, sharedKey);
+                    if (!secret) {
+                        throw new Error("Error decrypt secret");
+                    }
 
-                    const doc = await EraChain.Type.Documents.parse(decryptedData);
+                    const decodedData = EraChain.base64ToArray(data.exData.encryptedData64);
+
+                    const decryptedData = await EraChain.Crypt.decryptAES(decodedData, secret);
+                    if (!secret) {
+                        throw new Error("Error decrypt data");
+                    }
+
+                    const s = await EraChain.Crypt.wordsToBase58(decryptedData)
+
+                    const doc = await EraChain.Type.Documents.parse(s);
+
                     console.log(doc.json());
                     // doc.json().F - array of meta file
                     // {

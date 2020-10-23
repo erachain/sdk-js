@@ -124,31 +124,41 @@ describe('Template', () => {
     expect(template.name).toEqual('Template 1234');
   });
 
-  it('Template.parse', async () => {
-    const bytes = await template.toBytes(false, false);
-    const i = await Template.parse(await Base58.encode(bytes));
-
-    expect(i.name).toEqual('Template 1234');
-    expect(i.icon).toEqual(new Int8Array(0));
-    expect(i.image).toEqual(new Int8Array(0));
-    expect(i.description).toEqual('My template');
+  it('Template.parse', () => {
+    return template.toBytes(false, false)
+      .then((bytes: any) => {
+        return Base58.encode(bytes)
+          .then((b: any) => {
+            return Template.parse(b)
+              .then((i: any) => {
+                expect(i.name).toEqual('Template 1234');
+                expect(i.icon).toEqual(new Int8Array(0));
+                expect(i.image).toEqual(new Int8Array(0));
+                expect(i.description).toEqual('My template');
+              });
+          });
+      })
+      .catch(() => { expect(true).toBe(false); });
   });
 
-  it('Imprint.raw', async () => {
+  it('Imprint.raw', () => {
     const timestamp = 1594864181831;
 
-    const r = await testTranRawTemplate(
+    return testTranRawTemplate(
       keyPair, 
       timestamp,
       name,
       icon,
       image,
       description
-    );
-
-    expect(r.raw).toEqual(
-      '6UtCmTdALNtrgSs9DmwPSZSdYf6Woj7bLPKTNgHw1mb8KK5hsMUdW3yPfqrv876Hsavf6j9E4ZWRnCrX6j4DHqmY217ezhHzk2MjA9jrPLwnwYYTgPCBKz1Jmkm9Rss3QvndGx9hMvh2jSZ6RBa2iRx78eT5DpNWWAbZxGppTxiMvXYajszmqPdnxnkRGiJWan26Ak8Jfv4SW6pCP5a9GbFchvU319nwiLsd2KsgTCSMHhWrtjSKYZ9FXYd1aU',
-    );
+    )
+      .then((r: any) => {
+        expect(r.raw).toEqual(
+          '6UtCmTdALNtrgSs9DmwPSZSdYf6Woj7bLPKTNgHw1mb8KK5hsMUdW3yPfqrv876Hsavf6j9E4ZWRnCrX6j4DHqmY217ezhHzk2MjA9jrPLwnwYYTgPCBKz1Jmkm9Rss3QvndGx9hMvh2jSZ6RBa2iRx78eT5DpNWWAbZxGppTxiMvXYajszmqPdnxnkRGiJWan26Ak8Jfv4SW6pCP5a9GbFchvU319nwiLsd2KsgTCSMHhWrtjSKYZ9FXYd1aU',
+        );
+      }) 
+      .catch(() => { expect(true).toBe(false); });
+    
   });
 
 });

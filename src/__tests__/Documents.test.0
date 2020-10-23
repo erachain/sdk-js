@@ -1,0 +1,194 @@
+const { EraChain } = require('erachain-js-api');
+const { KeyPair, Documents, ExData, ExLink } = EraChain.Type;
+const fs = require('fs');
+
+const crypt = require('../core/crypt/libs/aesCrypt');
+
+describe('Documents', () => {
+
+  const keys = {
+    secretKey: new Int8Array([
+      71,
+      24,
+      85,
+      -57,
+      50,
+      -54,
+      -29,
+      -5,
+      1,
+      -105,
+      106,
+      46,
+      69,
+      58,
+      -21,
+      -126,
+      -73,
+      -23,
+      47,
+      -80,
+      -27,
+      -74,
+      101,
+      2,
+      107,
+      41,
+      -65,
+      66,
+      -112,
+      -27,
+      28,
+      123,
+      40,
+      -109,
+      113,
+      49,
+      -34,
+      113,
+      -31,
+      21,
+      -112,
+      51,
+      112,
+      -21,
+      111,
+      -117,
+      -63,
+      -126,
+      -115,
+      29,
+      -39,
+      39,
+      109,
+      93,
+      21,
+      77,
+      38,
+      50,
+      75,
+      56,
+      112,
+      -107,
+      -83,
+      -4,
+    ]),
+    publicKey: new Int8Array([
+      40,
+      -109,
+      113,
+      49,
+      -34,
+      113,
+      -31,
+      21,
+      -112,
+      51,
+      112,
+      -21,
+      111,
+      -117,
+      -63,
+      -126,
+      -115,
+      29,
+      -39,
+      39,
+      109,
+      93,
+      21,
+      77,
+      38,
+      50,
+      75,
+      56,
+      112,
+      -107,
+      -83,
+      -4,
+    ]),
+  };
+  /*
+  it('Documents.parse', () => {
+  
+    const keyPair = new EraChain.Type.KeyPair(keys);
+
+    const ms = "Уникальный текст 10001";
+    const msu = true;
+    const tm = 4;
+    const tmu = true;
+    const hsu = true;
+    const pr = { "param.1": "Уникальный" };
+    const fu = true;
+    
+    const docs = new Documents(ms, msu, tm, tmu, pr, hsu, fu);
+
+  
+  
+    //console.log("Documents: ", forPrint(await docs.toBytes()));
+
+    // синхронное чтение
+    const fileContent = fs.readFileSync("./src/__tests__/assets/erachain.png");
+    docs.addFile("erachain.png", false, new Int8Array(fileContent.buffer));
+
+    //const hashFile = await EraChain.Base58.encode(EraChain.Crypt.sha256(fileContent.buffer));
+
+    //const hash = docs.addHash("C:/Erachains/IMG/TMP/EDS.gif", hashFile);
+
+    //const fileContent2 = fs.readFileSync("./src/assets/document3.pdf");
+    //docs.addFile("document2.pdf", false, new Int8Array(fileContent2.buffer));
+
+    //const fileContent3 = fs.readFileSync("./src/assets/document3.pdf");
+    //docs.addFile("document3.pdf", false, new Int8Array(fileContent3.buffer));
+
+    //const exLink = new ExLink(EraChain.Type.ExLink.TYPE_APPENDIX, "433997-1")
+
+    const exData = new ExData(keyPair, "Документы", docs, true);
+
+
+    return exData.addRecipient("HuuDEwczAdckBc7vspVswYbhgoo5zTsVtSPC4wkHrETY")
+      .then(() => { 
+        return exData.toBytes()
+          .then((bytes: any) => {
+            console.log(bytes);
+            expect(true).toBe(true);
+          });
+      })
+      .catch(() => { expect(true).toBe(false); });
+    
+  });
+
+  */
+
+  it('Documents.parse2', () => {
+
+    const encryptedSecret = 'GYm6AX625RsCxaPWX3A7qkmP1RG73mSrdRyPMMPSbBBVFuMAV98VhXbogAz9TaN9Mj';
+    const encryptedData64 = "AYSQr9KGIudI4NORtNr9UbOQVBOe1aMbQyrwWDTOWfLKnyXv7FliWhic4WaUCMpD4tb6R+Lm19wA6qEJrNXgBdahLxDml87rPNto7K3nEamtba5pzM/W9g6IlrJKsO6fzdYQqePYV+aIJjcUK6Hp/dKXvD/lr1e/K+mNRSURNt5h9k3p4cBRxz1AgSKiqc1l5YQceucKRhfOXz1wsteH9y+Ejh3xXx4V8g/viukJlr47ijQvZerV4nZWOzvYr4oGplxpJiPbwTXsBzaZOzMkJQE=";
+    const creatorPublicKey = "gx2qCpJDbpurpSLotYZokfzi5VpUAbj6AhVbarkgLbX";
+
+    return EraChain.Crypt.passwordAES(creatorPublicKey, keys.secretKey)
+      .then((sharedKey: any) => {
+        return EraChain.Crypt.decryptAES(encryptedSecret, sharedKey)
+          .then((secret:any) => {
+            if (!secret) {
+              throw new Error("Error decrypt secret");
+            }
+            const decoded = EraChain.base64ToArray(encryptedData64);
+            return EraChain.Crypt.decryptAES(decoded, secret)
+              .then((decryptedData: any) => {
+                return EraChain.Crypt.wordsToBase58(decryptedData)
+                  .then((s: any) => {
+                    return EraChain.Type.Documents.parse(s)
+                      .then((doc: any) => {
+                        console.log(doc.json());
+                        expect(true).toBe(false);
+                      })
+                  })
+              })
+          })
+      })
+      .catch((e: Error) => { console.log(e); expect(true).toBe(false); });
+
+  })
+      
+});

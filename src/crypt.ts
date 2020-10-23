@@ -12,8 +12,15 @@ export class Crypt {
   static publicKeyBySecretKey = AppCrypt.getPublicKeyBySecretKey;
   static sign = AppCrypt.sign;
   static sha256 = AppCrypt.sha256big;
-  static encrypt32 = crypt.encrypt32;
-  static decrypt32 = crypt.decrypt32;
   static decryptMessage = crypt.decryptMessage;
   static encryptMessage = crypt.encryptMessage;
+  static decryptAES = crypt.decryptAES;
+  static encryptAES = crypt.encryptAES;
+  static encryptBytes = crypt.encryptBytes;
+  static passwordAES = crypt.passwordAES;
+  static wordsToBase58 = crypt.wordsToBase58;
+  static wordsToUtf8 = crypt.wordsToUtf8;
+  static wordsToBytes = crypt.wordsToBytes;
+  static bytesToWords = crypt.bytesToWords;
+
 }

@@ -125,31 +125,42 @@ describe('Imprint', () => {
     expect(imprint.name).toEqual('Imprint');
   });
 
-  it('Imprint.parse', async () => {
-    const bytes = await imprint.toBytes(false, false);
-    const i = await Imprint.parse(await Base58.encode(bytes));
-
-    expect(i.name).toEqual('Imprint');
-    expect(i.icon).toEqual(new Int8Array(0));
-    expect(i.image).toEqual(new Int8Array(0));
-    expect(i.description).toEqual('My imprint');
+  it('Imprint.parse', () => {
+    return imprint.toBytes(false, false)
+      .then((bytes: any) => {
+        return Base58.encode(bytes)
+          .then((s: any) => {
+            return Imprint.parse(s)
+              .then((i: any) => {
+                expect(i.name).toEqual('Imprint');
+                expect(i.icon).toEqual(new Int8Array(0));
+                expect(i.image).toEqual(new Int8Array(0));
+                expect(i.description).toEqual('My imprint');
+              });
+          })
+      })
+      .catch(() => { expect(true).toBe(false); });
   });
 
-  it('Imprint.raw', async () => {
+  it('Imprint.raw', () => {
     const timestamp = 1594864181831;
 
-    const r = await testTranRawImprint(
+    return testTranRawImprint(
       keyPair, 
       timestamp,
       ["1", "2", "3"],
       icon,
       image,
       description
-    );
+    )
+      .then((r: any) => {
+        expect(r.raw).toEqual(
+          'xfZihDF6b5EzzDDRLUDxUkAZZFPaU54vYgzNAHW4jdEsTaMvXA9fXCrrLzKMRTwQzxaBJMHQ6P1yGAUmiWBBthpA1bjdo67vK6CPdNWFmdADiSGgTxDeKR7xhwtrgmtkLzu4qn9ytaeG1UFp69E3xo52X4jyPSKjwh6SExvPEmJLatDjZRLXPugjNfcb5Uv9BsdrWwsS1j55mfTBMj4QM7YeJMqG47a6zh27JntSPBfcQovAh77N19oU27eR6CLsW43ZTLderGgH8GDemBNVym',
+        );
+      })
+      .catch(() => { expect(true).toBe(false); });
 
-    expect(r.raw).toEqual(
-      'xfZihDF6b5EzzDDRLUDxUkAZZFPaU54vYgzNAHW4jdEsTaMvXA9fXCrrLzKMRTwQzxaBJMHQ6P1yGAUmiWBBthpA1bjdo67vK6CPdNWFmdADiSGgTxDeKR7xhwtrgmtkLzu4qn9ytaeG1UFp69E3xo52X4jyPSKjwh6SExvPEmJLatDjZRLXPugjNfcb5Uv9BsdrWwsS1j55mfTBMj4QM7YeJMqG47a6zh27JntSPBfcQovAh77N19oU27eR6CLsW43ZTLderGgH8GDemBNVym',
-    );
+    
   });
 
 });

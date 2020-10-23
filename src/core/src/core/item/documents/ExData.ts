@@ -4,7 +4,7 @@ import { DataWriter } from '../../DataWriter';
 import { Documents } from './Documents';
 import { Base58 } from '../../../../crypt/libs/Base58';
 import { AppCrypt } from '../../../../crypt/AppCrypt';
-import { encryptMessage, encrypt32, getPassword } from '../../../../crypt/libs/aesCrypt';
+import { encryptBytes, getPassword, passwordAES, bytesToWords } from '../../../../crypt/libs/aesCrypt';
 import { ExLink, IExLink } from './ExLink';
 
 export class ExData {
@@ -12,7 +12,7 @@ export class ExData {
 
   keys: KeyPair;
   shareKeys: KeyPair;
-  private _password32: string | null;
+  private _password32: Int8Array | null;
   flags: Int8Array;
   title: string;
   exLink?: IExLink;
@@ -31,7 +31,7 @@ export class ExData {
     this.flags = new Int8Array([0, encrypted ? 32 : (exLink ? -1 : 0), 0, 0]);
     this.title = title;
     this.data = data;
-    this.recipientFlags = onlyRecipients ? new Int8Array([1]) : new Int8Array([0]);
+    this.recipientFlags = onlyRecipients ? new Int8Array([-128]) : new Int8Array([0]);
     this.recipients = [];
     this.secretFlags = new Int8Array([0]);
     this.secrets = [];
@@ -40,10 +40,9 @@ export class ExData {
     this.exLink = exLink;
   }
 
-  async password32(): Promise<string> {
+  async password32(): Promise<Int8Array> {
     if (!this._password32) {
-      const pwd = await getPassword(this.shareKeys.publicKey, this.shareKeys.secretKey);
-      this._password32 = await Base58.encode(new Int8Array(pwd));
+      this._password32 = new Int8Array(await getPassword(this.shareKeys.publicKey, this.shareKeys.secretKey));
     }
 
     return this._password32;
@@ -52,23 +51,31 @@ export class ExData {
   async addRecipient(recipient: Int8Array | string): Promise<void> {
     const addressOrPublic = typeof recipient === 'string' ? await Base58.decode(recipient) : recipient;
     const length = addressOrPublic.length;
-    if ((this.flags[1] & 32) === 32 && length !== 32) {
-      throw new Error('Not public key');
-    }
-    if (length === 32) {
+    if ((this.flags[1] & 32) === 32) {
+
+      if (length !== 32) {
+        throw new Error('Not public key');
+      }
+
       this.publics.push(addressOrPublic);
       const address = await AppCrypt.getAddressByPublicKey(addressOrPublic);
       const short = await AppCrypt.shortAddress(address);
       this.recipients.push(short);
-      const stringShare = await this.password32();
-      const secret = await encryptMessage(stringShare, addressOrPublic, this.keys.secretKey);
+      const secret = await this.password32();
+      const sharedKey = await passwordAES(addressOrPublic, this.keys.secretKey);
+      const encryptedSecret = await encryptBytes(secret, sharedKey);
+
       const l = new Int8Array([0]);
-      l[0] = secret.length;
-      this.secrets.push(new Int8Array([l[0], ...secret]));
+      l[0] = encryptedSecret.length;
+      this.secrets.push(new Int8Array([l[0], ...encryptedSecret]));
+      
       // console.log("secrets", this.secrets);
+
     } else {
+
       const short = await AppCrypt.shortAddress(addressOrPublic);
       this.recipients.push(short);
+
     }
     this.flags[1] = this.flags[1] | 64;
   }
@@ -138,7 +145,11 @@ export class ExData {
 
       await this.recipientsLengthToBytes(data);
   
-      this.recipients.forEach(bytes => data.set(bytes));
+      // tslint:disable-next-line: prefer-for-of
+      for (let i = 0; i < this.recipients.length; i += 1) {
+        const recipient = this.recipients[i];
+        data.set(recipient);
+      }
     }
 
     if (this.authors) {
@@ -183,19 +194,27 @@ export class ExData {
 
     if ((this.flags[1] & 32) === 32) {
       data.set(this.secretFlags);
-      this.secrets.forEach(bytes => data.set(bytes));
-      const l = new Int8Array([0]);
-      l[0] = this.keys.publicKey.length;
 
-      data.set(new Int8Array([l[0], ...this.keys.publicKey]));
+      // tslint:disable-next-line: prefer-for-of
+      for (let i = 0; i < this.secrets.length; i += 1) {
+        const bytes = this.secrets[i];
+        data.set(bytes);
+      }
+      const secret = await this.password32();
+      const sharedKey = await passwordAES(this.keys.publicKey, this.keys.secretKey);
+      const encryptedSecret = await encryptBytes(secret, sharedKey);
+
+      const l = new Int8Array([0]);
+      l[0] = encryptedSecret.length;
+      data.set(new Int8Array([l[0], ...encryptedSecret]));
     }    
 
     let bytesData = await this.data.toBytes();
 
     if ((this.flags[1] & 32) === 32) {
-      const stringData = await Base58.encode(bytesData);
-      const secret32 = await this.password32();
-      bytesData = await encrypt32(stringData, secret32);
+      const secret = await this.password32();
+      const sharedKey = bytesToWords(secret);
+      bytesData = await encryptBytes(bytesData, sharedKey);
     }
 
     data.set(bytesData);

@@ -96,7 +96,11 @@ export class Documents {
     await this.lengthToBytes(jsonBytes.length, data);
     data.set(jsonBytes);
 
-    this.files.forEach(bytes => data.set(bytes));
+    // tslint:disable-next-line: prefer-for-of
+    for (let i = 0; i < this.files.length; i += 1) {
+      const bytes = this.files[i];
+      data.set(bytes); 
+    }
 
     return data.data;
   }
@@ -121,23 +125,27 @@ export class Documents {
     // READ JSON
     const jsonBytes = data.slice(position, position + length);
     const stringJson = await Bytes.stringFromByteArray(jsonBytes);
-    // console.log("Documents.parse.json", stringJson);
+    console.log({ stringJson });
     const json = JSON.parse(stringJson);
 
     position += length;
 
     const { MS, MSU, TM, TMU, PR, HSU, FU } = json;
     const documents = new Documents(MS, MSU, TM, TMU, PR, HSU, FU);
-    documents.hs = json.HS;
-    documents.f = json.F;
+    if (json.HS) {
+      documents.hs = json.HS;
+    }
   
-    Object.values(json.F).forEach((meta: any) => {
-      // READ FILE
-      const bytes = data.slice(position, position + meta.SZ);
-      documents.files.push(bytes);
-      position += meta.SZ;
-      // console.log("Documents.parse.file", meta);
-    });
+    if (json.F) {
+      documents.f = json.F;
+      Object.values(json.F).forEach((meta: any) => {
+        // READ FILE
+        const bytes = data.slice(position, position + meta.SZ);
+        documents.files.push(bytes);
+        position += meta.SZ;
+        // console.log("Documents.parse.file", meta);
+      });
+    }
 
     return documents;
   }
