@@ -1,16 +1,37 @@
-export const wordsToByteArray = wordArray => {
-  if (wordArray.hasOwnProperty('sigBytes') && wordArray.hasOwnProperty('words')) {
-    wordArray = wordArray.words;
-  }
-  const byteArray = [];
-  for (let i = 0; i < wordArray.length; ++i) {
-    const word = wordArray[i];
-    for (let j = 3; j >= 0; --j) {
-      byteArray.push((word >> (8 * j)) & 0xff);
-    }
-  }
-  return byteArray;
-};
+function wordToByteArray(word, length) {
+	var ba = [],
+		i,
+		xFF = 0xFF;
+	if (length > 0)
+		ba.push(word >>> 24);
+	if (length > 1)
+		ba.push((word >>> 16) & xFF);
+	if (length > 2)
+		ba.push((word >>> 8) & xFF);
+	if (length > 3)
+		ba.push(word & xFF);
+
+	return ba;
+}
+
+export function wordsToByteArray(wordArray, length) {
+	if (wordArray.hasOwnProperty("sigBytes") && wordArray.hasOwnProperty("words")) {
+		length = wordArray.sigBytes;
+		wordArray = wordArray.words;
+	}
+
+	var result = [],
+		bytes,
+		i = 0;
+	while (length > 0) {
+		bytes = wordToByteArray(wordArray[i], Math.min(4, length));
+		length -= bytes.length;
+		result.push(bytes);
+		i++;
+	}
+	return [].concat.apply([], result);
+}
+
 
 export const prepareAfterDecrypt = byteArray => {
   for (let i = byteArray.length - 1; i >= 0; i--) {

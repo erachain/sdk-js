@@ -63,6 +63,7 @@ export class ExData {
       this.recipients.push(short);
       const secret = await this.password32();
       const sharedKey = await passwordAES(addressOrPublic, this.keys.secretKey);
+
       const encryptedSecret = await encryptBytes(secret, sharedKey);
 
       const l = new Int8Array([0]);
@@ -214,7 +215,7 @@ export class ExData {
     if ((this.flags[1] & 32) === 32) {
       const secret = await this.password32();
       const sharedKey = bytesToWords(secret);
-      bytesData = await encryptBytes(bytesData, sharedKey);
+      bytesData = await encryptBytes(bytesData, sharedKey, false);
     }
 
     data.set(bytesData);

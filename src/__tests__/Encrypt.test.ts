@@ -44,6 +44,7 @@ describe('Encrypt', () => {
                   .then((str: string) => {
                     return crypt.decryptAES(str, password)
                       .then((decrypted: any) => {
+                        //console.log({ decrypted: crypt.wordsToUtf8(decrypted) });
                         const output = JSON.parse(crypt.wordsToUtf8(decrypted));
                         console.log({ input: s, output });
                         expect(output.key).toEqual(99);

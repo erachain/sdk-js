@@ -777,16 +777,10 @@ const { EraChain } = require('erachain-js-api')
                     const sharedKey = await EraChain.Crypt.passwordAES(creatorPublicKey, keys.secretKey);
 
                     const secret = await EraChain.Crypt.decryptAES(encryptedSecret, sharedKey);
-                    if (!secret) {
-                        throw new Error("Error decrypt secret");
-                    }
 
                     const decodedData = EraChain.base64ToArray(data.exData.encryptedData64);
 
-                    const decryptedData = await EraChain.Crypt.decryptAES(decodedData, secret);
-                    if (!secret) {
-                        throw new Error("Error decrypt data");
-                    }
+                    const decryptedData = await EraChain.Crypt.decryptAES(decodedData, secret, false);
 
                     const s = await EraChain.Crypt.wordsToBase58(decryptedData)
 
