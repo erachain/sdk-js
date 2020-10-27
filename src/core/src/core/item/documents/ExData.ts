@@ -28,7 +28,7 @@ export class ExData {
 
   constructor(keys: KeyPair, title: string, data: Documents, encrypted: boolean, exLink: IExLink | undefined, onlyRecipients: boolean | undefined = false) {
     this.keys = keys;
-    this.flags = new Int8Array([0, encrypted ? 32 : (exLink ? -1 : 0), 0, 0]);
+    this.flags = new Int8Array([3, encrypted ? 32 : (exLink ? -1 : 0), 0, 0]);
     this.title = title;
     this.data = data;
     this.recipientFlags = onlyRecipients ? new Int8Array([-128]) : new Int8Array([0]);
