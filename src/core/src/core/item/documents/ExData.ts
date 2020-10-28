@@ -51,11 +51,12 @@ export class ExData {
   async addRecipient(recipient: Int8Array | string): Promise<void> {
     const addressOrPublic = typeof recipient === 'string' ? await Base58.decode(recipient) : recipient;
     const length = addressOrPublic.length;
-    if ((this.flags[1] & 32) === 32) {
 
-      if (length !== 32) {
-        throw new Error('Not public key');
-      }
+    if ((this.flags[1] & 32) === 32 && length !== 32) {
+      throw new Error('Not public key');
+    }
+
+    if (length === 32) {
 
       this.publics.push(addressOrPublic);
       const address = await AppCrypt.getAddressByPublicKey(addressOrPublic);
