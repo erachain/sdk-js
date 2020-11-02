@@ -33,6 +33,12 @@ import { tranTemplate } from './TranTemplate';
 const fetch = require('node-fetch');
 const url = require('url');
 
+enum ChainMode {
+  DEFAULT = "DEFAULT",
+  SIDE = "SIDE",
+  CLONE = "CLONE",
+}
+
 enum TypeTransaction {
   SEND = 31,
   ORDER = 50,
@@ -54,6 +60,7 @@ export interface IAsset {
 
 export class API {
   static TYPE_TRANSACTION: TypeTransaction;
+  static CHAIN_MODE: ChainMode = ChainMode.DEFAULT; 
 
   private request: FetchRequest;
   private rpcPort: number;
@@ -65,10 +72,33 @@ export class API {
     this.rpcPort = rpcPort;
     this.genesis_sign = new Int8Array([]);
     this.url = url.parse(baseUrl);
+    this.setMode();
+  }
+
+  private setMode(): void {
+    API.CHAIN_MODE = ChainMode.DEFAULT;
+    const part = Math.trunc(this.rpcPort / 10);
+    if (part === 905) {
+      API.CHAIN_MODE = ChainMode.SIDE;
+    } else if (part === 909) {
+      API.CHAIN_MODE = ChainMode.CLONE;
+    }
+  }
+
+  set mode(mode: ChainMode) {
+    if (mode === ChainMode.DEFAULT || mode === ChainMode.SIDE || mode === ChainMode.CLONE) {
+      API.CHAIN_MODE = mode;
+    } else {
+      throw new Error(`Invalid mode. Expected either: ${ChainMode.DEFAULT}, ${ChainMode.SIDE}, ${ChainMode.CLONE}`);
+    }
+  }
+
+  get mode(): ChainMode {
+    return API.CHAIN_MODE;
   }
 
   get sidechainMode(): boolean {
-    return Math.trunc(this.rpcPort / 10) === 905;
+    return API.CHAIN_MODE !== ChainMode.DEFAULT;
   }
 
   async genesisSignature(): Promise<Int8Array> {
@@ -81,7 +111,7 @@ export class API {
       this.genesis_sign = await Base58.decode(sign);
     } catch (e) {
       this.genesis_sign = new Int8Array([]);
-      console.log(e);
+      throw new Error(`Genesis signature retrieval error: ${e.message}`);
     }
     return this.genesis_sign;
   }
