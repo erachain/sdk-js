@@ -125,15 +125,21 @@ const { EraChain } = require('erachain-js-api')
 
 ```javascript
 
-    const url = "http://domain.com:9067/api"; // 9067 - TestNET, 9047 - MainNET, 905X - Sidechain
-    const rpcPort = 9066; // 9066 - TestNET, 9046 - MainNET, 905X - Sidechain
+    const url = "http://domain.com:9067/api"; // 9067 - TestNET, 9047 - MainNET, 905X - Sidechain, 909X - Clone mode
+    const rpcPort = 9066; // 9066 - TestNET, 9046 - MainNET, 905X - Sidechain, 909X - Clone mode
 
     const api = new EraChain.API(url, rpcPort);
 
-    // Sidechain mode: boolean
+    // Sidechain | Clone mode: boolean
     if (api.sidechainMode) {
         console.log("Sidechain mode")
     }
+
+    // Chain mode property
+    api.mode
+
+    // Forced  assignment
+    api.mode = "DEFAULT"; // "SIDE" - sidechain, "CLONE" - clone mode
 
 ```
 
