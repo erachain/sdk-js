@@ -23,7 +23,8 @@ export const tranPerson = async (
     const raw = await Base58.encode(await tx.toBytes(true, null));
     let size = await tx.getDataLength(false);
 
-    const fee = (size * 100.0) / Math.pow(10, 8);
+    // 2 times less than usual
+    const fee = (size * 100.0) / (Math.pow(10, 8) * 2) ;
     size = size;
 
     return {
@@ -58,7 +59,8 @@ export const testTranPerson = async (
     const raw = await Base58.encode(await tx.toBytes(true, null));
     let size = await tx.getDataLength(false);
 
-    const fee = (size * 100.0) / Math.pow(10, 8);
+    // 2 times less than usual
+    const fee = (size * 100.0) / (Math.pow(10, 8) * 2);
     size = size;
 
     return {

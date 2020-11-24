@@ -23,7 +23,6 @@ import { IEraPersonData } from '../types/era/IEraPersonData';
 import { IEraBalance } from '../types/era/IEraBalanse';
 import { IEraParams } from '../types/era/IEraParams';
 import { IEraInfo } from '../types/era/IEraInfo';
-import { AppCrypt } from '../crypt/AppCrypt';
 import { ExData } from '../src/core/item/documents/ExData';
 import { tranDocument } from './TranDocument';
 import { tranSign } from './TranSign';
@@ -466,8 +465,8 @@ export class API {
    */
   async tranRawVerifyPerson(keyPair: KeyPair, personKey: number, personPublicKey: Int8Array): Promise<ITranRaw> {
     try {
-      const address = await AppCrypt.getAddressBySecretKey(keyPair.secretKey);
-      const reference = await this.request.address.lastReference(address);
+      //const address = await AppCrypt.getAddressBySecretKey(keyPair.secretKey);
+      const reference = 0;
       const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
 
       return await tranVerifyPerson(keyPair, personKey, personPublicKey, reference, this.rpcPort, genesis_sign);
@@ -485,8 +484,8 @@ export class API {
    */
   async verifyPerson(keyPair: KeyPair, personKey: number, personPublicKey: Int8Array): Promise<IBroadcastResponse> {
     try {
-      const address = await AppCrypt.getAddressBySecretKey(keyPair.secretKey);
-      const reference = await this.request.address.lastReference(address);
+      //const address = await AppCrypt.getAddressBySecretKey(keyPair.secretKey);
+      const reference = 0;
       const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
 
       const tran = await tranVerifyPerson(keyPair, personKey, personPublicKey, reference, this.rpcPort, genesis_sign);

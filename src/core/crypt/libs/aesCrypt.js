@@ -9,8 +9,8 @@ const ed2curve = require('./ed2curve');
 const CryptoJS = require('crypto-js');
 
 /** @description Gets share key.
- * @param {Int8Array | string} publicKey The radius of the circle.
- * @param {Int8Array | string} privateKey The radius of the circle.
+ * @param {Int8Array | string} publicKey The public key.
+ * @param {Int8Array | string} privateKey The private key.
  * @return {Promise<Uint8Array>}
  */
 export const getPassword = async (publicKey, privateKey) => {
@@ -23,9 +23,9 @@ export const getPassword = async (publicKey, privateKey) => {
   return password;
 };
 
-/** @description Gets share key.
- * @param {Int8Array | string} publicKey The radius of the circle.
- * @param {Int8Array | string} privateKey The radius of the circle.
+/** @description Gets share key at word array type.
+ * @param {Int8Array | string} publicKey The public key.
+ * @param {Int8Array | string} privateKey The private key.
  * @return {Promise<Words>}
  */
 export const passwordAES = async (publicKey, privateKey) => {
@@ -36,7 +36,7 @@ export const passwordAES = async (publicKey, privateKey) => {
 
 /** @description Decrypt byte array.
  * @param {Int8Array | string} encryptedMessage Encrypted text to decrypt.
- * @param {Words} secret32 The radius of the circle.
+ * @param {Words} secret32 Shared secret.
  * @param {boolean} prefix Exists prefix.
  * @return {Words | boolean}
  */
@@ -78,8 +78,8 @@ export const bytesToWords = (bytes) => {
 
 /** @description Decrypt text.
  * @param {string} encryptedMessage Encrypted text to decrypt.
- * @param {Int8Array | string} publicKey The radius of the circle.
- * @param {Int8Array | string} privateKey The radius of the circle.
+ * @param {Int8Array | string} publicKey The public key.
+ * @param {Int8Array | string} privateKey The private key.
  * @param {boolean} prefix Exists prefix.
  * @return {Promise<string | boolean>}
  */
@@ -101,8 +101,8 @@ export const decryptMessage = async (encryptedMessage, publicKey, privateKey, pr
 
 /** @description Encrypt text.
  * @param {string} message Text to encrypt.
- * @param {Int8Array | string} publicKey The radius of the circle.
- * @param {Int8Array | string} privateKey The radius of the circle.
+ * @param {Int8Array | string} publicKey The public key.
+ * @param {Int8Array | string} privateKey The private key.
  * @param {boolean} prefix Exists prefix.
  * @return {Promise<int8Array | boolean>}
  */

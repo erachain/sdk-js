@@ -108,15 +108,6 @@ const { EraChain } = require('erachain-js-api')
     // Decrypt
     const decrypted_string = await EraChain.Crypt.decryptMessage(encrypted_string_base58, keys1.publicKey_Int8Array, keys2.secretKey_Int8Array);
 
-    // By 32-byte's secret
-    // Encrypt
-    const encrypted_Int8Array = await EraChain.Crypt.encrypt32(msg_string, secret32);
-
-    const encrypted_string_base58 = await EraChain.Base58.encode(encrypted_Int8Array);
-
-    // Decrypt
-    const decrypted_string = await EraChain.Crypt.decrypt32(encrypted_string_base58, secret32);
-
 ```
 
 ## API
