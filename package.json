@@ -1,6 +1,6 @@
 {
     "name": "erachain-js-api",
-    "version": "2.4.5",
+    "version": "2.4.7",
     "description": "EraChain JS API",
     "main": "lib/index.js",
     "types": "lib/index.d.ts",

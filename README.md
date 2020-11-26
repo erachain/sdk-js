@@ -119,7 +119,16 @@ const { EraChain } = require('erachain-js-api')
     const url = "http://domain.com:9067/api"; // 9067 - TestNET, 9047 - MainNET, 905X - Sidechain, 909X - Clone mode
     const rpcPort = 9066; // 9066 - TestNET, 9046 - MainNET, 905X - Sidechain, 909X - Clone mode
 
-    const api = new EraChain.API(url, rpcPort);
+    let api = new EraChain.API(url, rpcPort);
+
+    // OR
+
+    const config = {
+        mode: 'SIDE',
+        genesis: 'in Base58', // signature
+    };
+
+    api = new EraChain.API(url, rpcPort, config);
 
     // Sidechain | Clone mode: boolean
     if (api.sidechainMode) {

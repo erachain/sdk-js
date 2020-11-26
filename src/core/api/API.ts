@@ -23,6 +23,7 @@ import { IEraPersonData } from '../types/era/IEraPersonData';
 import { IEraBalance } from '../types/era/IEraBalanse';
 import { IEraParams } from '../types/era/IEraParams';
 import { IEraInfo } from '../types/era/IEraInfo';
+import { IApiConfig, ChainMode } from '../types/era/IApiConfig';
 import { ExData } from '../src/core/item/documents/ExData';
 import { tranDocument } from './TranDocument';
 import { tranSign } from './TranSign';
@@ -31,12 +32,6 @@ import { tranTemplate } from './TranTemplate';
 
 const fetch = require('node-fetch');
 const url = require('url');
-
-enum ChainMode {
-  DEFAULT = "DEFAULT",
-  SIDE = "SIDE",
-  CLONE = "CLONE",
-}
 
 enum TypeTransaction {
   SEND = 31,
@@ -65,13 +60,19 @@ export class API {
   private rpcPort: number;
   private url: any;
   private genesis_sign: Int8Array;
+  private genesis: string | undefined;
 
-  constructor(baseUrl: string, rpcPort: number) {
+  constructor(baseUrl: string, rpcPort: number, config?: IApiConfig) {
     this.request = new FetchRequest(baseUrl);
     this.rpcPort = rpcPort;
     this.genesis_sign = new Int8Array([]);
     this.url = url.parse(baseUrl);
-    this.setMode();
+    if (config) {
+      API.CHAIN_MODE = config.mode;
+      this.genesis = config.genesis;
+    } else {
+      this.setMode();
+    }
   }
 
   private setMode(): void {
@@ -105,8 +106,14 @@ export class API {
       return this.genesis_sign;
     }
     try {
+      if (this.genesis) {
+        this.genesis_sign = await Base58.decode(this.genesis);
+  
+        return this.genesis_sign;
+      }
       const block: IEraFirstBlock = await this.request.block.firstBlock();
       const sign = block.signatures[0];
+      this.genesis = sign;
       this.genesis_sign = await Base58.decode(sign);
     } catch (e) {
       this.genesis_sign = new Int8Array([]);
@@ -389,7 +396,6 @@ export class API {
     return await tranSend(recipient, keyPair, transAsset, tranBody, this.rpcPort, genesis_sign);
 
   }
-
 
   /** @description API send amount of asset to recipient.
    * @param {KeyPair} keyPair Key pair.
