@@ -64,9 +64,7 @@ export class TransactionAmount extends Transaction {
       data.set(keyBytes);
 
       //WRITE AMOUNT
-      let amountBytes = await Bytes.longToByteArray(this.amount.unscaledValue());
-      amountBytes = Bytes.ensureCapacity(amountBytes, TransactionAmount.AMOUNT_LENGTH, 0);
-      data.set(amountBytes);
+      await this.amountToBytes(this.amount, data);
     }
 
     return data.data;
