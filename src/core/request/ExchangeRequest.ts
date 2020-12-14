@@ -10,8 +10,8 @@ export class ExchangeRequest extends NodeBaseRequest {
     super();
   }
 
-  orders(baseKey: number, quoteKey: number): Promise<IOrders> {
-    return this.fetchJSON(`ordersbook/${baseKey}/${quoteKey}?limit=${ExchangeRequest.limit}`);
+  orders(baseKey: number, quoteKey: number, limit?: number): Promise<IOrders> {
+    return this.fetchJSON(`ordersbook/${baseKey}/${quoteKey}?limit=${limit ? limit : ExchangeRequest.limit}`);
   }
 
   lasttrade(baseKey: number, quoteKey: number): Promise<ITrade[]> {
@@ -22,12 +22,12 @@ export class ExchangeRequest extends NodeBaseRequest {
     return this.fetchJSON(`pair/${baseKey}/${quoteKey}`);
   }
 
-  tradesAll(baseKey: number, quoteKey: number, orderID: string): Promise<ITrade[]> {
+  tradesAll(baseKey: number, quoteKey: number, orderID?: string, limit?: number): Promise<ITrade[]> {
     let paramOrderID = '';
     if (orderID) {
       paramOrderID = `order=${orderID}&`;
     }
-    return this.fetchJSON(`tradesfrom/${quoteKey}/${baseKey}?${paramOrderID}limit=${ExchangeRequest.limit}`);
+    return this.fetchJSON(`tradesfrom/${quoteKey}/${baseKey}?${paramOrderID}limit=${limit ? limit : ExchangeRequest.limit}`);
   }
 
   order(signature: string): Promise<IOrderComplete> {

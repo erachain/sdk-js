@@ -11,6 +11,8 @@ import { tranMessage } from './TranMessage';
 import { tranPerson } from './TranPerson';
 import { tranAsset } from './TranAsset';
 import { tranVerifyPerson } from './TranPersonVerify';
+import { tranOrder } from './TranOrder';
+import { tranCancelOrder } from './TranCancelOrder';
 import { IEraBlock } from '../types/era/IEraBlock';
 import { IEraFirstBlock } from '../types/era/IEraBlock';
 import { ITelegramTransaction } from '../request/TelegramRequest';
@@ -24,6 +26,9 @@ import { IEraBalance } from '../types/era/IEraBalanse';
 import { IEraParams } from '../types/era/IEraParams';
 import { IEraInfo } from '../types/era/IEraInfo';
 import { IApiConfig, ChainMode } from '../types/era/IApiConfig';
+import { IOrders, IPlayOrders } from '../types/era/IOrders';
+import { IOrderComplete } from '../types/era/IOrderComplete';
+import { ITrade } from '../types/era/ITrade';
 import { ExData } from '../src/core/item/documents/ExData';
 import { tranDocument } from './TranDocument';
 import { tranSign } from './TranSign';
@@ -192,6 +197,26 @@ export class API {
 
   async getPublicKeyByAddress(address: string): Promise<string> {
     return await this.request.address.addresspublickey(address);
+  }
+
+  async orderBook(wantAssetKey: number, haveAssetKey: number, limit?: number): Promise<IOrders> {
+    return await this.request.exchange.orders(wantAssetKey, haveAssetKey, limit);
+  }
+
+  async lastTrade(wantAssetKey: number, haveAssetKey: number): Promise<ITrade[]> {
+    return await this.request.exchange.lasttrade(wantAssetKey, haveAssetKey);
+  }
+
+  async playOrders(wantAssetKey: number, haveAssetKey: number): Promise<IPlayOrders> {
+    return await this.request.exchange.playOrders(wantAssetKey, haveAssetKey);
+  }
+
+  async tradesAll(wantAssetKey: number, haveAssetKey: number, orderID?: string, limit?: number): Promise<ITrade[]> {
+    return await this.request.exchange.tradesAll(wantAssetKey, haveAssetKey, orderID, limit);
+  }
+
+  async orderBySign(signature: string): Promise<IOrderComplete> {
+    return await this.request.exchange.order(signature);
   }
 
   async getTransactions(
@@ -883,5 +908,61 @@ async tranRawTemplate(
     );
 
   }
-  
+
+/** @description API: Gets raw data for create order.
+ * @param {KeyPair} keyPair Key pair.
+ * @param {string} name Name.
+ * @param {number} haveAssetKey Asset key on hand.
+ * @param {number} haveAmount Amount of assets at hand.
+ * @param {number} wantAssetKey Want such an asset key.
+ * @param {number} wantAmount Want amount assets.
+ * @return {Promise<ITranRaw>}
+ */
+async tranRawOrder(
+  keyPair: KeyPair,
+  name: string,
+  haveAssetKey: number,
+  haveAmount: number,
+  wantAssetKey: number,
+  wantAmount: number,
+): Promise<ITranRaw> {
+
+    const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
+
+    return await tranOrder(
+      keyPair,
+      name,
+      haveAssetKey,
+      haveAmount,
+      wantAssetKey,
+      wantAmount,
+      this.rpcPort,
+      genesis_sign,
+    );
+
+  }
+
+/** @description API: Gets raw data for cancel order.
+ * @param {KeyPair} keyPair Key pair.
+ * @param {string} name Name.
+ * @param {string} signature Signature of order.
+ * @return {Promise<ITranRaw>}
+ */
+async tranRawCancelOrder(
+  keyPair: KeyPair,
+  name: string,
+  signature: string,
+): Promise<ITranRaw> {
+
+    const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
+
+    return await tranCancelOrder(
+      keyPair,
+      name,
+      signature,
+      this.rpcPort,
+      genesis_sign,
+    );
+
+  }
 }

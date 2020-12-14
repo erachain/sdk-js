@@ -918,3 +918,89 @@ const { EraChain } = require('erachain-js-api')
 
 
 ```
+
+### API exchange
+
+[Exchange types](resources/exchange.md)
+
+```javascript
+
+    const wantAssetKey = 1; // Want such an asset key
+    const haveAssetKey = 2; // Asset key on hand
+    const limit: number | undefined = 20;
+
+    // Orders book
+    api.orderBook(wantAssetKey, haveAssetKey, limit)
+        .then((data: IOrders) => {
+            console.log(data);
+        });
+
+    api.playOrders(wantAssetKey, haveAssetKey)
+        .then((data: IPlayOrders) => {
+            console.log(data);
+        });
+
+    api.lastTrade(wantAssetKey, haveAssetKey)
+        then((data: ITrade[]) => {
+            console.log(data);
+        });
+
+    const orderID: string | undefined = undefined;
+    api.tradesAll(wantAssetKey, haveAssetKey, orderID, limit)
+        .then((data: ITrade[]) => {
+            console.log(data);
+        });
+
+    const signature = "Base58 string";
+    api.orderBySign(signature: string)
+        .then((result: IOrderComplete) => {
+            console.log(result);
+        });
+
+```
+
+### API exchange create order
+
+```javascript
+
+    const name = "";
+
+    // Buy wantAmount (wantAssetKey) for haveAmount (haveAssetKey)
+
+    const haveAssetKey = 2;
+    const haveAmount = 0.05;
+    const wantAssetKey = 1;
+    const wantAmount = 10;
+
+    apt.tranRawOrder(
+        keyPair,
+        name,
+        haveAssetKey,
+        haveAmount,
+        wantAssetKey,
+        wantAmount,
+    )
+        .then((raw) => {
+            console.log(raw);
+        });
+
+    // Sell haveAmount (haveAssetKey) for wantAmount (wantAssetKey)
+
+    const haveAssetKey = 1;
+    const haveAmount = 10;
+    const wantAssetKey = 2;
+    const wantAmount = 0.05;
+
+    apt.tranRawOrder(
+        keyPair,
+        name,
+        haveAssetKey,
+        haveAmount,
+        wantAssetKey,
+        wantAmount,
+    )
+        .then((raw) => {
+            console.log(raw);
+        });
+
+```

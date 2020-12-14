@@ -17,5 +17,5 @@ export const Type = {
   ExData,
   ExLink,
   Imprint,
-  Template
+  Template,
 };
