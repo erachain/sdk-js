@@ -28,7 +28,7 @@ export class ExData {
 
   constructor(keys: KeyPair, title: string, data: Documents, encrypted: boolean, exLink: IExLink | undefined, onlyRecipients: boolean | undefined = false) {
     this.keys = keys;
-    this.flags = new Int8Array([3, encrypted ? 32 : (exLink ? -1 : 0), 0, 0]);
+    this.flags = new Int8Array([3, encrypted ? 32 : (exLink ? -128 : 0), 0, 0]);
     this.title = title;
     this.data = data;
     this.recipientFlags = onlyRecipients ? new Int8Array([-128]) : new Int8Array([0]);
@@ -52,7 +52,7 @@ export class ExData {
     const addressOrPublic = typeof recipient === 'string' ? await Base58.decode(recipient) : recipient;
     const length = addressOrPublic.length;
 
-    if ((this.flags[1] & 32) === 32 && length !== 32) {
+    if (this.flags[1] === 32 && length !== 32) {
       throw new Error('Not public key');
     }
 

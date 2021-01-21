@@ -41,6 +41,34 @@ export class Bytes {
     return new Int8Array(byteArray);
   }
 
+  static syncIntFromByteArray(bytes: Int8Array): number {
+    /*
+    const a = new Int32Array(bytes.buffer);
+    return Number(a[0]);
+    */
+    let value = 0;
+    const ubytes = new Uint8Array(bytes);
+    for (const n of ubytes) {
+      value = value * 256 + n;
+      //value = (value << 8) | n;
+    }
+    return value;
+  }
+
+  static syncIntToByteArray(int32: number): Int8Array {
+    /*
+    const buffer = new ArrayBuffer(4);
+    const int32View = new Int32Array(buffer);
+    int32View[0] = int32;
+    return new Int8Array(int32View.buffer, 0, 4);
+    */
+    const byteArray = [];
+    for (let b = 0; b < 32; b += 8) {
+      byteArray.push((int32 >>> (24 - (b % 32))) & 0xff);
+    }
+    return new Int8Array(byteArray);
+  }
+
   static async intFromByteArray(bytes: Int8Array): Promise<number> {
     /*
     const a = new Int32Array(bytes.buffer);
@@ -67,6 +95,20 @@ export class Bytes {
   }
 
   static async longFromByteArray(bytes: Int8Array): Promise<number> {
+    /*
+    const a = new BigInt64Array(bytes.buffer);
+    return Number(a[0]);
+    */
+    let value = 0;
+    const ubytes = new Uint8Array(bytes);
+    for (const n of ubytes) {
+      value = value * 256 + n;
+      // value = (value << 8) | n;
+    }
+    return value;
+  }
+
+  static syncLongFromByteArray(bytes: Int8Array): number {
     /*
     const a = new BigInt64Array(bytes.buffer);
     return Number(a[0]);

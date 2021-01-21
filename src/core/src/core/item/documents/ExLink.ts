@@ -1,3 +1,5 @@
+import { Bytes } from '../../Bytes';
+
 export interface IExLink {
     type: number; // byte
     flags: number; // byte
@@ -39,7 +41,19 @@ export class ExLink implements IExLink {
             if (s.length === 2 && !isNaN(Number(s[0])) && !isNaN(Number(s[1]))) {
                 const seq = Number(s[0]);
                 const no = Number(s[1]);
-                this.link = (seq << 4) | (no & 0xFFFFFFFF);
+
+                const aSeq = Bytes.syncIntToByteArray(seq);
+                const aNo = Bytes.syncIntToByteArray(no);
+
+                const aLink = new Int8Array([aSeq[0], aSeq[1], aSeq[2], aSeq[3], aNo[0], aNo[1], aNo[2], aNo[3]]);
+                this.link = Bytes.syncLongFromByteArray(aLink);
+
+                // console.log("test.exLink", {
+                //     aSeq,
+                //     aNo,
+                //     aLink,
+                //     link: this.link,
+                // });
             } else {
                 throw new Error('Error format SeqNo');
             }
