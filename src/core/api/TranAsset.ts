@@ -25,7 +25,7 @@ export const tranAsset = async (
 
     const date = new Date();
     const timestamp = date.getTime();
-    const reference = 1;
+    const reference = 0;
     const asset = new Asset(owner, quantity, scale, assetType, name, icon, image, description);
 
     const tx = new IssueAsset(privateAccount, asset, feePow, timestamp, reference, port, genesis_sign);

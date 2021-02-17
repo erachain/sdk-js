@@ -7,6 +7,7 @@ import { Bytes } from '../../Bytes';
 import { BlockChain } from '../../BlockChain';
 import { Transaction } from '../../transaction/Transaction';
 import { DataWriter } from '../../DataWriter';
+import { subClass } from './subclass';
 
 export class Asset extends AssetCls {
   ownerSignature: Int8Array;
@@ -21,7 +22,15 @@ export class Asset extends AssetCls {
     image: Int8Array,
     description: string,
   ) {
-    super(new Int8Array([2, 0]), owner, quantity, scale, asset_type, name, icon, image, description);
+    let id = 2
+    const flag = subClass.get(asset_type);
+    if (flag) {
+      id = flag;
+    } else if (quantity === 1) {
+      id = 1;
+    }
+
+    super(new Int8Array([id, 0]), owner, quantity, scale, asset_type, name, icon, image, description);
   }
 
   /* tslint:disable-next-line */

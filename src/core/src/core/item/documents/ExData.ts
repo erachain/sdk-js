@@ -80,6 +80,7 @@ export class ExData {
 
     }
     this.flags[1] = this.flags[1] | 64;
+    //console.log("exData.addRecipient.flags[1]", this.flags[1]);
   }
 
   addAuthor(id: number, weight: number, desc: string): void {
@@ -123,7 +124,7 @@ export class ExData {
 
   async toBytes(): Promise<Int8Array> {
     const data = new DataWriter();
-
+    //console.log("exData.flags.toBytes", this.flags);
     data.set(this.flags);
 
     await this.stringToBytes(this.title, data, true);

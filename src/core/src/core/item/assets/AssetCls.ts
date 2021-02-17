@@ -38,10 +38,15 @@ export class AssetCls extends ItemCls {
 
     //console.log({ dataWriter: dataWriter.data });
     // WRITE QUANTITY
-    await this.quantityToBytes(dataWriter);
+    if (this.typeBytes[0] === 2) {
+      await this.quantityToBytes(dataWriter);
+    }
+    
     //console.log({ dataWriter: dataWriter.data });
     // WRITE SCALE
-    await this.scaleToBytes(dataWriter);
+    if (this.typeBytes[0] === 2) {
+      await this.scaleToBytes(dataWriter);
+    }
     //console.log({ dataWriter: dataWriter.data });
     // WRITE ASSET_TYPE
     await this.assetTypeToBytes(dataWriter);

@@ -19,7 +19,7 @@ export class TransactionDocument extends Transaction {
     genesis_sign: Int8Array,
   ) {
     super(
-      new Int8Array([Transaction.DOCUMENT_TRANSACTION, 3, 0, exData.length > 0 ? -1 : 0]),
+      new Int8Array([Transaction.DOCUMENT_TRANSACTION, 3, 0, exData.length > 0 ? -128 : 0]),
       name,
       creator,
       feePow,
@@ -51,5 +51,4 @@ export class TransactionDocument extends Transaction {
   async getDataLength(): Promise<number> {
     return TransactionDocument.BASE_LENGTH + Transaction.DATA_SIZE_LENGTH + this.exData.length;
   }
-
 }
