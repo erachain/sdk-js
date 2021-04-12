@@ -112,12 +112,12 @@ describe('Person', () => {
 
   const account = new EraChain.Type.PublicKeyAccount(keys.publicKey);
 
-  const date = new Date('1946-06-14T00:00:00');
+  const date = new Date(1946, 6, 14);
   const birthday = date.getTime();
 
-  // console.log(birthday);
+  console.log(birthday);
 
-  const person = new EraChain.Type.PersonHuman(
+  const person = new PersonHuman(
     account,
     'Donald Trump', // ФИО персоны
     birthday, // День рождения персоны
@@ -143,19 +143,23 @@ describe('Person', () => {
     return person.raw(keyPair.secretKey)
       .then((raw: string) => {
         expect(raw).toEqual(
-          'A4mLGRx7dLiBYeh96XFy5ahRG6TyHEXvfrcfrXzs8n1RfhfnTXUod3NepzWWJvUoWA5u1yRUcTPmr79Y39cnUGehbcbakkip7UYY1G83xj2ra1zhEeL7KSVvU21ZGnXiv7HE5JjGUnEDrt4cjfTMygELe9Hs5Bm4CvZN5sMUYV1vC7dxeZZ1n4XH5T4siWLo1F1xrCwxaTTz5xTc6zxSpti6ZbznPxLUo4gGQzaBnEZMJAvYRq98X9qjcAb5q555N4KDWHWaDjhXE6TUH9QHqfJffn56WG611odi6qVmigWnXPQom',
+          'A4mLGRx7dLiBYeh96XFy5ahRG6TyHEXvfrcfrXzs8n1RfhfnTXUod3NepzWWJvUoWA5u1yRUcTPmr79Y39cnUGehbcbakkip7UYY1G83xj2ra1zhEeL7PMt4aioxuGfmtQKCWPT7vwFAsyxVdJVRsZLWZR6WTziAR496C3vGoQzQpexC8exhNYb8ucqCzuRwW47hE5QgdUgXoJe2YipsoFHUf62w1pB4GBQoVUwtzT9UVMfquwFXmxfRiLWHjHHM5dhDRFKQAQL2QvWnHoZi5wzvQZBNeVzqcXEy952Xjv77HYdBX',
         );
       })
       .catch(() => { expect(true).toBe(false); });
   });
 
+  // birthday: 18446742830872672000,
+  // deathday: 18446742830872672000,
+  // birthday: 18446743330464352000,
+
   it('PersonHuman.parse', () => {
     return person.raw(keyPair.secretKey)
       .then((raw: string) => {
-        return EraChain.Type.PersonHuman.parse(raw)
+        return PersonHuman.parse(raw)
           .then((p: PersonHuman) => {
             expect(p.name).toEqual('Donald Trump');
-            expect(p.birthday).toEqual(18446743330464352000); // отрицательный timestamp
+            expect(p.birthday).toEqual(-740653200000); // отрицательный timestamp
             expect(p.deathday).toEqual(0);
             expect(p.gender).toEqual(0);
             expect(p.race).toEqual('Белый');
@@ -176,16 +180,16 @@ describe('Person', () => {
   it('PersonHuman.register', () => {
     return person.raw(keyPair.secretKey)
       .then((raw: string) => {
-        return EraChain.Type.PersonHuman.parse(raw)
+        return PersonHuman.parse(raw)
           .then((p: PersonHuman) => {
             const timestamp = 1594864181831;
 
             return testTranPerson(keyPair, p, timestamp, 9066, new Int8Array([]))
               .then((tranRaw: any) => {
                 expect(tranRaw.size).toEqual(199);
-        
+
                 expect(tranRaw.raw).toEqual(
-                  '2YNgcLFSGeA1mRVxUGWhFbhoGnBR9AM8fPp3Y4RDWjn4gNQvLmLEFBojYte6Hu79fNwn3xQMPwSbECoybS6dUQocmAdHwECnZ7korzaj3KweL8fRXygp9Pm8GYPc7QaJnEQFYx7JK41h1QECgTmkNNh7Y3Bf8MSc6HwVkjjcQHDm12iBomTesARBWCW6aUu3KLNWJij4GvCcqvRbgniEoNcUCrGKmptTfy634PiChAyQxW9gh4Ryq7okZLoAVNYBs83ED384AWk6gVdimpGx6Ch3qv6FnsUsg19UwnTZjm4Q4tS5txTtS6Z2FpzSgQWqUkHkmwZjg9CtfsezZkedWkeBvbKtFBxGdkpNrcMYRhJ6LNPaW21iRq52m5xkZtNnRaeeJYauAj7YZaTxRpE8GjkPmGhM4jpthsv7uzDeaCyDLgAwzS7fXL22obgAnpGH68N79CGZvuK5zt394P',
+                  '2YNgcLFSGeA1mRVxUGWhFbhoGnBR9AM8fPp3Y4RDWjn4gNQvLmLEFBojYte6Hu79fNwn3xQMNoRKqYajmBy9TMHNcJdT7TBYpSfCRsTZnVxPd887XiFULw2tk4RF7CY74xTqF6jDm9hG41bcHCW7RcXeQyoYJfZ5yksBj229UwrLhZwJ2L73T9P4PC5TJf7CNvMT3YcuC2PVgHR5acUDv4T2q7dxY2ZRnHdVpXF2DCrpWHgXkEh74mKLmBCJJ1DLwkvCXMEX5HvkHUdYe92sVswUhqeN2CgqSp4rD3HDesR8taGoPP3TEb5MzU21qoXgkjFPJ9T4ULDbRbJraXXFmPhFR84wxdrrR93dDkmCcj11sMzWGpXhbktkJYDxNDj7mMnjMwQrNfyikBj46a5ejSVJ6qoUaTn5zgkxYen7HUaM3hm3Jn59u2sALY4CgQ7vc7yBQnc26aQGfWXG2u',
                 );
               });
           });

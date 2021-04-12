@@ -26,6 +26,22 @@ describe('Bytes', () => {
       .catch(() => { expect(true).toBe(false); });
   });
 
+  it('Bytes.negativeLongToByteArray().negativeLongFromByteArray()', () => {
+    const l = Number.MAX_SAFE_INTEGER - 1;
+    return Bytes.longToByteArray(l)
+      .then(af => {
+        return Bytes.longFromByteArray(af)
+          .then(r => {
+            console.log({
+              input: l,
+              output: r,
+            });
+            expect(r).toEqual(l);
+          });
+      })
+      .catch(() => { expect(true).toBe(false); });
+  });
+
   it('Bytes.floatToByteArray().floatFromByteArray()', () => {
     const f = 521.75;
     return Bytes.floatToByteArray(f)

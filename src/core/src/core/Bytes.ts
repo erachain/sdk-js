@@ -101,9 +101,17 @@ export class Bytes {
     */
     let value = 0;
     const ubytes = new Uint8Array(bytes);
-    for (const n of ubytes) {
-      value = value * 256 + n;
-      // value = (value << 8) | n;
+    if (ubytes[0] >= 128) {
+      for (const n of ubytes) {
+        value = value * 256 + (255 - n);
+      }
+      value += 1;
+      value *= -1;
+    } else {
+      for (const n of ubytes) {
+        value = value * 256 + n;
+        // value = (value << 8) | n;
+      }
     }
     return value;
   }

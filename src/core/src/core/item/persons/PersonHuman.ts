@@ -147,7 +147,6 @@ export class PersonHuman extends PersonCls {
 
     //READ BIRTDAY
     const birthdayBytes = data.slice(position, position + ItemCls.BIRTHDAY_LENGTH);
-    
     const birthday = await Bytes.longFromByteArray(birthdayBytes);
 
     //console.log("PersonHuman.Parse", { birthday });
