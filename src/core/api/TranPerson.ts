@@ -4,12 +4,14 @@ import { PrivateKeyAccount } from '../src/core/account/PrivateKeyAccount';
 import { ITranRaw } from '../src/core/transaction/TranTypes';
 import { Base58 } from '../crypt/libs/Base58';
 import { PersonHuman } from '../src/core/item/persons/PersonHuman';
+import base64 from "../src/core/util/base64";
 
 export const tranPerson = async (
   keyPair: KeyPair,
   person: PersonHuman,
   port: number,
   genesis_sign: Int8Array,
+  isBase64?: boolean,
 ): Promise<ITranRaw> => {
   try {
     const privateAccount = new PrivateKeyAccount(keyPair);
@@ -20,7 +22,9 @@ export const tranPerson = async (
     const tx = new IssuePersonRecord(privateAccount, person, 0, timestamp, reference, port, genesis_sign);
 
     await tx.sign(privateAccount, false);
-    const raw = await Base58.encode(await tx.toBytes(true, null));
+
+    const bytes = await tx.toBytes(true, null);
+    const raw = isBase64 ? base64.encodeFromByteArray(new Uint8Array(bytes)) : await Base58.encode(bytes);
     let size = await tx.getDataLength(false);
 
     // 2 times less than usual
@@ -48,6 +52,7 @@ export const testTranPerson = async (
   timestamp: number,
   port: number,
   genesis_sign: Int8Array,
+  isBase64?: boolean,
 ): Promise<ITranRaw> => {
   try {
     const privateAccount = new PrivateKeyAccount(keyPair);
@@ -56,7 +61,8 @@ export const testTranPerson = async (
     const tx = new IssuePersonRecord(privateAccount, person, 0, timestamp, reference, port, genesis_sign);
 
     await tx.sign(privateAccount, false);
-    const raw = await Base58.encode(await tx.toBytes(true, null));
+    const bytes = await tx.toBytes(true, null);
+    const raw = isBase64 ? base64.encodeFromByteArray(new Uint8Array(bytes)) : await Base58.encode(bytes);
     let size = await tx.getDataLength(false);
 
     // 2 times less than usual

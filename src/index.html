@@ -49,7 +49,7 @@
 
             var signature =  await sign(EraChain.Bytes.stringToByteArray(msg), keys1.secretKey);
             document.getElementById("signature").innerHTML = "signature: " + signature;
-            document.getElementById("verifySignature").innerHTML = "verify signature: " +   await verifySignature(EraChain.Bytes.stringToByteArray(msg),  await EraChain.Base58.decode(signature), keys1.publicKey);
+            document.getElementById("verifySignature").innerHTML = "verify signature: " +   await verifySignature(await EraChain.Bytes.stringToByteArray(msg),  await EraChain.Base58.decode(signature), keys1.publicKey);
 
             var decrypted = await testCrypt(msg);
             document.getElementById("decrypted").innerHTML = "decrypted message: " + decrypted;

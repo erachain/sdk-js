@@ -3,6 +3,7 @@ import { PublicKeyAccount } from '../account/PublicKeyAccount';
 import { Transaction } from '../transaction/Transaction';
 import { Bytes } from '../Bytes';
 import { DataWriter } from '../DataWriter';
+import {AppData} from './AppData';
 
 export class ItemCls {
   static MAX_ICON_LENGTH = 11000;
@@ -41,6 +42,7 @@ export class ItemCls {
   image: Int8Array;
   description: string;
   reference?: Int8Array;
+  appData?: AppData;
 
   constructor(
     typeBytes: Int8Array,
@@ -56,8 +58,55 @@ export class ItemCls {
     this.icon = icon;
     this.image = image;
     this.description = description.trim();
+    this.initAppData();
 
     // this.reference = Bytes.ensureCapacity(base58.decode(name), ItemCls.REFERENCE_LENGTH, 0) as Int8Array;
+  }
+
+  public initAppData = async (): Promise<boolean> => {
+    if (!!this.appData) return true;
+    try {
+        const sIcon = (await Bytes.stringFromByteArray(this.icon)).toLowerCase();
+        const sImage = (await Bytes.stringFromByteArray(this.image)).toLowerCase();
+        const isIconURL = sIcon.indexOf("http") >= 0;
+        const isImageURL = sImage.indexOf("http") >= 0;
+        let iconType = new Int8Array([ 0 ]);
+        if (isIconURL) {
+            if (
+                (sIcon.indexOf(".jpg") >= 0) ||
+                (sIcon.indexOf(".jpeg") >= 0) ||
+                (sIcon.indexOf(".gif") >= 0) ||
+                (sIcon.indexOf(".png") >= 0)
+            ) {
+                iconType = new Int8Array([-128 | 0]);
+            } else if (
+                (sIcon.indexOf(".mp4") >= 0) 
+            ) {
+                iconType = new Int8Array([-128 | 1]);
+            }
+        }
+        let imageType = new Int8Array([ 0 ]);
+        if (isImageURL) {
+            if (
+                (sImage.indexOf(".jpg") >= 0) ||
+                (sImage.indexOf(".jpeg") >= 0) ||
+                (sImage.indexOf(".gif") >= 0) ||
+                (sImage.indexOf(".png") >= 0)
+            ) {
+                imageType = new Int8Array([-128 | 0]);
+            } else if (
+                (sImage.indexOf(".mp4") >= 0) 
+            ) {
+                imageType = new Int8Array([-128 | 1]);
+            }
+        }
+        if (isIconURL || isImageURL) {
+            this.appData = new AppData(iconType, imageType);
+
+            return true;
+        }
+    } catch (e) { /**/ }
+    return false;
   }
 
   async getDataLength(includeReference: boolean): Promise<number> {
@@ -66,6 +115,7 @@ export class ItemCls {
       (await Bytes.stringToByteArray(this.name)).length +
       this.icon.length +
       this.image.length +
+      (this.appData ? this.appData.getDataLength() : 0) +
       (await Bytes.stringToByteArray(this.description)).length +
       (includeReference ? ItemCls.REFERENCE_LENGTH : 0)
     );
@@ -96,6 +146,10 @@ export class ItemCls {
     }
     //console.log("ItemCls2", { data });
     await this.imageToBytes(data, useAll);
+    if (this.appData) {
+      const bytesAppData = await this.appData.toBytes();
+      data.set(bytesAppData);
+    }
     //console.log("ItemCls3", { data });
     // WRITE DESCRIPTION
     await this.descriptionToBytes(data, useAll);
@@ -135,7 +189,12 @@ export class ItemCls {
 
   async imageToBytes(dataWriter: DataWriter, prependLength: boolean = false): Promise<void> {
     if (prependLength) {
-      dataWriter.set(await Bytes.intToByteArray(this.image.length));
+      let length = this.image.length;
+      if (this.appData) {
+          length = length | 1 << 31; 
+      }
+      const bytes = await Bytes.intToByteArray(length);
+      dataWriter.set(bytes);
     }
 
     dataWriter.set(this.image);

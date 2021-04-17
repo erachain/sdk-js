@@ -5,6 +5,7 @@ import { PrivateKeyAccount } from '../src/core/account/PrivateKeyAccount';
 import { ITranRecipient, ITranMessage, ITranRaw } from '../src/core/transaction/TranTypes';
 import { Base58 } from '../crypt/libs/Base58';
 import { Bytes } from '../src/core/Bytes';
+import base64 from "../src/core/util/base64";
 
 const crypt = require('../crypt/libs/aesCrypt');
 
@@ -14,6 +15,7 @@ export const tranMessage = async (
   body: ITranMessage,
   port: number,
   genesis_sign: Int8Array,
+  isBase64?: boolean,
 ): Promise<ITranRaw> => {
   try {
     const account = new Account(recipient.address);
@@ -54,11 +56,8 @@ export const tranMessage = async (
     );
     await tx.sign(privateOwner, false);
 
-    // console.log({ tx });
     const bytes = await tx.toBytes(true, null);
-    //console.log(bytes);
-
-    const raw = await Base58.encode(bytes);
+    const raw = isBase64 ? base64.encodeFromByteArray(new Uint8Array(bytes)) : await Base58.encode(bytes);
 
     const fee = (bytes.length * 100.0) / Math.pow(10, 8);
 

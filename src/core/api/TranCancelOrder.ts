@@ -3,6 +3,7 @@ import { KeyPair } from '../src/core/account/KeyPair';
 import { PrivateKeyAccount } from '../src/core/account/PrivateKeyAccount';
 import { ITranRaw } from '../src/core/transaction/TranTypes';
 import { Base58 } from '../crypt/libs/Base58';
+import base64 from "../src/core/util/base64";
 
 export const tranCancelOrder = async (
     keyPair: KeyPair,
@@ -10,6 +11,7 @@ export const tranCancelOrder = async (
     signature: string,
     port: number,
     genesis_sign: Int8Array,
+    isBase64?: boolean,
 ): Promise<ITranRaw> => {
   try {
     const feePow = 0;
@@ -22,7 +24,8 @@ export const tranCancelOrder = async (
     const tx = new CancelOrder(name, privateAccount, feePow, timestamp, reference, port, signature, genesis_sign);
 
     await tx.sign(privateAccount, false);
-    const raw = await Base58.encode(await tx.toBytes(true, null));
+    const bytes = await tx.toBytes(true, null);
+    const raw = isBase64 ? base64.encodeFromByteArray(new Uint8Array(bytes)) : await Base58.encode(bytes);
     let size = await tx.getDataLength(false);
 
     const fee = (size * 100.0) / Math.pow(10, 8);

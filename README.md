@@ -268,6 +268,12 @@ const { EraChain } = require('erachain-js-api')
     const icon = EraChain.base64ToArray(icon_base64string);
     const image = EraChain.base64ToArray(image_base64string);
 
+    /* Save only url links */
+    /*
+        const icon = await EraChain.Bytes.stringToByteArray("https://my.domain.com/photo.{ png | jpeg | jpg | gif }");
+        const image = await EraChain.Bytes.stringToByteArray("https://my.domain.com/photo.{ png | jpeg | jpg | gif }";
+    */
+
     api.registerAsset(keyPair, name, assetType, quantity, scale, icon, image, description)
         .then(data => {
             // data = {status: "ok"}
@@ -1001,6 +1007,50 @@ const { EraChain } = require('erachain-js-api')
     )
         .then((raw) => {
             console.log(raw);
+        });
+
+```
+
+### Base64
+
+```javascript
+
+    api.tranRaw*(..., isBase64?)
+        .then(data => {
+            //data.raw is Base64
+            api.broadcast64(result.raw)
+                    .then(data => {
+                        // data = {status: "ok"}
+                        console.log(data);
+                    })
+                    .catch(e => {
+                        console.log(e);
+                    });
+        });
+
+    api.sendDocuments(..., isBase64?)
+        .then(data => {
+            // data.raw is Base64
+        });
+
+    api.registerAsset(..., isBase64?)
+        .then(data => {
+            // data.raw is Base64
+        });
+
+    api.sendMessage(..., isBase64?)
+        .then(data => {
+            // data.raw is Base64
+        });
+
+    api.sendAsset(..., isBase64?)
+        .then(data => {
+            // data.raw is Base64
+        });
+
+    api.verifyPerson(..., isBase64?)
+        .then(data => {
+            // data.raw is Base64
         });
 
 ```

@@ -367,59 +367,21 @@ export class API {
    * @return {Promise<IBroadcastResponse>}
    */
   async broadcast(raw: string): Promise<IBroadcastResponse> {
-
       return await this.request.broadcast.broadcastPost(raw)
         .catch(e => {
           throw new Error(e);
         });
-
   }
 
-  /** @description API raw data for sending asset.
-   * @param {KeyPair} keyPair Key pair.
-   * @param {IAsset} asset Amount and asset key.
-   * @param {string} recipientPublicKey Recipient public key.
-   * @param {string} head Title.
-   * @param {string} message Message.
-   * @param {boolean} encrypted Encryption flag.
-   * @return {Promise<ITranRaw>}
+  /** @description API broadcast.
+   * @param {string} raw Base64 raw data.
+   * @return {Promise<IBroadcastResponse>}
    */
-  async tranRawSendAsset(
-    keyPair: KeyPair,
-    asset: IAsset,
-    recipientPublicKey: string,
-    head: string,
-    message: string,
-    encrypted: boolean,
-  ): Promise<ITranRaw> {
-    let recipient: ITranRecipient = {
-      address: recipientPublicKey,
-      publicKey: null,
-    };
-
-    if (recipientPublicKey.length >= 43) {
-      const pk = await Base58.decode(recipientPublicKey);
-      recipient = {
-        address: await Qora.getAccountAddressFromPublicKey(pk),
-        publicKey: pk,
-      };
-    }
-
-    const tranBody = {
-      head,
-      message,
-      encrypted,
-    };
-
-    const transAsset: ITranAsset = {
-      assetKey: asset.assetKey,
-      amount: new BigDecimal(asset.amount),
-    };
-
-    const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
-
-    return await tranSend(recipient, keyPair, transAsset, tranBody, this.rpcPort, genesis_sign);
-
+   async broadcast64(raw: string): Promise<IBroadcastResponse> {
+    return await this.request.broadcast.broadcastPost64(raw)
+      .catch(e => {
+        throw new Error(e);
+      });
   }
 
   /** @description API send amount of asset to recipient.
@@ -438,6 +400,7 @@ export class API {
     head: string,
     message: string,
     encrypted: boolean,
+    isBase64?: boolean,
   ): Promise<IBroadcastResponse> {
     let recipient: ITranRecipient = {
       address: recipientPublicKey,
@@ -465,13 +428,20 @@ export class API {
 
     const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
 
-    const tran = await tranSend(recipient, keyPair, transAsset, tranBody, this.rpcPort, genesis_sign);
+    const tran = await tranSend(recipient, keyPair, transAsset, tranBody, this.rpcPort, genesis_sign, isBase64);
 
     if (!tran.error) {
-      const data = await this.request.broadcast.broadcastPost(tran.raw).catch(e => {
-        throw new Error(e);
-      });
-      return data;
+      if (isBase64) {
+        const data = await this.request.broadcast.broadcastPost64(tran.raw).catch(e => {
+          throw new Error(e);
+        });
+        return data;
+      } else {
+        const data = await this.request.broadcast.broadcastPost(tran.raw).catch(e => {
+          throw new Error(e);
+        });
+        return data; 
+      }
     } else {
       throw new Error(tran.error);
     }
@@ -482,10 +452,10 @@ export class API {
    * @param {PersonHuman} person Person.
    * @return {Promise<ITranRaw>}
    */
-  async tranRawPerson(keyPair: KeyPair, person: PersonHuman): Promise<ITranRaw> {
+  async tranRawPerson(keyPair: KeyPair, person: PersonHuman, isBase64?: boolean): Promise<ITranRaw> {
     const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
 
-    return await tranPerson(keyPair, person, this.rpcPort, genesis_sign);
+    return await tranPerson(keyPair, person, this.rpcPort, genesis_sign, isBase64);
   }
 
   /** @description API verify person.
@@ -494,13 +464,13 @@ export class API {
    * @param {Int8Array} personPublicKey Person public key.
    * @return {Promise<ITranRaw>}
    */
-  async tranRawVerifyPerson(keyPair: KeyPair, personKey: number, personPublicKey: Int8Array): Promise<ITranRaw> {
+  async tranRawVerifyPerson(keyPair: KeyPair, personKey: number, personPublicKey: Int8Array, isBase64?: boolean): Promise<ITranRaw> {
     try {
       //const address = await AppCrypt.getAddressBySecretKey(keyPair.secretKey);
       const reference = 0;
       const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
 
-      return await tranVerifyPerson(keyPair, personKey, personPublicKey, reference, this.rpcPort, genesis_sign);
+      return await tranVerifyPerson(keyPair, personKey, personPublicKey, reference, this.rpcPort, genesis_sign, isBase64);
 
     } catch (e) {
       throw new Error(e);
@@ -513,18 +483,25 @@ export class API {
    * @param {Int8Array} personPublicKey Person public key.
    * @return {Promise<IBroadcastResponse>}
    */
-  async verifyPerson(keyPair: KeyPair, personKey: number, personPublicKey: Int8Array): Promise<IBroadcastResponse> {
+  async verifyPerson(keyPair: KeyPair, personKey: number, personPublicKey: Int8Array, isBase64?: boolean): Promise<IBroadcastResponse> {
     try {
       //const address = await AppCrypt.getAddressBySecretKey(keyPair.secretKey);
       const reference = 0;
       const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
 
-      const tran = await tranVerifyPerson(keyPair, personKey, personPublicKey, reference, this.rpcPort, genesis_sign);
+      const tran = await tranVerifyPerson(keyPair, personKey, personPublicKey, reference, this.rpcPort, genesis_sign, isBase64);
       if (!tran.error) {
-        const data = await this.request.broadcast.broadcastPost(tran.raw).catch(e => {
-          throw new Error(e);
-        });
-        return data;
+        if (isBase64) {
+          const data = await this.request.broadcast.broadcastPost64(tran.raw).catch(e => {
+            throw new Error(e);
+          });
+          return data;
+        } else {
+          const data = await this.request.broadcast.broadcastPost(tran.raw).catch(e => {
+            throw new Error(e);
+          });
+          return data;
+        }
       } else {
         throw new Error(tran.error);
       }
@@ -547,6 +524,7 @@ export class API {
     head: string,
     message: string,
     encrypted: boolean,
+    isBase64?: boolean
   ): Promise<ITranRaw> {
     let recipient: ITranRecipient = {
       address: recipientPublicKey,
@@ -569,7 +547,7 @@ export class API {
 
     const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
 
-    return await tranMessage(recipient, keyPair, tranBody, this.rpcPort, genesis_sign);
+    return await tranMessage(recipient, keyPair, tranBody, this.rpcPort, genesis_sign, isBase64);
 
   }
 
@@ -587,6 +565,7 @@ export class API {
     head: string,
     message: string,
     encrypted: boolean,
+    isBase64?: boolean,
   ): Promise<IBroadcastResponse> {
     let recipient: ITranRecipient = {
       address: recipientPublicKey,
@@ -609,13 +588,20 @@ export class API {
 
     const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
 
-    const tran = await tranMessage(recipient, keyPair, tranBody, this.rpcPort, genesis_sign);
+    const tran = await tranMessage(recipient, keyPair, tranBody, this.rpcPort, genesis_sign, isBase64);
 
     if (!tran.error) {
-      const data = await this.request.broadcast.broadcastPost(tran.raw).catch(e => {
-        throw new Error(e);
-      });
-      return data;
+      if (isBase64) {
+        const data = await this.request.broadcast.broadcastPost64(tran.raw).catch(e => {
+          throw new Error(e);
+        });
+        return data;
+      } else {
+        const data = await this.request.broadcast.broadcastPost(tran.raw).catch(e => {
+          throw new Error(e);
+        });
+        return data;
+      }
     } else {
       throw new Error(tran.error);
     }
@@ -725,6 +711,7 @@ export class API {
     icon: Int8Array,
     image: Int8Array,
     description: string,
+    isBase64?: boolean,
   ): Promise<ITranRaw> {
     const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
 
@@ -739,6 +726,7 @@ export class API {
       description,
       this.rpcPort,
       genesis_sign,
+      isBase64,
     );
 
   }
@@ -764,6 +752,7 @@ export class API {
     icon: Int8Array,
     image: Int8Array,
     description: string,
+    isBase64?: boolean,
   ): Promise<IBroadcastResponse> {
     const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
 
@@ -778,13 +767,21 @@ export class API {
       description,
       this.rpcPort,
       genesis_sign,
+      isBase64,
     );
 
     if (!tran.error) {
-      const data = await this.request.broadcast.broadcastPost(tran.raw).catch(e => {
-        throw new Error(e);
-      });
-      return data;
+      if (isBase64) {
+        const data = await this.request.broadcast.broadcastPost64(tran.raw).catch(e => {
+          throw new Error(e);
+        });
+        return data;
+      } else {
+        const data = await this.request.broadcast.broadcastPost(tran.raw).catch(e => {
+          throw new Error(e);
+        });
+        return data;
+      }
     } else {
       throw new Error(tran.error);
     }
@@ -798,19 +795,27 @@ export class API {
   async sendDocuments(
     keyPair: KeyPair,
     exData: ExData,
+    isBase64?: boolean,
   ): Promise<IBroadcastResponse> {
 
     const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
 
     const dataBytes = await exData.toBytes();
 
-    const tran = await tranDocument(keyPair, dataBytes, this.rpcPort, genesis_sign);
+    const tran = await tranDocument(keyPair, dataBytes, this.rpcPort, genesis_sign, isBase64);
 
     if (!tran.error) {
-      const data = await this.request.broadcast.broadcastPost(tran.raw).catch(e => {
-        throw new Error(e);
-      });
-      return data;
+      if (isBase64) {
+        const data = await this.request.broadcast.broadcastPost64(tran.raw).catch(e => {
+          throw new Error(e);
+        });
+        return data;
+      } else {
+        const data = await this.request.broadcast.broadcastPost(tran.raw).catch(e => {
+          throw new Error(e);
+        });
+        return data;
+      }
     } else {
       throw new Error(tran.error);
     }
@@ -824,13 +829,14 @@ export class API {
   async tranRawDocuments(
     keyPair: KeyPair,
     exData: ExData,
+    isBase64?: boolean,
   ): Promise<ITranRaw> {
 
     const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
 
     const dataBytes = await exData.toBytes();
 
-    return await tranDocument(keyPair, dataBytes, this.rpcPort, genesis_sign);
+    return await tranDocument(keyPair, dataBytes, this.rpcPort, genesis_sign, isBase64);
   }
 
 
@@ -842,11 +848,12 @@ export class API {
   async tranRawSign(
     keyPair: KeyPair,
     seqNo: string,
+    isBase64?: boolean,
   ): Promise<ITranRaw> {
 
     const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
 
-    return await tranSign(keyPair, seqNo, this.rpcPort, genesis_sign);
+    return await tranSign(keyPair, seqNo, this.rpcPort, genesis_sign, isBase64);
   }
 
 /** @description API: Gets raw data for create a unique imprint.
@@ -863,6 +870,7 @@ async tranRawImprint(
   icon: Int8Array,
   image: Int8Array,
   description: string,
+  isBase64?: boolean,
 ): Promise<ITranRaw> {
 
     const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
@@ -875,8 +883,8 @@ async tranRawImprint(
       description,
       this.rpcPort,
       genesis_sign,
+      isBase64,
     );
-
   }
 
 /** @description API: Gets raw data for create a template.
@@ -893,6 +901,7 @@ async tranRawTemplate(
   icon: Int8Array,
   image: Int8Array,
   description: string,
+  isBase64?: boolean,
 ): Promise<ITranRaw> {
 
     const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
@@ -905,8 +914,8 @@ async tranRawTemplate(
       description,
       this.rpcPort,
       genesis_sign,
+      isBase64,
     );
-
   }
 
 /** @description API: Gets raw data for create order.
@@ -925,6 +934,7 @@ async tranRawOrder(
   haveAmount: number,
   wantAssetKey: number,
   wantAmount: number,
+  isBase64?: boolean,
 ): Promise<ITranRaw> {
 
     const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
@@ -938,6 +948,7 @@ async tranRawOrder(
       wantAmount,
       this.rpcPort,
       genesis_sign,
+      isBase64,
     );
 
   }
@@ -952,6 +963,7 @@ async tranRawCancelOrder(
   keyPair: KeyPair,
   name: string,
   signature: string,
+  isBase64?: boolean,
 ): Promise<ITranRaw> {
 
     const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
@@ -962,7 +974,7 @@ async tranRawCancelOrder(
       signature,
       this.rpcPort,
       genesis_sign,
+      isBase64,
     );
-
   }
 }

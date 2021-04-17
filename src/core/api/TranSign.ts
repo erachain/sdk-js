@@ -3,12 +3,14 @@ import { KeyPair } from '../src/core/account/KeyPair';
 import { PrivateKeyAccount } from '../src/core/account/PrivateKeyAccount';
 import { ITranRaw } from '../src/core/transaction/TranTypes';
 import { Base58 } from '../crypt/libs/Base58';
+import base64 from "../src/core/util/base64";
 
 export const tranSign = async (
   keyPair: KeyPair,
   seqNo: string,
   port: number,
   genesis_sign: Int8Array,
+  isBase64?: boolean,
 ): Promise<ITranRaw> => {
   try {
     const feePow = 0;
@@ -22,7 +24,8 @@ export const tranSign = async (
     //console.log("tranDocument.tx");
     await tx.sign(privateAccount, false);
     //console.log("tranDocument.sign");
-    const raw = await Base58.encode(await tx.toBytes(true, null));
+    const bytes = await tx.toBytes(true, null);
+    const raw = isBase64 ? base64.encodeFromByteArray(new Uint8Array(bytes)) : await Base58.encode(bytes);
     //console.log("tranDocument.base58encode");
     let size = await tx.getDataLength();
 

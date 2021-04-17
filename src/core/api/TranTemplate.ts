@@ -5,6 +5,7 @@ import { PrivateKeyAccount } from '../src/core/account/PrivateKeyAccount';
 import { PublicKeyAccount } from '../src/core/account/PublicKeyAccount';
 import { ITranRaw } from '../src/core/transaction/TranTypes';
 import { Base58 } from '../crypt/libs/Base58';
+import base64 from "../src/core/util/base64";
 
 export const tranTemplate = async (
   keyPair: KeyPair,
@@ -14,6 +15,7 @@ export const tranTemplate = async (
   description: string,
   port: number,
   genesis_sign: Int8Array,
+  isBase64?: boolean,
 ): Promise<ITranRaw> => {
   try {
 
@@ -32,7 +34,8 @@ export const tranTemplate = async (
 
     const tx = new TransactionTemplate(privateAccount, template, feePow, timestamp, reference, port, genesis_sign);
     await tx.sign(privateAccount, false);
-    const raw = await Base58.encode(await tx.toBytes(true, null));
+    const bytes = await tx.toBytes(true, null);
+    const raw = isBase64 ? base64.encodeFromByteArray(new Uint8Array(bytes)) : await Base58.encode(bytes);
     let size = await tx.getDataLength(false);
 
     const fee = (size * 100.0) / Math.pow(10, 8);
@@ -62,6 +65,7 @@ const testTranTemplate = async (
   description: string,
   port: number,
   genesis_sign: Int8Array,
+  isBase64?: boolean,
 ): Promise<ITranRaw> => {
   try {
 
@@ -78,7 +82,8 @@ const testTranTemplate = async (
 
     const tx = new TransactionTemplate(privateAccount, template, feePow, timestamp, reference, port, genesis_sign);
     await tx.sign(privateAccount, false);
-    const raw = await Base58.encode(await tx.toBytes(true, null));
+    const bytes = await tx.toBytes(true, null);
+    const raw = isBase64 ? base64.encodeFromByteArray(new Uint8Array(bytes)) : await Base58.encode(bytes);
     let size = await tx.getDataLength(false);
 
     const fee = (size * 100.0) / Math.pow(10, 8);
