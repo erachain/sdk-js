@@ -210,7 +210,7 @@ export abstract class Transaction {
     return (await this.getDataLength(false)) * BlockChain.FEE_PER_BYTE;
   }
 
-  abstract async getDataLength(asPack: boolean): Promise<number>;
+  abstract getDataLength(asPack: boolean): Promise<number>;
 
   async amountToBytes(n: BigDecimal, dataWriter: DataWriter): Promise<void> {
     let bytes = new Int8Array([]);

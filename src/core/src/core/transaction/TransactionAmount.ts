@@ -57,7 +57,7 @@ export class TransactionAmount extends Transaction {
     //WRITE RECIPIENT
     data.set(await Base58.decode(this.recipient.getAddress()));
 
-    if (this.amount != null) {
+    if (!!this.amount) {
       //WRITE KEY
       let keyBytes = await Bytes.longToByteArray(this.key);
       keyBytes = Bytes.ensureCapacity(keyBytes, Transaction.KEY_LENGTH, 0);
