@@ -391,6 +391,7 @@ export class API {
    * @param {string} head Title.
    * @param {string} message Message.
    * @param {boolean} encrypted Encryption flag.
+   * @param {boolean} isBase64 Base64 encoding.
    * @return {Promise<IBroadcastResponse>}
    */
   async sendAsset(
@@ -445,6 +446,54 @@ export class API {
     } else {
       throw new Error(tran.error);
     }
+  }
+
+  /** @description API gets raw send amount of asset to recipient.
+   * @param {KeyPair} keyPair Key pair.
+   * @param {IAsset} asset Amount and asset key.
+   * @param {string} recipientPublicKey Recipient public key.
+   * @param {string} head Title.
+   * @param {string} message Message.
+   * @param {boolean} encrypted Encryption flag.
+   * @param {boolean} isBase64 Base64 encoding.
+   * @return {Promise<IBroadcastResponse>}
+   */
+  async tranRawSendAsset(
+    keyPair: KeyPair,
+    asset: IAsset,
+    recipientPublicKey: string,
+    head: string,
+    message: string,
+    encrypted: boolean,
+    isBase64?: boolean
+  ): Promise<ITranRaw> {
+    let recipient: ITranRecipient = {
+      address: recipientPublicKey,
+      publicKey: null,
+    };
+
+    if (recipientPublicKey.length >= 43) {
+      const pk = await Base58.decode(recipientPublicKey);
+      recipient = {
+        address: await Qora.getAccountAddressFromPublicKey(pk),
+        publicKey: pk,
+      };
+    }
+
+    const tranBody = {
+      head,
+      message,
+      encrypted,
+    };
+
+    const transAsset: ITranAsset = {
+      assetKey: asset.assetKey,
+      amount: new BigDecimal(asset.amount),
+    };
+
+    const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
+
+    return await tranSend(recipient, keyPair, transAsset, tranBody, this.rpcPort, genesis_sign, isBase64);;
   }
 
   /** @description API get transaction raw of person.

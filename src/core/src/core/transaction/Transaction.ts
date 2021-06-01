@@ -222,7 +222,6 @@ export abstract class Transaction {
       }
       n = new BigDecimal(num);
     }
-    //console.log('test', { scale: n.getScale(), diffScale, value: n.unscaledValue() });
     bytes = await Bytes.longToByteArray(n.unscaledValue());
     bytes = Bytes.ensureCapacity(bytes, Transaction.AMOUNT_LENGTH, 0);
     dataWriter.set(bytes);

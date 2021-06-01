@@ -24,7 +24,7 @@ export class BigDecimal {
   }
 
   get intCompact(): number {
-    return this._num * BigDecimal.pow(10, this.scale);
+    return this._num * Math.pow(10, this.scale);
   }
 
   get stringCache(): string {
@@ -47,7 +47,7 @@ export class BigDecimal {
   }
 
   setScale(newScale: number = this.scale, roundingMode: number = BigDecimal.ROUND_DOWN): BigDecimal {
-    const precision = BigDecimal.pow(10, newScale + 1);
+    const precision = Math.pow(10, newScale + 1);
     let value = this.num * precision;
     value = roundingMode === BigDecimal.ROUND_UP ? Math.ceil(value) : Math.floor(value);
     value = value / precision;
@@ -56,7 +56,7 @@ export class BigDecimal {
   }
 
   pow(x: number | BigDecimal): BigDecimal {
-    return new BigDecimal(BigDecimal.pow(this.num, this._numValue(x)));
+    return new BigDecimal(Math.pow(this.num, this._numValue(x)));
   }
 
   valueOf(): number {

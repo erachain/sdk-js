@@ -207,7 +207,7 @@ const { EraChain } = require('erachain-js-api')
     const encrypted = true; // encrypted = true, only if recipient is public key
                             // encrypted = false, only if sender is certified persons
 
-    api.sendAsset(keyPair, recipientPublicKeyOrAddress, asset, head, message, encrypted)
+    api.sendAsset(keyPair, asset, recipientPublicKey, head, message, encrypted, isBase64)
         .then(data => {
             // data = {status: "ok"}
             console.log(data);
@@ -218,7 +218,7 @@ const { EraChain } = require('erachain-js-api')
 
     // With raw code
 
-    api.tranRawSendAsset(keyPair, recipientPublicKeyOrAddress, asset, head, message, encrypted)
+    api.tranRawSendAsset(keyPair, recipientPublicKeyOrAddress, asset, head, message, encrypted, isBase64)
         .then(result => {
             /*
                 result: {
