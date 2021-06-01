@@ -216,13 +216,13 @@ export abstract class Transaction {
     let bytes = new Int8Array([]);
     let diffScale = n.getScale() - Transaction.AMOUNT_DEFAULT_SCALE;
     if (diffScale !== 0) {
-      const num = n.num * Math.pow(10, diffScale);
+      const num = n.num * BigDecimal.pow(10, diffScale);
       if (diffScale < 0) {
         diffScale += Transaction.SCALE_MASK + 1;
       }
       n = new BigDecimal(num);
     }
-    //console.log({ scale: n.getScale(), diffScale, value: n.unscaledValue() });
+    //console.log('test', { scale: n.getScale(), diffScale, value: n.unscaledValue() });
     bytes = await Bytes.longToByteArray(n.unscaledValue());
     bytes = Bytes.ensureCapacity(bytes, Transaction.AMOUNT_LENGTH, 0);
     dataWriter.set(bytes);
