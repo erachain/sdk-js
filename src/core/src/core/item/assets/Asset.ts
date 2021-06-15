@@ -9,6 +9,7 @@ import { Transaction } from '../../transaction/Transaction';
 import { DataWriter } from '../../DataWriter';
 import { subClass } from './subclass';
 import { AppData } from '../AppData';
+import Base64 from '../../util/base64';
 
 export class Asset extends AssetCls {
   ownerSignature: Int8Array;
@@ -38,7 +39,12 @@ export class Asset extends AssetCls {
 
   /* tslint:disable-next-line */
   static async parse(rowData: string, includeReference: boolean = false): Promise<Asset> {
-    const data = await Base58.decode(rowData);
+    let data: Int8Array; 
+    if (Base64.isBase64(rowData)) {
+      data = Base64.decodeToByteArray(rowData);
+    } else {
+      data = await Base58.decode(rowData);
+    }
 
     // READ TYPE
     const typeBytes = data.slice(0, ItemCls.TYPE_LENGTH);
@@ -82,16 +88,13 @@ export class Asset extends AssetCls {
     //READ IMAGE
     let imageLengthBytes = data.slice(position, position + ItemCls.IMAGE_SIZE_LENGTH);
     imageLengthBytes = imageLengthBytes.slice();
+
     if (imageLengthBytes[0] === -128) {
         isAppData = true;
         imageLengthBytes[0] = imageLengthBytes[0] & 127;
     }
     const imageLength = await Bytes.intFromByteArray(imageLengthBytes);
     position += ItemCls.IMAGE_SIZE_LENGTH;
-
-    if (imageLength < 0 || imageLength > ItemCls.MAX_IMAGE_LENGTH) {
-      throw new Error('Invalid image length: ' + imageLength);
-    }
 
     const image = data.slice(position, position + imageLength);
     position += imageLength;
@@ -111,8 +114,9 @@ export class Asset extends AssetCls {
         position += AppData.ICON_TYPE_LENGTH;
         const imageTypeBytes = data.slice(position, position + AppData.IMAGE_TYPE_LENGTH);
         position += AppData.IMAGE_TYPE_LENGTH;
+
         const typeLink = imageTypeBytes[0] < 0 ? 2 : (iconTypeBytes[0] < 0 ? 1 : 0);
-        if (typeLink !== 0) {
+        if (typeLink !== 0 || iconTypeBytes[0] || imageTypeBytes[0]) {
             appData = new AppData(iconTypeBytes, imageTypeBytes);
             appData.flags1 = flag1;
             appData.flags2 = flag2;

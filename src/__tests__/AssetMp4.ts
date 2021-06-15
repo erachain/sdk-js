@@ -1,8 +1,22 @@
 import { KeyPair } from '../core/src/core/account/KeyPair';
-import { Bytes } from '../core/src/core/Bytes';
 import { Asset } from '../core/src/core/item/assets/Asset';
 import { PublicKeyAccount } from '../core/src/core/account/PublicKeyAccount';
-import { Base58 } from '../core/crypt/libs/Base58';
+import base64 from "../core/src/core/util/base64";
+const fs = require('fs');
+
+
+function mp4() {
+  return new Promise<string>(function(resolve){
+    const path = `${__dirname}/assets/test.mp4`;
+    function read(p: string) {
+        fs.readFile(p, "base64", function(err: Error, imagebuffer: string){
+            if (err) throw err;
+            resolve(imagebuffer);
+        });
+    }
+    read(path);
+  });
+}
 
 describe('Asset', () => {
 
@@ -116,29 +130,29 @@ describe('Asset', () => {
   const quantity = 1;
   const scale = 0;
   const icon = new Int8Array([]);
-  const imageURL = 'https://www.host.com/video.mp4';
-  const image = Bytes.syncStringToByteArray(imageURL);
   const description = '';
 
   const owner = new PublicKeyAccount(keyPair.publicKey);
 
   it('Asset.nft.links', async () => {
-    const asset = new Asset(owner, quantity, scale, assetType, name, icon, image, description);
 
-    return asset.toBytes(false, false)
-      .then(b => {
-        return Base58.encode(b)
-          .then(raw => {
+    return mp4()
+      .then((base64Mp4: string) => {
+        const image = base64.decodeToByteArray(base64Mp4);
+        const asset = new Asset(owner, quantity, scale, assetType, name, icon, image, description, 0, 1);
+
+        return asset.toBytes(false, false)
+          .then(b => {
+            const raw = base64.encodeFromByteArray(b);
+
             return Asset.parse(raw)
-              .then(a => {
-                console.log('test', {
-                  a: JSON.stringify(asset.appData),
-                  b: JSON.stringify(a.appData),
-                });
-                expect(JSON.stringify(asset.appData)).toBe(JSON.stringify(a.appData));
-                expect(iconURL).toBe(Bytes.syncStringFromByteArray(a.icon));
-                expect(imageURL).toBe(Bytes.syncStringFromByteArray(a.image));
+            .then(a => {
+              console.log('test', {
+                a: JSON.stringify(asset.appData),
+                b: JSON.stringify(a.appData),
               });
+              expect(JSON.stringify(asset.appData)).toBe(JSON.stringify(a.appData));
+            });
           });
       })
       .catch(e => { 
