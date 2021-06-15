@@ -132,10 +132,6 @@ describe('Asset', () => {
           .then(raw => {
             return Asset.parse(raw)
               .then(a => {
-                console.log('test', {
-                  a: JSON.stringify(asset.appData),
-                  b: JSON.stringify(a.appData),
-                });
                 expect(JSON.stringify(asset.appData)).toBe(JSON.stringify(a.appData));
                 expect(iconURL).toBe(Bytes.syncStringFromByteArray(a.icon));
                 expect(imageURL).toBe(Bytes.syncStringFromByteArray(a.image));

@@ -67,7 +67,8 @@ export class Imprint extends ItemCls {
     const imageLength = await Bytes.intFromByteArray(imageLengthBytes);
     position += ItemCls.IMAGE_SIZE_LENGTH;
 
-    if (imageLength < 0 || imageLength > ItemCls.MAX_IMAGE_LENGTH) {
+    //if (imageLength < 0 || imageLength > ItemCls.MAX_IMAGE_LENGTH) {
+    if (imageLength < 0) {
       throw new Error('Invalid image length: ' + imageLength);
     }
 

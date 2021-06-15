@@ -6,7 +6,7 @@ import { DataWriter } from '../DataWriter';
 import {AppData} from './AppData';
 
 export class ItemCls {
-  static MAX_ICON_LENGTH = 11000;
+  static MAX_ICON_LENGTH = 51200;
   static MAX_IMAGE_LENGTH = 1100000;
   static HAIR_COLOR_SIZE_LENGTH = 1;
   static MAX_HAIR_COLOR_LENGTH = 256 ^ (ItemCls.HAIR_COLOR_SIZE_LENGTH - 1);

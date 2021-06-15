@@ -125,7 +125,7 @@ export class Documents {
     // READ JSON
     const jsonBytes = data.slice(position, position + length);
     const stringJson = await Bytes.stringFromByteArray(jsonBytes);
-    console.log({ stringJson });
+    //console.log({ stringJson });
     const json = JSON.parse(stringJson);
 
     position += length;
