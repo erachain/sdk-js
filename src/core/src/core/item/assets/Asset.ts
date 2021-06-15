@@ -22,6 +22,8 @@ export class Asset extends AssetCls {
     icon: Int8Array,
     image: Int8Array,
     description: string,
+    iconType?: number,
+    imageType?: number,
   ) {
     let id = 2
     const flag = subClass.get(asset_type);
@@ -31,7 +33,7 @@ export class Asset extends AssetCls {
       id = 1;
     }
 
-    super(new Int8Array([id, 0]), owner, quantity, scale, asset_type, name, icon, image, description);
+    super(new Int8Array([id, 0]), owner, quantity, scale, asset_type, name, icon, image, description, iconType, imageType);
   }
 
   /* tslint:disable-next-line */

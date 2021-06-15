@@ -761,6 +761,8 @@ export class API {
     image: Int8Array,
     description: string,
     isBase64?: boolean,
+    iconType?: number,
+    imageType?: number,
   ): Promise<ITranRaw> {
     const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
 
@@ -776,6 +778,8 @@ export class API {
       this.rpcPort,
       genesis_sign,
       isBase64,
+      iconType,
+      imageType,
     );
 
   }
@@ -802,6 +806,8 @@ export class API {
     image: Int8Array,
     description: string,
     isBase64?: boolean,
+    iconType?: number,
+    imageType?: number,
   ): Promise<IBroadcastResponse> {
     const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
 
@@ -817,6 +823,8 @@ export class API {
       this.rpcPort,
       genesis_sign,
       isBase64,
+      iconType,
+      imageType,
     );
 
     if (!tran.error) {

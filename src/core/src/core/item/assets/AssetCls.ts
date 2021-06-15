@@ -22,8 +22,10 @@ export class AssetCls extends ItemCls {
     icon: Int8Array,
     image: Int8Array,
     description: string,
+    iconType?: number,
+    imageType?: number,
   ) {
-    super(typeBytes, owner, name, icon, image, description);
+    super(typeBytes, owner, name, icon, image, description, iconType, imageType);
 
     this.quantity = quantity;
     this.scale = scale;

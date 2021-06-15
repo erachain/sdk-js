@@ -270,8 +270,8 @@ const { EraChain } = require('erachain-js-api')
 
     /* Save only url links */
     /*
-        const icon = await EraChain.Bytes.stringToByteArray("https://my.domain.com/photo.{ png | jpeg | jpg | gif }");
-        const image = await EraChain.Bytes.stringToByteArray("https://my.domain.com/photo.{ png | jpeg | jpg | gif }";
+        const icon = await EraChain.Bytes.stringToByteArray("https://my.domain.com/photo.{ png | jpeg | jpg | gif | mp4 }");
+        const image = await EraChain.Bytes.stringToByteArray("https://my.domain.com/photo.{ png | jpeg | jpg | gif | mp4 }";
     */
 
     api.registerAsset(keyPair, name, assetType, quantity, scale, icon, image, description)
