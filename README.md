@@ -265,13 +265,13 @@ const { EraChain } = require('erachain-js-api')
     const assetType = 1; // цифровой актив
     const quantity = 1000; // количество
     const scale = 2; // дробность
-    const icon = EraChain.base64ToArray(icon_base64string);
-    const image = EraChain.base64ToArray(image_base64string);
+    const icon = EraChain.Base64.decodeToByteArray(icon_base64);
+    const image = EraChain.Base64.decodeToByteArray(image_base64);
 
     /* Save only url links */
     /*
-        const icon = await EraChain.Bytes.stringToByteArray("https://my.domain.com/photo.{ png | jpeg | jpg | gif }");
-        const image = await EraChain.Bytes.stringToByteArray("https://my.domain.com/photo.{ png | jpeg | jpg | gif }";
+        const icon = await EraChain.Bytes.stringToByteArray("https://my.domain.com/photo.{ png | jpeg | jpg | gif | mp4 }");
+        const image = await EraChain.Bytes.stringToByteArray("https://my.domain.com/photo.{ png | jpeg | jpg | gif | mp4 }";
     */
 
     api.registerAsset(keyPair, name, assetType, quantity, scale, icon, image, description)
@@ -310,6 +310,45 @@ const { EraChain } = require('erachain-js-api')
             console.log(e);
         });
 
+    // video
+    const video = EraChain.Base64.decodeToByteArray(mp4_base64);
+    const isBase64 = true OR false; // if false then will be use Base58 more slow way 
+    const iconType = 0; // 0 - gif, jpg, .png (default), 1 - mp4
+    const imageType = 1; // 0 - gif, jpg, .png (default), 1 - mp4
+
+    api.registerAsset(keyPair, name, assetType, quantity, scale, icon, video, description, isBase64, iconType, imageType)
+        .then(data => {
+            // data = {status: "ok"}
+            console.log(data);
+        })
+        .catch(e => {
+            console.log(e);
+        });
+
+    api.tranRawAsset(keyPair, name, assetType, quantity, scale, icon, video, description, isBase64, iconType, imageType)
+        .then(result => {
+            /*
+                result: {
+                    raw: string;
+                    size: number;
+                    fee: number;
+                    error?: any;
+                }
+            */
+            if (!result.error) {
+                api.broadcast(result.raw)
+                    .then(data => {
+                        // data = {status: "ok"}
+                        console.log(data);
+                    })
+                    .catch(e => {
+                        console.log(e);
+                    });
+            }
+        })
+        .catch(e => {
+            console.log(e);
+        });
 
 ```
 

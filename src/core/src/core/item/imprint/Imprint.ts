@@ -6,6 +6,7 @@ import { Bytes } from '../../Bytes';
 import { BlockChain } from '../../BlockChain';
 import { Transaction } from '../../transaction/Transaction';
 import { DataWriter } from '../../DataWriter';
+import Base64 from '../../util/base64';
 
 export class Imprint extends ItemCls {
   ownerSignature: Int8Array;
@@ -22,7 +23,12 @@ export class Imprint extends ItemCls {
 
   /* tslint:disable-next-line */
   static async parse(rowData: string, includeReference: boolean = false): Promise<Imprint> {
-    const data = await Base58.decode(rowData);
+    let data: Int8Array; 
+    if (Base64.isBase64(rowData)) {
+      data = Base64.decodeToByteArray(rowData);
+    } else {
+      data = await Base58.decode(rowData);
+    }
 
     // READ TYPE
     const typeBytes = data.slice(0, ItemCls.TYPE_LENGTH);

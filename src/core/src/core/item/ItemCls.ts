@@ -43,6 +43,8 @@ export class ItemCls {
   description: string;
   reference?: Int8Array;
   appData?: AppData;
+  iconType?: number;
+  imageType?: number;
 
   constructor(
     typeBytes: Int8Array,
@@ -51,6 +53,8 @@ export class ItemCls {
     icon: Int8Array,
     image: Int8Array,
     description: string,
+    iconType?: number,
+    imageType?: number,
   ) {
     this.typeBytes = typeBytes;
     this.owner = owner;
@@ -58,6 +62,8 @@ export class ItemCls {
     this.icon = icon;
     this.image = image;
     this.description = description.trim();
+    this.iconType = iconType ?? 0;
+    this.imageType = imageType ?? 0;
     this.initAppData();
 
     // this.reference = Bytes.ensureCapacity(base58.decode(name), ItemCls.REFERENCE_LENGTH, 0) as Int8Array;
@@ -104,6 +110,18 @@ export class ItemCls {
             this.appData = new AppData(iconType, imageType);
 
             return true;
+        }
+        // Если не ссылки, то смотрим iconType и imageType
+        if (this.iconType) {
+          iconType = new Int8Array([this.iconType]);
+        }
+        if (this.imageType) {
+          imageType = new Int8Array([this.imageType]);
+        }
+        if (this.iconType || this.imageType) {
+          this.appData = new AppData(iconType, imageType);
+
+          return true;
         }
     } catch (e) { /**/ }
     return false;

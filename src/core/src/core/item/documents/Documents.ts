@@ -1,6 +1,7 @@
 import { Bytes } from '../../Bytes';
 import { DataWriter } from '../../DataWriter';
 import { Base58 } from '../../../../crypt/libs/Base58';
+import Base64 from '../../util/base64';
 
 export interface IMetadata {
   [key: string]: string;
@@ -112,7 +113,12 @@ export class Documents {
   }
 
   static async parse(raw: string): Promise<Documents> {
-    const data = await Base58.decode(raw);
+    let data: Int8Array; 
+    if (Base64.isBase64(raw)) {
+      data = Base64.decodeToByteArray(raw);
+    } else {
+      data = await Base58.decode(raw);
+    }
 
     // READ LENGTH OF JSON
     const lengthBytes = data.slice(0, Documents.JSON_LENGTH);
@@ -125,7 +131,6 @@ export class Documents {
     // READ JSON
     const jsonBytes = data.slice(position, position + length);
     const stringJson = await Bytes.stringFromByteArray(jsonBytes);
-    //console.log({ stringJson });
     const json = JSON.parse(stringJson);
 
     position += length;
