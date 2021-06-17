@@ -134,7 +134,7 @@ describe('Asset', () => {
 
   const owner = new PublicKeyAccount(keyPair.publicKey);
 
-  it('Asset.nft.links', async () => {
+  it('Asset.MP4', async () => {
 
     return mp4()
       .then((base64Mp4: string) => {

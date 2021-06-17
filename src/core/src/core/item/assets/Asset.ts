@@ -42,6 +42,7 @@ export class Asset extends AssetCls {
     let data: Int8Array; 
     if (Base64.isBase64(rowData)) {
       data = Base64.decodeToByteArray(rowData);
+      console.log('test.base64');
     } else {
       data = await Base58.decode(rowData);
     }
@@ -88,7 +89,7 @@ export class Asset extends AssetCls {
     //READ IMAGE
     let imageLengthBytes = data.slice(position, position + ItemCls.IMAGE_SIZE_LENGTH);
     imageLengthBytes = imageLengthBytes.slice();
-
+    console.log('test', imageLengthBytes[0]);
     if (imageLengthBytes[0] === -128) {
         isAppData = true;
         imageLengthBytes[0] = imageLengthBytes[0] & 127;

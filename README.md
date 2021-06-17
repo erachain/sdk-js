@@ -265,8 +265,8 @@ const { EraChain } = require('erachain-js-api')
     const assetType = 1; // цифровой актив
     const quantity = 1000; // количество
     const scale = 2; // дробность
-    const icon = EraChain.base64ToArray(icon_base64);
-    const image = EraChain.base64ToArray(image_base64);
+    const icon = EraChain.Base64.decodeToByteArray(icon_base64);
+    const image = EraChain.Base64.decodeToByteArray(image_base64);
 
     /* Save only url links */
     /*
@@ -311,7 +311,7 @@ const { EraChain } = require('erachain-js-api')
         });
 
     // video
-    const video = EraChain.base64ToArray(mp4_base64);
+    const video = EraChain.Base64.decodeToByteArray(mp4_base64);
     const isBase64 = true OR false; // if false then will be use Base58 more slow way 
     const iconType = 0; // 0 - gif, jpg, .png (default), 1 - mp4
     const imageType = 1; // 0 - gif, jpg, .png (default), 1 - mp4

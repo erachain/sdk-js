@@ -1,11 +1,13 @@
 const keyStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 const regexBase64 = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
+const regexNotBase58 = /[0OIl\+\/]+/;
 
-export default {
-    isBase64: (input: string) => {
-        return regexBase64.test(input);
-    },
-    encode: (input: string) => {
+export default class Base64 {
+    static isBase64(input: string) {
+        return regexBase64.test(input) && regexNotBase58.test(input);
+    }
+
+    static encode(input: string) {
         const output = [];
         let chr1: number = 0;
         let chr2: number = 0;
@@ -42,9 +44,9 @@ export default {
         } while (i < input.length);
 
         return output.join('');
-    },
+    }
 
-    encodeFromByteArray: (input: Uint8Array | Int8Array) => {
+    static encodeFromByteArray(input: Uint8Array | Int8Array) {
         if (input instanceof Int8Array) {
             input = new Uint8Array(input);
         }
@@ -85,9 +87,9 @@ export default {
         } while (i < input.length);
 
         return output.join('');
-    },
+    }
 
-    decode: (input: string) => {
+    static decode(input: string) {
         let output = "";
         let chr1: number = 0;
         let chr2: number = 0;
@@ -132,10 +134,10 @@ export default {
         } while (i < input.length);
 
         return output;
-    },
+    }
 
-    decodeToByteArray: function (input: string): Int8Array {
-        let output: number[] = [];
+    static decodeToByteArray(input: string) {
+        const output: number[] = [];
         let chr1: number = 0;
         let chr2: number = 0;
         let chr3: number = 0;
@@ -166,10 +168,10 @@ export default {
 
             output.push(chr1);
 
-            if (enc3 != 64) {
+            if (enc3 !== 64) {
                 output.push(chr2);
             }
-            if (enc4 != 64) {
+            if (enc4 !== 64) {
                 output.push(chr3);
             }
 
