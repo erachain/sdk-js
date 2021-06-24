@@ -5,6 +5,8 @@ import { Bytes } from '../Bytes';
 import { DataWriter } from '../DataWriter';
 import {AppData} from './AppData';
 
+const regexURL = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/i;
+
 export class ItemCls {
   static MAX_ICON_LENGTH = 51200;
   static MAX_IMAGE_LENGTH = 1100000;
@@ -74,8 +76,9 @@ export class ItemCls {
     try {
         const sIcon = (await Bytes.stringFromByteArray(this.icon)).toLowerCase();
         const sImage = (await Bytes.stringFromByteArray(this.image)).toLowerCase();
-        const isIconURL = sIcon.indexOf("http") >= 0;
-        const isImageURL = sImage.indexOf("http") >= 0;
+
+        const isIconURL = regexURL.test(sIcon);
+        const isImageURL = regexURL.test(sImage);
         let iconType = new Int8Array([ 0 ]);
         if (isIconURL) {
             if (
@@ -101,7 +104,7 @@ export class ItemCls {
             ) {
                 imageType = new Int8Array([-128 | 0]);
             } else if (
-                (sImage.indexOf(".mp4") >= 0) 
+                (sImage.indexOf(".mp4") >= 0)
             ) {
                 imageType = new Int8Array([-128 | 1]);
             }
