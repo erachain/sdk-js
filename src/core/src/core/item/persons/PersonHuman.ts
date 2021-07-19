@@ -270,7 +270,7 @@ export class PersonHuman extends PersonCls {
   }
 
   async sign(secretKey: Int8Array): Promise<void> {
-    const data = await this.toBytes(false, true);
+    const data = await this.toBytesWithoutAppData(false, true);
     const sign = AppCrypt.sign(data, secretKey);
     this.ownerSignature = new Int8Array(sign);
   }

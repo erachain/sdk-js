@@ -7,6 +7,7 @@ import { ExData } from '../src/core/item/documents/ExData';
 import { ExLink } from '../src/core/item/documents/ExLink';
 import { Imprint } from '../src/core/item/imprint/Imprint';
 import { Template } from '../src/core/item/template/Template';
+import { ChainMode } from '../types/era/IApiConfig';
 
 export const Type = {
   BigDecimal,
@@ -18,4 +19,5 @@ export const Type = {
   ExLink,
   Imprint,
   Template,
+  ChainMode,
 };

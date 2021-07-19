@@ -184,6 +184,45 @@ export class ItemCls {
     return data.data;
   }
 
+  async toBytesWithoutAppData(includeReference: boolean, forOwnerSign: boolean): Promise<Int8Array> {
+    const data = new DataWriter();
+    const useAll = !forOwnerSign;
+    //console.log("ItemCls", { includeReference, forOwnerSign, useAll });
+    if (useAll) {
+      //WRITE TYPE
+      this.typeToBytes(data);
+    }
+
+    if (useAll) {
+      // WRITE OWNER
+      this.ownerToBytes(data);
+    }
+
+    //WRITE NAME
+    await this.nameToBytes(data, useAll);
+    //console.log("ItemCls1", { data });
+
+    if (useAll) {
+      //WRITE ICON SIZE - 2 bytes = 64kB max
+      //WRITE ICON
+      await this.iconToBytes(data);
+    }
+    //console.log("ItemCls2", { data });
+    await this.imageToBytes(data, useAll);
+
+    //console.log("ItemCls3", { data });
+    // WRITE DESCRIPTION
+    await this.descriptionToBytes(data, useAll);
+    //console.log("ItemCls4", { data });
+
+    if (useAll && includeReference && this.reference) {
+      //WRITE REFERENCE
+      data.set(this.reference);
+    }
+    //console.log("ItemCls5", { data });
+    return data.data;
+  }
+
   typeToBytes(dataWriter: DataWriter): void {
     dataWriter.set(this.typeBytes);
   }

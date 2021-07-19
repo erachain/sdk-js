@@ -3,6 +3,7 @@ import { Base58 } from './Base58';
 import SHA256 from './SHA256';
 import { wordsToByteArray, prepareAfterDecrypt, trimString, bytesToHex, hexToBytes } from './convert';
 import { Bytes } from '../../src/core/Bytes';
+import Base64 from '../../src/core/util/base64';
 
 const ed2curve = require('./ed2curve');
 
@@ -60,6 +61,32 @@ export const decryptAES = async (encryptedMessage, secret32, prefix = true) => {
 
 };
 
+/** @description Decrypt byte array.
+ * @param {Int8Array | string} encryptedMessage Encrypted text to decrypt.
+ * @param {Words} secret32 Shared secret.
+ * @param {boolean} prefix Exists prefix.
+ * @return {Words | boolean}
+ */
+ export const decryptAES64 = async (encryptedMessage, secret32, prefix = true) => {
+
+  const iv = CryptoJS.enc.Hex.parse('06040308010201020702030805070101');
+
+  let arrayMessage = encryptedMessage;
+  if (typeof encryptedMessage === 'string') {
+    arrayMessage = Base64.decodeToByteArray(encryptedMessage);
+    
+  }
+  if (prefix) {
+    arrayMessage = arrayMessage.slice(1);
+  }
+  
+  const words = CryptoJS.lib.WordArray.create(arrayMessage);
+
+  return CryptoJS.AES.decrypt({ ciphertext: words }, secret32, { iv });
+  // return await Base58.encode(prepareAfterDecrypt(wordsToByteArray(decrypted)));    
+
+};
+
 export const wordsToBytes = (words) => {
   return hexToBytes(CryptoJS.enc.Hex.stringify(words));
 }
@@ -89,6 +116,29 @@ export const decryptMessage = async (encryptedMessage, publicKey, privateKey, pr
     
     const sharedKey = await passwordAES(publicKey, privateKey);
     const decrypted = await decryptAES(encryptedMessage, sharedKey, prefix);
+
+    return wordsToUtf8(decrypted);
+
+    //return trimString(jsonString);
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
+};
+
+/** @description Decrypt text.
+ * @param {string} encryptedMessage Encrypted text to decrypt.
+ * @param {Int8Array | string} publicKey The public key.
+ * @param {Int8Array | string} privateKey The private key.
+ * @param {boolean} prefix Exists prefix.
+ * @return {Promise<string | boolean>}
+ */
+ export const decryptMessage64 = async (encryptedMessage, publicKey, privateKey, prefix = true) => {
+  try {
+    const iv = CryptoJS.enc.Hex.parse('06040308010201020702030805070101');
+    
+    const sharedKey = await passwordAES(publicKey, privateKey);
+    const decrypted = await decryptAES64(encryptedMessage, sharedKey, prefix);
 
     return wordsToUtf8(decrypted);
 

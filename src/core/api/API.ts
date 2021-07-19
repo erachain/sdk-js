@@ -34,6 +34,7 @@ import { tranDocument } from './TranDocument';
 import { tranSign } from './TranSign';
 import { tranImprint } from './TranImprint';
 import { tranTemplate } from './TranTemplate';
+import { tranUpdateOrder } from './TranUpdateOrder';
 
 const fetch = require('node-fetch');
 const url = require('url');
@@ -83,7 +84,7 @@ export class API {
   private setMode(): void {
     API.CHAIN_MODE = ChainMode.DEFAULT;
     const part = Math.trunc(this.rpcPort / 10);
-    if (part === 905) {
+    if (part === 905 || part === 907) {
       API.CHAIN_MODE = ChainMode.SIDE;
     } else if (part === 909) {
       API.CHAIN_MODE = ChainMode.CLONE;
@@ -122,7 +123,7 @@ export class API {
       this.genesis_sign = await Base58.decode(sign);
     } catch (e) {
       this.genesis_sign = new Int8Array([]);
-      throw new Error(`Genesis signature retrieval error: ${e.message}`);
+      throw new Error(`Genesis signature retrieval error: ${(e as Error).message}`);
     }
     return this.genesis_sign;
   }
@@ -522,7 +523,7 @@ export class API {
       return await tranVerifyPerson(keyPair, personKey, personPublicKey, reference, this.rpcPort, genesis_sign, isBase64);
 
     } catch (e) {
-      throw new Error(e);
+      throw e;
     }
   }
 
@@ -555,7 +556,7 @@ export class API {
         throw new Error(tran.error);
       }
     } catch (e) {
-      throw new Error(e);
+      throw e;
     }
   }
 
@@ -1029,6 +1030,38 @@ async tranRawCancelOrder(
       keyPair,
       name,
       signature,
+      this.rpcPort,
+      genesis_sign,
+      isBase64,
+    );
+  }
+
+/** @description API: Gets raw data for cancel order.
+ * @param {KeyPair} keyPair Key pair.
+ * @param {string} name Name.
+ * @param {string} signature Signature of order.
+ * @param {number} wantAmount Want amount assets.
+ * @return {Promise<ITranRaw>}
+ */
+async tranRawUpdateOrder(
+  keyPair: KeyPair,
+  name: string,
+  signature: string,
+  wantAmount: number,
+  isBase64?: boolean,
+): Promise<ITranRaw> {
+
+    const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
+    console.log('test', {
+      sidechainMode: this.sidechainMode,
+      genesis_sign: this.genesis_sign,
+    });
+    
+    return await tranUpdateOrder(
+      keyPair,
+      name,
+      signature,
+      wantAmount,
       this.rpcPort,
       genesis_sign,
       isBase64,

@@ -103,10 +103,26 @@ const { EraChain } = require('erachain-js-api')
     // Encrypt
     const encrypted_Int8Array = await EraChain.Crypt.encryptMessage(msg_string, key2.publicKey_Int8Array, key1.secretKey_Int8Array);
 
+    // Base58
     const encrypted_string_base58 = await EraChain.Base58.encode(encrypted_Int8Array);
 
     // Decrypt
     const decrypted_string = await EraChain.Crypt.decryptMessage(encrypted_string_base58, keys1.publicKey_Int8Array, keys2.secretKey_Int8Array);
+
+```
+
+### Encrypt/Decrypt base64 functions
+
+```javascript
+
+    // Encrypt
+    const encrypted_Int8Array = await EraChain.Crypt.encryptMessage(msg_string, key2.publicKey_Int8Array, key1.secretKey_Int8Array);
+
+    // Bass64
+    const encrypted_string_base64 = EraChain.Base64.encodeFromByteArray(encrypted_Int8Array);
+
+    // Decrypt
+    const decrypted_string = await EraChain.Crypt.decryptMessage64(encrypted_string_base64, keys1.publicKey_Int8Array, keys2.secretKey_Int8Array);
 
 ```
 
@@ -1017,7 +1033,7 @@ const { EraChain } = require('erachain-js-api')
     const wantAssetKey = 1;
     const wantAmount = 10;
 
-    apt.tranRawOrder(
+    api.tranRawOrder(
         keyPair,
         name,
         haveAssetKey,
@@ -1036,12 +1052,40 @@ const { EraChain } = require('erachain-js-api')
     const wantAssetKey = 2;
     const wantAmount = 0.05;
 
-    apt.tranRawOrder(
+    api.tranRawOrder(
         keyPair,
         name,
         haveAssetKey,
         haveAmount,
         wantAssetKey,
+        wantAmount,
+    )
+        .then((raw) => {
+            console.log(raw);
+        });
+
+    // Cancel order
+
+    const signature = "Base58 string";
+
+    api.tranRawCancelOrder(
+        keyPair,
+        name,
+        signature,
+    )
+        .then((raw) => {
+            console.log(raw);
+        });
+
+    // Update order
+
+    const signature = "Base58 string";
+    const wantAmount = 10;
+
+    api.tranRawUpdateOrder(
+        keyPair,
+        name,
+        signature,
         wantAmount,
     )
         .then((raw) => {

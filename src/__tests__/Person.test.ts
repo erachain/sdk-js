@@ -115,8 +115,6 @@ describe('Person', () => {
   const date = new Date(1946, 6, 14);
   const birthday = date.getTime();
 
-  console.log(birthday);
-
   const person = new PersonHuman(
     account,
     'Donald Trump', // ФИО персоны

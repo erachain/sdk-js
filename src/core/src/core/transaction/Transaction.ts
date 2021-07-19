@@ -23,6 +23,8 @@ export abstract class Transaction {
   static SEND_ASSET_TRANSACTION = 31;
 
   static ORDER_TRANSACTION = 50;
+  
+  static UPDATE_ORDER_TRANSACTION = 52;
 
   static DOCUMENT_TRANSACTION = 35;
 

@@ -13,8 +13,10 @@ export class Crypt {
   static sign = AppCrypt.sign;
   static sha256 = AppCrypt.sha256big;
   static decryptMessage = crypt.decryptMessage;
+  static decryptMessage64 = crypt.decryptMessage64;
   static encryptMessage = crypt.encryptMessage;
   static decryptAES = crypt.decryptAES;
+  static decryptAES64 = crypt.decryptAES64;
   static encryptAES = crypt.encryptAES;
   static encryptBytes = crypt.encryptBytes;
   static passwordAES = crypt.passwordAES;
