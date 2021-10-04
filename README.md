@@ -403,6 +403,10 @@ const { EraChain } = require('erachain-js-api')
     // Gets raw of person
     const raw = await person.raw(keyPair.secretKey);
 
+    // or
+
+    const raw = await person.raw64(keyPair.secretKey);
+
     const parsedPerson = EraChain.Type.PersonHuman.parse(raw);
 
     // Register person

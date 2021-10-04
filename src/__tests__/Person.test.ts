@@ -180,6 +180,7 @@ describe('Person', () => {
       .then((raw: string) => {
         return PersonHuman.parse(raw)
           .then((p: PersonHuman) => {
+            console.log({ person: p });
             expect(p.name).toEqual('Donald Trump');
             expect(p.birthday).toEqual(-740653200000); // отрицательный timestamp
             expect(p.deathday).toEqual(0);
