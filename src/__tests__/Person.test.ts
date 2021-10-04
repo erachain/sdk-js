@@ -151,7 +151,7 @@ describe('Person', () => {
   // deathday: 18446742830872672000,
   // birthday: 18446743330464352000,
 
-  it('PersonHuman.parse', () => {
+  it('PersonHuman.parse58', () => {
     return person.raw(keyPair.secretKey)
       .then((raw: string) => {
         return PersonHuman.parse(raw)
@@ -174,6 +174,31 @@ describe('Person', () => {
       })
       .catch(() => { expect(true).toBe(false); });
   });
+
+  it('PersonHuman.parse64', () => {
+    return person.raw64(keyPair.secretKey)
+      .then((raw: string) => {
+        return PersonHuman.parse(raw)
+          .then((p: PersonHuman) => {
+            expect(p.name).toEqual('Donald Trump');
+            expect(p.birthday).toEqual(-740653200000); // отрицательный timestamp
+            expect(p.deathday).toEqual(0);
+            expect(p.gender).toEqual(0);
+            expect(p.race).toEqual('Белый');
+            expect(p.birthLatitude).toBeLessThanOrEqual(55.755826);
+            expect(p.birthLongitude).toBeLessThanOrEqual(37.6172999);
+            expect(p.skinColor).toEqual('Белый');
+            expect(p.eyeColor).toEqual('Голубой');
+            expect(p.hairColor).toEqual('Блондин');
+            expect(p.height).toEqual(190);
+            expect(p.icon).toEqual(new Int8Array(0));
+            expect(p.image).toEqual(new Int8Array(0));
+            expect(p.description).toEqual('Президент США');
+          });
+      })
+      .catch(() => { expect(true).toBe(false); });
+  });
+
 
   it('PersonHuman.register', () => {
     return person.raw(keyPair.secretKey)

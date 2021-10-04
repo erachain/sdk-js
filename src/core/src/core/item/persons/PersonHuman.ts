@@ -291,4 +291,11 @@ export class PersonHuman extends PersonCls {
     const raw = await Base58.encode(new Int8Array(bytes));
     return raw.trim();
   }
+
+  async raw64(secretKey: Int8Array): Promise<string> {
+    await this.sign(secretKey);
+    const bytes = await this.toBytes(false, false);
+    const raw = Base64.encodeFromByteArray(bytes);
+    return raw.trim();
+  }
 }
