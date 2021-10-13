@@ -221,4 +221,25 @@ describe('Person', () => {
       .catch(() => { expect(true).toBe(false); });
     
   });
+
+  it('PersonHuman.registerWithCertify', () => {
+    return person.raw(keyPair.secretKey)
+      .then((raw: string) => {
+        return PersonHuman.parse(raw)
+          .then((p: PersonHuman) => {
+            const timestamp = 1594864181831;
+
+            return testTranPerson(keyPair, p, timestamp, 9066, new Int8Array([]), true)
+              .then((tranRaw: any) => {
+                expect(tranRaw.size).toEqual(199);
+
+                expect(tranRaw.raw).toEqual(
+                  'GAAAAAAAAXNVUCJHAAAAAAAAAAEok3Ex3nHhFZAzcOtvi8GCjR3ZJ21dFU0mMks4cJWt/AAYocQdhimdSTVmzj+a6BtugcYUQthbu6u7+tLre93NF8TPj04ascsfoHrw7SraO160hRuMC7UsNndoPTCo45UMAQEok3Ex3nHhFZAzcOtvi8GCjR3ZJ21dFU0mMks4cJWt/AxEb25hbGQgVHJ1bXAAAAAAAAAAAAAZ0J/RgNC10LfQuNC00LXQvdGCINCh0KjQkP///1ONoQ2AAAAAAAAAAAAACtCR0LXQu9GL0LlCXwX3QhZ4HQrQkdC10LvRi9C5DtCT0L7Qu9GD0LHQvtC5DtCR0LvQvtC90LTQuNC9vt2jjZwWZKujX2PCv5swXWsHchFhFXm2SmYyA5vQ0sLNAoEcVPwgmcg1fKdnnRxPD8IL/HN9Df9MhCmH+Gs8JQo=',
+                );
+              });
+          });
+      })
+      .catch(() => { expect(true).toBe(false); });
+    
+  });
 });

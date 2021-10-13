@@ -434,6 +434,23 @@ const { EraChain } = require('erachain-js-api')
 
         });
 
+    // Register person with certify
+    api.tranRawPersonCertify(keyPair, parsedPerson)
+        .then(result => {
+            console.log(result);
+
+            // Register person in Erachain
+            api.broadcast(result.raw)
+                .then(data => {
+                    // data = {status: "ok"}
+                    console.log(data);
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+
+        });
+
 ```
 
 ### Verify person

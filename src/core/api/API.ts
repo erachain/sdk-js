@@ -508,6 +508,17 @@ export class API {
     return await tranPerson(keyPair, person, this.rpcPort, genesis_sign, isBase64);
   }
 
+  /** @description API get transaction raw of person with certification.
+   * @param {KeyPair} keyPair Key pair.
+   * @param {PersonHuman} person Person.
+   * @return {Promise<ITranRaw>}
+   */
+    async tranRawPersonCertify(keyPair: KeyPair, person: PersonHuman, isBase64?: boolean): Promise<ITranRaw> {
+    const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
+
+    return await tranPerson(keyPair, person, this.rpcPort, genesis_sign, isBase64);
+  }
+
   /** @description API verify person.
    * @param {KeyPair} keyPair Key pair.
    * @param {number} personKey Person key ID.

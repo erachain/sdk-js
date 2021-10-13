@@ -12,6 +12,7 @@ export const tranPerson = async (
   port: number,
   genesis_sign: Int8Array,
   isBase64?: boolean,
+  isCertify?: boolean,
 ): Promise<ITranRaw> => {
   try {
     const privateAccount = new PrivateKeyAccount(keyPair);
@@ -19,7 +20,7 @@ export const tranPerson = async (
     const date = new Date();
     const timestamp = date.getTime();
     const reference = 1;
-    const tx = new IssuePersonRecord(privateAccount, person, 0, timestamp, reference, port, genesis_sign);
+    const tx = new IssuePersonRecord(privateAccount, person, 0, timestamp, reference, port, genesis_sign, isCertify);
 
     await tx.sign(privateAccount, false);
 
@@ -53,12 +54,13 @@ export const testTranPerson = async (
   port: number,
   genesis_sign: Int8Array,
   isBase64?: boolean,
+  isCertity?: boolean,
 ): Promise<ITranRaw> => {
   try {
     const privateAccount = new PrivateKeyAccount(keyPair);
 
     const reference = 1;
-    const tx = new IssuePersonRecord(privateAccount, person, 0, timestamp, reference, port, genesis_sign);
+    const tx = new IssuePersonRecord(privateAccount, person, 0, timestamp, reference, port, genesis_sign, isCertity);
 
     await tx.sign(privateAccount, false);
     const bytes = await tx.toBytes(true, null);

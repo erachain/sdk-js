@@ -15,9 +15,10 @@ export class IssuePersonRecord extends Issue_ItemRecord {
     reference: number,
     port: number,
     genesis_sign: Int8Array,
+    isCertify?: boolean,
   ) {
     super(
-      new Int8Array([IssuePersonRecord.TYPE_ID, 0, 0, 0]),
+      new Int8Array([IssuePersonRecord.TYPE_ID, 0, 0, isCertify ? 1 : 0]),
       IssuePersonRecord.NAME_ID,
       creator,
       person,
