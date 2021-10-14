@@ -1,6 +1,6 @@
 {
     "name": "erachain-js-api",
-    "version": "2.9.3",
+    "version": "2.9.4",
     "description": "EraChain JS API",
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
@@ -44,7 +44,7 @@
         "ts-jest": "^25.2.1",
         "tslint": "^6.0.0",
         "tslint-config-prettier": "^1.18.0",
-        "typescript": "^3.8.2",
+        "typescript": "^3.9.10",
         "webpack": "^4.42.0",
         "webpack-cli": "^3.3.11"
     },

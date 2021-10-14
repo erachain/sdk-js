@@ -516,7 +516,7 @@ export class API {
     async tranRawPersonCertify(keyPair: KeyPair, person: PersonHuman, isBase64?: boolean): Promise<ITranRaw> {
     const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
 
-    return await tranPerson(keyPair, person, this.rpcPort, genesis_sign, isBase64);
+    return await tranPerson(keyPair, person, this.rpcPort, genesis_sign, isBase64, true);
   }
 
   /** @description API verify person.
