@@ -259,6 +259,40 @@ const { EraChain } = require('erachain-js-api')
             console.log(e);
         });
 
+    // To debt
+    api.tranRawDebt(keyPair, recipientPublicKeyOrAddress, asset, head, message, encrypted,isBase64)
+        .then(result => {})
+        .catch(e => console.log(e));
+
+    // Return debt
+    api.tranRawReturnDebt(keyPair, recipientPublicKeyOrAddress, asset, head, message, encrypted,isBase64)
+        .then(result => {})
+        .catch(e => console.log(e));
+
+    // Confiscate debt
+    api.tranRawConfiscateDebt(keyPair, recipientPublicKeyOrAddress, asset, head, message, encrypted,isBase64)
+        .then(result => {})
+        .catch(e => console.log(e));
+
+    // Take in your arms
+    api.tranRawTake(keyPair, recipientPublicKeyOrAddress, asset, head, message, encrypted,isBase64)
+        .then(result => {})
+        .catch(e => console.log(e));
+
+    // To spend
+    api.tranRawSpend(keyPair, recipientPublicKeyOrAddress, asset, head, message, encrypted,isBase64)
+        .then(result => {})
+        .catch(e => console.log(e));
+
+    // To pledge
+    api.tranRawPledge(keyPair, recipientPublicKeyOrAddress, asset, head, message, encrypted,isBase64)
+        .then(result => {})
+        .catch(e => console.log(e));
+
+    // Return pledge
+    api.tranRawReturnPledge(keyPair, recipientPublicKeyOrAddress, asset, head, message, encrypted,isBase64)
+        .then(result => {})
+        .catch(e => console.log(e));
 
 ```
 

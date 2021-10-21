@@ -1,4 +1,5 @@
 import { R_Send } from '../src/core/transaction/R_Send';
+import { ETransferType } from '../src/core/transaction/TranTypes';
 import { Account } from '../src/core/account/Account';
 import { KeyPair } from '../src/core/account/KeyPair';
 import { PrivateKeyAccount } from '../src/core/account/PrivateKeyAccount';
@@ -17,6 +18,7 @@ export const tranSend = async (
   port: number,
   genesis_sign: Int8Array,
   isBase64?: boolean,
+  transferType: ETransferType = ETransferType.DEFAULT
 ): Promise<ITranRaw> => {
   try {
     const feePow = 0;
@@ -51,6 +53,7 @@ export const tranSend = async (
       reference,
       port,
       genesis_sign,
+      transferType,
     );
     await tx.sign(privateAccount, false);
     const bytes = await tx.toBytes(true, null);

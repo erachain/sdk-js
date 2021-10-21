@@ -35,6 +35,7 @@ import { tranSign } from './TranSign';
 import { tranImprint } from './TranImprint';
 import { tranTemplate } from './TranTemplate';
 import { tranUpdateOrder } from './TranUpdateOrder';
+import { ETransferType } from '../src/core/transaction/TranTypes';
 
 const fetch = require('node-fetch');
 const url = require('url');
@@ -457,6 +458,7 @@ export class API {
    * @param {string} message Message.
    * @param {boolean} encrypted Encryption flag.
    * @param {boolean} isBase64 Base64 encoding.
+   * @param {ETransferType} transferType Transfer type.
    * @return {Promise<IBroadcastResponse>}
    */
   async tranRawSendAsset(
@@ -466,7 +468,8 @@ export class API {
     head: string,
     message: string,
     encrypted: boolean,
-    isBase64?: boolean
+    isBase64?: boolean,
+    transferType: ETransferType = ETransferType.DEFAULT,
   ): Promise<ITranRaw> {
     let recipient: ITranRecipient = {
       address: recipientPublicKey,
@@ -494,7 +497,7 @@ export class API {
 
     const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
 
-    return await tranSend(recipient, keyPair, transAsset, tranBody, this.rpcPort, genesis_sign, isBase64);;
+    return await tranSend(recipient, keyPair, transAsset, tranBody, this.rpcPort, genesis_sign, isBase64, transferType);
   }
 
   /** @description API get transaction raw of person.
@@ -1077,5 +1080,159 @@ async tranRawUpdateOrder(
       genesis_sign,
       isBase64,
     );
+  }
+
+  /** @description API gets raw transaction, send amount of asset to recipient to debt.
+   * @param {KeyPair} keyPair Key pair.
+   * @param {IAsset} asset Amount and asset key.
+   * @param {string} recipientPublicKey Recipient public key.
+   * @param {string} head Title.
+   * @param {string} message Message.
+   * @param {boolean} encrypted Encryption flag.
+   * @param {boolean} isBase64 Base64 encoding.
+   * @return {Promise<IBroadcastResponse>}
+   */
+   async tranRawDebt(
+    keyPair: KeyPair,
+    asset: IAsset,
+    recipientPublicKey: string,
+    head: string,
+    message: string,
+    encrypted: boolean,
+    isBase64?: boolean,
+  ): Promise<ITranRaw> {
+    return await this.tranRawSendAsset(keyPair, asset, recipientPublicKey, head, message, encrypted, isBase64, ETransferType.DEBT);
+  }
+
+  /** @description API gets raw transaction, send amount of asset to recipient to return debt.
+   * @param {KeyPair} keyPair Key pair.
+   * @param {IAsset} asset Amount and asset key.
+   * @param {string} recipientPublicKey Recipient public key.
+   * @param {string} head Title.
+   * @param {string} message Message.
+   * @param {boolean} encrypted Encryption flag.
+   * @param {boolean} isBase64 Base64 encoding.
+   * @return {Promise<IBroadcastResponse>}
+   */
+    async tranRawReturnDebt(
+      keyPair: KeyPair,
+      asset: IAsset,
+      recipientPublicKey: string,
+      head: string,
+      message: string,
+      encrypted: boolean,
+      isBase64?: boolean,
+    ): Promise<ITranRaw> {
+      return await this.tranRawSendAsset(keyPair, asset, recipientPublicKey, head, message, encrypted, isBase64, ETransferType.RETURN_DEBT);
+    }
+
+  /** @description API gets raw transaction, send amount of asset to recipient to confiscate debt.
+   * @param {KeyPair} keyPair Key pair.
+   * @param {IAsset} asset Amount and asset key.
+   * @param {string} recipientPublicKey Recipient public key.
+   * @param {string} head Title.
+   * @param {string} message Message.
+   * @param {boolean} encrypted Encryption flag.
+   * @param {boolean} isBase64 Base64 encoding.
+   * @return {Promise<IBroadcastResponse>}
+   */
+  async tranRawConfiscateDebt(
+    keyPair: KeyPair,
+    asset: IAsset,
+    recipientPublicKey: string,
+    head: string,
+    message: string,
+    encrypted: boolean,
+    isBase64?: boolean,
+  ): Promise<ITranRaw> {
+    return await this.tranRawSendAsset(keyPair, asset, recipientPublicKey, head, message, encrypted, isBase64, ETransferType.CONFISCATE_DEBT);
+  }
+
+/** @description API gets raw transaction, send amount of asset to recipient to take.
+ * @param {KeyPair} keyPair Key pair.
+ * @param {IAsset} asset Amount and asset key.
+ * @param {string} recipientPublicKey Recipient public key.
+ * @param {string} head Title.
+ * @param {string} message Message.
+ * @param {boolean} encrypted Encryption flag.
+ * @param {boolean} isBase64 Base64 encoding.
+ * @return {Promise<IBroadcastResponse>}
+ */
+  async tranRawTake(
+    keyPair: KeyPair,
+    asset: IAsset,
+    recipientPublicKey: string,
+    head: string,
+    message: string,
+    encrypted: boolean,
+    isBase64?: boolean,
+  ): Promise<ITranRaw> {
+    return await this.tranRawSendAsset(keyPair, asset, recipientPublicKey, head, message, encrypted, isBase64, ETransferType.TAKE);
+  }
+
+  /** @description API gets raw transaction, send amount of asset to recipient to spend.
+   * @param {KeyPair} keyPair Key pair.
+   * @param {IAsset} asset Amount and asset key.
+   * @param {string} recipientPublicKey Recipient public key.
+   * @param {string} head Title.
+   * @param {string} message Message.
+   * @param {boolean} encrypted Encryption flag.
+   * @param {boolean} isBase64 Base64 encoding.
+   * @return {Promise<IBroadcastResponse>}
+   */
+  async tranRawSpend(
+    keyPair: KeyPair,
+    asset: IAsset,
+    recipientPublicKey: string,
+    head: string,
+    message: string,
+    encrypted: boolean,
+    isBase64?: boolean,
+  ): Promise<ITranRaw> {
+    return await this.tranRawSendAsset(keyPair, asset, recipientPublicKey, head, message, encrypted, isBase64, ETransferType.SPEND);
+  }
+
+  /** @description API gets raw transaction, send amount of asset to recipient to pledge.
+   * @param {KeyPair} keyPair Key pair.
+   * @param {IAsset} asset Amount and asset key.
+   * @param {string} recipientPublicKey Recipient public key.
+   * @param {string} head Title.
+   * @param {string} message Message.
+   * @param {boolean} encrypted Encryption flag.
+   * @param {boolean} isBase64 Base64 encoding.
+   * @return {Promise<IBroadcastResponse>}
+   */
+   async tranRawPledge(
+    keyPair: KeyPair,
+    asset: IAsset,
+    recipientPublicKey: string,
+    head: string,
+    message: string,
+    encrypted: boolean,
+    isBase64?: boolean,
+  ): Promise<ITranRaw> {
+    return await this.tranRawSendAsset(keyPair, asset, recipientPublicKey, head, message, encrypted, isBase64, ETransferType.PLEDGE);
+  }
+
+  /** @description API gets raw transaction, send amount of asset to recipient to return pledge.
+   * @param {KeyPair} keyPair Key pair.
+   * @param {IAsset} asset Amount and asset key.
+   * @param {string} recipientPublicKey Recipient public key.
+   * @param {string} head Title.
+   * @param {string} message Message.
+   * @param {boolean} encrypted Encryption flag.
+   * @param {boolean} isBase64 Base64 encoding.
+   * @return {Promise<IBroadcastResponse>}
+   */
+   async tranRawReturnPledge(
+    keyPair: KeyPair,
+    asset: IAsset,
+    recipientPublicKey: string,
+    head: string,
+    message: string,
+    encrypted: boolean,
+    isBase64?: boolean,
+  ): Promise<ITranRaw> {
+    return await this.tranRawSendAsset(keyPair, asset, recipientPublicKey, head, message, encrypted, isBase64, ETransferType.RETURN_PLEDGE);
   }
 }
