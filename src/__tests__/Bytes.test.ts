@@ -32,10 +32,10 @@ describe('Bytes', () => {
       .then(af => {
         return Bytes.longFromByteArray(af)
           .then(r => {
-            console.log({
-              input: l,
-              output: r,
-            });
+            // console.log({
+            //   input: l,
+            //   output: r,
+            // });
             expect(r).toEqual(l);
           });
       })

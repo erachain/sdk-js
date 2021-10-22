@@ -180,7 +180,7 @@ describe('Person', () => {
       .then((raw: string) => {
         return PersonHuman.parse(raw)
           .then((p: PersonHuman) => {
-            console.log({ person: p });
+            //console.log({ person: p });
             expect(p.name).toEqual('Donald Trump');
             expect(p.birthday).toEqual(-740653200000); // отрицательный timestamp
             expect(p.deathday).toEqual(0);
@@ -213,7 +213,7 @@ describe('Person', () => {
                 expect(tranRaw.size).toEqual(199);
 
                 expect(tranRaw.raw).toEqual(
-                  '2YNgcLFSGeA1mRVxUGWhFbhoGnBR9AM8fPp3Y4RDWjn4gNQvLmLEFBojYte6Hu79fNwn3xQMNoRKqYajmBy9TMHNcJdT7TBYpSfCRsTZnVxPd887XiFULw2tk4RF7CY74xTqF6jDm9hG41bcHCW7RcXeQyoYJfZ5yksBj229UwrLhZwJ2L73T9P4PC5TJf7CNvMT3YcuC2PVgHR5acUDv4T2q7dxY2ZRnHdVpXF2DCrpWHgXkEh74mKLmBCJJ1DLwkvCXMEX5HvkHUdYe92sVswUhqeN2CgqSp4rD3HDesR8taGoPP3TEb5MzU21qoXgkjFPJ9T4ULDbRbJraXXFmPhFR84wxdrrR93dDkmCcj11sMzWGpXhbktkJYDxNDj7mMnjMwQrNfyikBj46a5ejSVJ6qoUaTn5zgkxYen7HUaM3hm3Jn59u2sALY4CgQ7vc7yBQnc26aQGfWXG2u',
+                  '2YQNUjcNxPY1AuApKnjRRuVuZqhZoz4wJmLzCXcdeuSmCZkrJkR1DVa6VffMotYpuFpe6chnovHLxJRupjcP42GiwrFP18V7uspnsz1T5ymmvWqn37L3rL78LbLpi7aSBUvpyVDJWHQDTvbQtjqWp3euWrkK91QyZCkDQw78w29VYNWEvRACRfoyVu3Axt33ryvZDPHvzsKc6Q2wGtWivydwUVDXuxYnefP8DuXCqGksLnfq9psY76EE6DxQcFYBdjVGHJYVLk91zTGCJ3UryABv1NmExrZyyfai9g6rJ8vh8ECNvQWKV3C8iX7EtV9kRkzF1ToZx9FWz6CEk3wCe33TMRMvf2J6Cvy4MUqHC9atso6YMfJiDDH1ZSYvBCbSJuAjvQ1t22mmoVPtjeTGpxxECvgdN49UAXHavvnTLHD85xuPkDCYghHnfsJq6w9MG1Mw6mVhtXpYkgHDnR',
                 );
               });
           });
@@ -234,7 +234,7 @@ describe('Person', () => {
                 expect(tranRaw.size).toEqual(199);
 
                 expect(tranRaw.raw).toEqual(
-                  'GAAAAAAAAXNVUCJHAAAAAAAAAAEok3Ex3nHhFZAzcOtvi8GCjR3ZJ21dFU0mMks4cJWt/AAYocQdhimdSTVmzj+a6BtugcYUQthbu6u7+tLre93NF8TPj04ascsfoHrw7SraO160hRuMC7UsNndoPTCo45UMAQEok3Ex3nHhFZAzcOtvi8GCjR3ZJ21dFU0mMks4cJWt/AxEb25hbGQgVHJ1bXAAAAAAAAAAAAAZ0J/RgNC10LfQuNC00LXQvdGCINCh0KjQkP///1ONoQ2AAAAAAAAAAAAACtCR0LXQu9GL0LlCXwX3QhZ4HQrQkdC10LvRi9C5DtCT0L7Qu9GD0LHQvtC5DtCR0LvQvtC90LTQuNC9vt2jjZwWZKujX2PCv5swXWsHchFhFXm2SmYyA5vQ0sLNAoEcVPwgmcg1fKdnnRxPD8IL/HN9Df9MhCmH+Gs8JQo=',
+                  'GAIAAAAAAXNVUCJHAAAAAAAAAAEok3Ex3nHhFZAzcOtvi8GCjR3ZJ21dFU0mMks4cJWt/AA8ItfIPC9SJiZGAagaPcx9p0VBdaAJKAFyDlm3Jm5FZx5ODVh0b3VKsaH84tYFV2waCZ4KFzjojHueOv6yKTQMAQEok3Ex3nHhFZAzcOtvi8GCjR3ZJ21dFU0mMks4cJWt/AxEb25hbGQgVHJ1bXAAAAAAAAAAAAAZ0J/RgNC10LfQuNC00LXQvdGCINCh0KjQkP///1ONoQ2AAAAAAAAAAAAACtCR0LXQu9GL0LlCXwX3QhZ4HQrQkdC10LvRi9C5DtCT0L7Qu9GD0LHQvtC5DtCR0LvQvtC90LTQuNC9vt2jjZwWZKujX2PCv5swXWsHchFhFXm2SmYyA5vQ0sLNAoEcVPwgmcg1fKdnnRxPD8IL/HN9Df9MhCmH+Gs8JQo=',
                 );
               });
           });

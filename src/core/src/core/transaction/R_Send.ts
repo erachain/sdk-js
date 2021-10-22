@@ -47,12 +47,12 @@ export class R_Send extends TransactionAmount {
       // вернуть долг
       transferFields.assetKey = -1 * transferFields.assetKey;
       // BACKWARD
-      transferFields.typeBytes[2] = transferFields.typeBytes[2] | 2 | 64;
+      // transferFields.typeBytes[2] = transferFields.typeBytes[2] | 2 | 64;
     } else if (transferType === ETransferType.CONFISCATE_DEBT) {
       // конфисковать долг
       transferFields.assetKey = -1 * transferFields.assetKey;
       // BACKWARD
-      transferFields.typeBytes[2] = transferFields.typeBytes[2] | 2 | 64;
+      transferFields.typeBytes[2] = transferFields.typeBytes[2] | 64;
     } else if (
       (transferType === ETransferType.TAKE) &&
       transferFields.amount
@@ -60,7 +60,7 @@ export class R_Send extends TransactionAmount {
       // принять на руки
       transferFields.amount = new BigDecimal(-1 * transferFields.amount.num);
       // BACKWARD
-      transferFields.typeBytes[2] = transferFields.typeBytes[2] | 2 | 64;
+      transferFields.typeBytes[2] = transferFields.typeBytes[2] | 64;
     } else if (
       (transferType === ETransferType.SPEND) &&
       transferFields.amount
@@ -71,7 +71,7 @@ export class R_Send extends TransactionAmount {
     } else if (transferType === ETransferType.PLEDGE && transferFields.amount) {
       // передать в залог
       // BACKWARD
-      transferFields.typeBytes[2] = transferFields.typeBytes[2] | 2 | 64;
+      transferFields.typeBytes[2] = transferFields.typeBytes[2] | 64;
     } else if (transferType === ETransferType.RETURN_PLEDGE && transferFields.amount) {
       // вернуть с залога
       transferFields.amount = new BigDecimal(-1 * transferFields.amount.num);

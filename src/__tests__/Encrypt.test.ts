@@ -18,7 +18,7 @@ describe('Encrypt', () => {
         return Base58.encode(encrypted)
           .then((str: string) => {
             return crypt.decryptMessage(str, public1, secret2).then((decrypted: any) => {
-              console.log({ input: s, output: decrypted });
+              //console.log({ input: s, output: decrypted });
               expect(decrypted).toEqual(s);
             });
           });
@@ -46,7 +46,7 @@ describe('Encrypt', () => {
                       .then((decrypted: any) => {
                         //console.log({ decrypted: crypt.wordsToUtf8(decrypted) });
                         const output = JSON.parse(crypt.wordsToUtf8(decrypted));
-                        console.log({ input: s, output });
+                        //console.log({ input: s, output });
                         expect(output.key).toEqual(99);
                       });
                   });
@@ -71,7 +71,7 @@ describe('Encrypt', () => {
                   return crypt.decryptAES(str, password)
                     .then((decrypted: any) => {
                       const output = new Int8Array(crypt.wordsToBytes(decrypted));
-                      console.log({ output, message });
+                      //console.log({ output, message });
                       expect(output).toEqual(message);
                     });
                 });

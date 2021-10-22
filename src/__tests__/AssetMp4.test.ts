@@ -147,10 +147,10 @@ describe('Asset', () => {
 
             return Asset.parse(raw)
             .then(a => {
-              console.log('test', {
-                a: JSON.stringify(asset.appData),
-                b: JSON.stringify(a.appData),
-              });
+              // console.log('test', {
+              //   a: JSON.stringify(asset.appData),
+              //   b: JSON.stringify(a.appData),
+              // });
               expect(JSON.stringify(asset.appData)).toBe(JSON.stringify(a.appData));
             });
           });

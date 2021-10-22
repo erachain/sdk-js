@@ -16,7 +16,7 @@ describe('Encrypt64', () => {
       .then((encrypted: any) => {
         const str = Base64.encodeFromByteArray(encrypted)
         return crypt.decryptMessage64(str, public1, secret2).then((decrypted: any) => {
-          console.log({ input: s, output: decrypted });
+          //console.log({ input: s, output: decrypted });
           expect(decrypted).toEqual(s);
         });
       })

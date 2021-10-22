@@ -130,7 +130,6 @@ describe('Asset', () => {
       .then(b => {
         return Base58.encode(b)
           .then(raw => {
-            console.log('raw', raw);
             return Asset.parse(raw)
               .then(a => {
                 expect(JSON.stringify(asset.appData)).toBe(JSON.stringify(a.appData));
