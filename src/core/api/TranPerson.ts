@@ -19,7 +19,7 @@ export const tranPerson = async (
 
     const date = new Date();
     const timestamp = date.getTime();
-    const reference = 1;
+    const reference = 0;
     const tx = new IssuePersonRecord(privateAccount, person, 0, timestamp, reference, port, genesis_sign, isCertify);
 
     await tx.sign(privateAccount, false);
@@ -59,7 +59,7 @@ export const testTranPerson = async (
   try {
     const privateAccount = new PrivateKeyAccount(keyPair);
 
-    const reference = 1;
+    const reference = 0;
     const tx = new IssuePersonRecord(privateAccount, person, 0, timestamp, reference, port, genesis_sign, isCertity);
 
     await tx.sign(privateAccount, false);

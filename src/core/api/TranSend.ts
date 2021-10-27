@@ -38,7 +38,7 @@ export const tranSend = async (
 
     const date = new Date();
     const timestamp = date.getTime();
-    const reference = 1;
+    const reference = 0;
     const tx = new R_Send(
       privateAccount,
       feePow,
