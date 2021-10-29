@@ -155,7 +155,7 @@ describe('Imprint', () => {
     )
       .then((r: any) => {
         expect(r.raw).toEqual(
-          'xgiDYWkm76SmaEyHqphGxiGYftR7b9XcxYf7qTDmzBwg9mBvVw5dUSfSMgkWRhkV7vDcQZJHKbo49kwGaL5JRqNsyXqcuM2HuPAzb5XXq7CGwniSKhF9s7LXcPToYxSbJRyAu95jrRbzaSUPBK2qpfGH8iJKThjejdKMTBgyMWevk81c6uH1N17hCyczyvZ9A27H5xf7JguWCXnvn1QzjZKXtvcLrjLgiQEUEgSejhvNE8Vssjwofn9Dr8kAt3rXuHEsLnuG5b5mdj9uNbKsiK',
+          'xfZihDF6b5EzzDDRLUDxUkAZZFPaU54vYgzNAHW4jdEsTaMvXA9fXCrrLzKMRTwQzxaBJMHQ6P1yGAUmiWBBthpA1bjdo67vK6CPdNWFmdADiSGgTxDeKR7xhwtrgmtkLzu4qn9ytaeG1UFp69E3xo52X4jyPSKjwh6SExvPEmJLatDjZRLXPugjNfcb5Uv9BsdrWwsS1j55mfTBMj4QM7YeJMqG47a6zh27JntSPBfcQovAh77N19oU27eR6CLsW43ZTLderGgH8GDemBNVym',
         );
       })
       .catch(() => { expect(true).toBe(false); });

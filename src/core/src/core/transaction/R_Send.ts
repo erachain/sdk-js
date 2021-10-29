@@ -32,7 +32,7 @@ export class R_Send extends TransactionAmount {
     const transferFields = {
       typeBytes: new Int8Array([
         R_Send.TYPE_ID,
-        0,
+        2,
         0,
         amount ? Transaction.diffScale(amount.num) : 0,
       ]),

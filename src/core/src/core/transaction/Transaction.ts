@@ -101,7 +101,6 @@ export abstract class Transaction {
     genesis_sign: Int8Array,
   ) {
     this.typeBytes = typeBytes;
-    this.typeBytes[1] = 2;
     this.port = port;
     this.creator = creator;
     //this.props = props;
