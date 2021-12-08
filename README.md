@@ -1136,12 +1136,15 @@ const { EraChain } = require('erachain-js-api')
 
     const signature = "Base58 string";
     const wantAmount = 10;
+    const forHave = true; // else for want
 
     api.tranRawUpdateOrder(
         keyPair,
         name,
         signature,
         wantAmount,
+        true, // isBase64
+        forHave,
     )
         .then((raw) => {
             console.log(raw);

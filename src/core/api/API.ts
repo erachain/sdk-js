@@ -1063,13 +1063,10 @@ async tranRawUpdateOrder(
   signature: string,
   wantAmount: number,
   isBase64?: boolean,
+  forHave?: boolean,
 ): Promise<ITranRaw> {
 
     const genesis_sign = this.sidechainMode ? await this.genesisSignature() : new Int8Array([]);
-    console.log('test', {
-      sidechainMode: this.sidechainMode,
-      genesis_sign: this.genesis_sign,
-    });
     
     return await tranUpdateOrder(
       keyPair,
@@ -1079,6 +1076,7 @@ async tranRawUpdateOrder(
       this.rpcPort,
       genesis_sign,
       isBase64,
+      forHave,
     );
   }
 

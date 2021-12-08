@@ -21,13 +21,14 @@ export class TransactionUpdateOrder extends Transaction {
     wantAmount: number,
     port: number,
     genesis_sign: Int8Array,
+    forHave?: boolean,
   ) {
     super(
       new Int8Array([
         Transaction.UPDATE_ORDER_TRANSACTION,
         0,
         0,
-        Transaction.diffScale(wantAmount),
+        Transaction.diffScale(wantAmount) | (forHave ? (1 << 5) : 0),
       ]),
       name,
       creator,

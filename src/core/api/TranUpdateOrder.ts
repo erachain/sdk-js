@@ -13,6 +13,7 @@ export const tranUpdateOrder = async (
     port: number,
     genesis_sign: Int8Array,
     isBase64?: boolean,
+    forHave?: boolean,
 ): Promise<ITranRaw> => {
   try {
     const feePow = 0;
@@ -22,7 +23,7 @@ export const tranUpdateOrder = async (
     const timestamp = date.getTime();
     const reference = 0;
 
-    const tx = new TransactionUpdateOrder(name, privateAccount, feePow, timestamp, reference, signature, wantAmount, port, genesis_sign);
+    const tx = new TransactionUpdateOrder(name, privateAccount, feePow, timestamp, reference, signature, wantAmount, port, genesis_sign, forHave);
 
     await tx.sign(privateAccount, false);
     const bytes = await tx.toBytes(true, null);
