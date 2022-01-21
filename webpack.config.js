@@ -1,8 +1,9 @@
 var path = require('path');
+const webpack = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-    entry: './lib/index.ts',
+    entry: './lib/index.js',
     output: {
         path: path.resolve(__dirname, 'dist/js'),
         filename: 'erachainapi.js'
@@ -23,7 +24,7 @@ module.exports = {
                                 '@babel/plugin-proposal-class-properties'
                             ]
                         }
-                        
+
                     }
                 ]
             }
