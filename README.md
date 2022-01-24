@@ -1,4 +1,3 @@
-npm login
 # erachain-js-api
 
 EraChain JS API
@@ -13,7 +12,7 @@ download https://lab.erachain.org/pub/sdk-js/-/blob/develop/dist/js/erachainapi.
 
 Usage:
 
-```
+```javascript
 <script src="erachainapi.js"></script>
 <script>
   EraSDK.EraChain.Crypt.generateSeed()
