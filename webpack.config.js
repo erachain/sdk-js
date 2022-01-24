@@ -6,7 +6,9 @@ module.exports = {
     entry: './lib/index.js',
     output: {
         path: path.resolve(__dirname, 'dist/js'),
-        filename: 'erachainapi.js'
+        filename: 'erachainapi.js',
+        library: 'EraSDK',
+        libraryTarget: 'umd',
     },
     module: {
         rules: [

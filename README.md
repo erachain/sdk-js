@@ -1,4 +1,4 @@
-
+npm login
 # erachain-js-api
 
 EraChain JS API
@@ -7,13 +7,21 @@ EraChain JS API
 
 npm install --save erachain-js-api
 
-### Build js lib for html => /dist
+### Download js lib for html => /dist
 
-git clone https://lab.erachain.org/erachain/web-js-encrypt.git
+download https://lab.erachain.org/pub/sdk-js/-/blob/develop/dist/js/erachainapi.js
 
-npm run build
+Usage:
 
-npm run prodjs
+```
+<script src="erachainapi.js"></script>
+<script>
+  EraSDK.EraChain.Crypt.generateSeed()
+      .then(seed => {
+        console.log('seed: ', seed)
+      })
+</script>
+```
 
 ### Generate docs => /docs
 

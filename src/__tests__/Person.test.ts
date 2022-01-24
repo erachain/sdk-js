@@ -141,10 +141,10 @@ describe('Person', () => {
     return person.raw(keyPair.secretKey)
       .then((raw: string) => {
         expect(raw).toEqual(
-          'A4mLGRx7dLiBYeh96XFy5ahRG6TyHEXvfrcfrXzs8n1RfhfnTXUod3NepzWWJvUoWA5u1yRUcTPmr79Y39cnUGehbcbakkip7UYY1G83xj2ra1zhEeL7PMt4aioxuGfmtQKCWPT7vwFAsyxVdJVRsZLWZR6WTziAR496C3vGoQzQpexC8exhNYb8ucqCzuRwW47hE5QgdUgXoJe2YipsoFHUf62w1pB4GBQoVUwtzT9UVMfquwFXmxfRiLWHjHHM5dhDRFKQAQL2QvWnHoZi5wzvQZBNeVzqcXEy952Xjv77HYdBX',
+          'A4mLGRx7dLiBYeh96XFy5ahRG6TyHEXvfrcfrXzs8n1RfhfnTXUod3NepzWWJvUoWA5u1yRUcTPmr79Y39cnUGehbcbakkip7UYY1G83xj2ra1zhEeL7PPmxrF7kXpoaK3BxxhNdpsTGAuf3U4nN3B3eNk5SuoW4Bd52C6uaayLhVdHCFAyNrPA33GcXXVTS68Nj2fBNcY5MRu89X18DLef2Fw3cxHei8perYqeAD63NT3Tc2c4GQU3fXiC8TbdMyRA1E7i8ic7gVCKBnStCcwNNdFdgfkMVRbX5gj29oGg8wDcFH',
         );
       })
-      .catch(() => { expect(true).toBe(false); });
+      .catch(() => expect(true).toBe(false));
   });
 
   // birthday: 18446742830872672000,
@@ -157,7 +157,7 @@ describe('Person', () => {
         return PersonHuman.parse(raw)
           .then((p: PersonHuman) => {
             expect(p.name).toEqual('Donald Trump');
-            expect(p.birthday).toEqual(-740653200000); // отрицательный timestamp
+            expect(p.birthday).toEqual(birthday); // отрицательный timestamp
             expect(p.deathday).toEqual(0);
             expect(p.gender).toEqual(0);
             expect(p.race).toEqual('Белый');
@@ -172,7 +172,7 @@ describe('Person', () => {
             expect(p.description).toEqual('Президент США');
           });
       })
-      .catch(() => { expect(true).toBe(false); });
+      .catch(() => {expect(true).toBe(false); });
   });
 
   it('PersonHuman.parse64', () => {
@@ -182,7 +182,7 @@ describe('Person', () => {
           .then((p: PersonHuman) => {
             //console.log({ person: p });
             expect(p.name).toEqual('Donald Trump');
-            expect(p.birthday).toEqual(-740653200000); // отрицательный timestamp
+            expect(p.birthday).toEqual(birthday); // отрицательный timestamp
             expect(p.deathday).toEqual(0);
             expect(p.gender).toEqual(0);
             expect(p.race).toEqual('Белый');
@@ -213,13 +213,13 @@ describe('Person', () => {
                 expect(tranRaw.size).toEqual(199);
 
                 expect(tranRaw.raw).toEqual(
-                  '2YNgcLFSGeA1mRVxUGWhFbhoGnBLXs4j2Zy3fm3Bz1NHiYyXNt1ftKdsArQWZYFZAWWsqSWryDHuvRYANrCQNBQLmG6qYFdMtwqXZzTAmVfCA8cy62y8JMpHZgtTm5m5At7srBN7RE1j4ehRX565WUD8wFPdfKNcKXo9By9JgET53tptWqmbYSBe7SS19nTPzwfYKfioVhW3JBnbaQS4kpyCyPJZWHbnYJQbz5bnY8fR5uYs1KDFZEEtr9JUzgpCn9Uy6ofDZrBAUhDpAEYe23pF1YWUFUABkCsR9pz3tJVnxZ2kuYsPnQCY4kdesuMyvo9cee44MHpewXqqUNF4zn9D5b9gtjJwCdYcL6dun87bXoT4aAesuoY7nGkjswRSjrhLY2my5ybRAeSRr4eHJwPLPehkCYUwMxNMZRYqjegmj3Y1HpDAmu36D8C3qxYxopakwEPDBQykyiWA9X',
+                  '2YNgcLFSGeA1mRVxUGWhFbhoGnBLXs4j2Zy3fm3Bz1NHiYyXNt1ftKdsArQWZYFZAWWsqSWrxwuLuZMAKe9Fh4UyqFTTwuUw92ogVhccnWRrp6wEtCGZA1VYu1X2dg21xpBFNGf6zRPSNboSZ8xDFMVnfya92AgHmgbsyVsNLzWUtKD7VyPgwYXr88q4T4e2nkcEFGRChZCM39gXVVtag9NQmy9UL2naNcTabaPRFFppLEWfFPy5rxE62eBXqQwgLGpcRJn57XPQkUWB9crrCUdMs4Jvur8fuTmfBAxJv9MEVVcuj8AGsGLitSQrffRSebEKZNNNrxxeDAcFG9kP9BrXsAfaEDj9cae2Bj6Se9bJETuy8PxUdn2VJvSdXwX6rwb6qEBHDG9zXroxVv7JUFFm6aSeNkRpWC8XVEAttm7K8a2gcxkq1jw4SYnGgwkaJN96oXthmNCzQiLiGw',
                 );
               });
           });
       })
-      .catch(() => { expect(true).toBe(false); });
-    
+      .catch(() => {expect(true).toBe(false); });
+
   });
 
   it('PersonHuman.registerWithCertify', () => {
@@ -234,12 +234,12 @@ describe('Person', () => {
                 expect(tranRaw.size).toEqual(199);
 
                 expect(tranRaw.raw).toEqual(
-                  'GAAAAAAAAXNVUCJHAAAAAAAAAAAok3Ex3nHhFZAzcOtvi8GCjR3ZJ21dFU0mMks4cJWt/ACmCZUFivMTiN6Is+HKH/cnjGokjkN2ctbKjgEkHBafp54EW3evhelJ4YHwwKQ9lgPJ49dunl/Krl7oL/G/H0wFAQEok3Ex3nHhFZAzcOtvi8GCjR3ZJ21dFU0mMks4cJWt/AxEb25hbGQgVHJ1bXAAAAAAAAAAAAAZ0J/RgNC10LfQuNC00LXQvdGCINCh0KjQkP///1ONoQ2AAAAAAAAAAAAACtCR0LXQu9GL0LlCXwX3QhZ4HQrQkdC10LvRi9C5DtCT0L7Qu9GD0LHQvtC5DtCR0LvQvtC90LTQuNC9vt2jjZwWZKujX2PCv5swXWsHchFhFXm2SmYyA5vQ0sLNAoEcVPwgmcg1fKdnnRxPD8IL/HN9Df9MhCmH+Gs8JQo=',
+                  'GAAAAAAAAXNVUCJHAAAAAAAAAAAok3Ex3nHhFZAzcOtvi8GCjR3ZJ21dFU0mMks4cJWt/ACStmgcMD1ZpjvzJTCxm+PQNoZQdiivXD28Do6XaoPrN3RbQXgrbbyhU2JOXxZeg2u1/bzWMmLRzzNWdCOHy+YCAQEok3Ex3nHhFZAzcOtvi8GCjR3ZJ21dFU0mMks4cJWt/AxEb25hbGQgVHJ1bXAAAAAAAAAAAAAZ0J/RgNC10LfQuNC00LXQvdGCINCh0KjQkP///1OO6qSAAAAAAAAAAAAACtCR0LXQu9GL0LlCXwX3QhZ4HQrQkdC10LvRi9C5DtCT0L7Qu9GD0LHQvtC5DtCR0LvQvtC90LTQuNC9vt02D0aMBEPozjuxHfWEeSpSjI2ujYM8ZPCZ/fqrIVO6Q7Yp+HeDRsams1VNoqW9rnQM65G57lILP+F0J6aVtQg=',
                 );
               });
           });
       })
-      .catch(() => { expect(true).toBe(false); });
-    
+      .catch(() => {expect(true).toBe(false); });
+
   });
 });
