@@ -24,11 +24,12 @@ export class R_SertifyPubKeys extends Transaction {
     timestamp: number,
     reference: number,
     port: number,
+    genesis_sign: Int8Array,
   ) {
     const verions = 0;
     const sertifiedPublicKeysCount = 1;
     const typeArray = new Int8Array([R_SertifyPubKeys.TYPE_ID, verions, sertifiedPublicKeysCount, 0]);
-    super(typeArray, R_SertifyPubKeys.NAME_ID, creator, feePow, timestamp, reference, port);
+    super(typeArray, R_SertifyPubKeys.NAME_ID, creator, feePow, timestamp, reference, port, genesis_sign);
 
     this.key = key;
     this.sertifiedPublicKey = sertifiedPublicKey;
@@ -40,7 +41,7 @@ export class R_SertifyPubKeys extends Transaction {
 
   async getDataLength(asPack: boolean): Promise<number> {
     // not include note reference
-    let len = asPack ? R_SertifyPubKeys.BASE_LENGTH_AS_PACK : R_SertifyPubKeys.BASE_LENGTH;
+    let len = asPack ? R_SertifyPubKeys.BASE_LENGTH_AS_PACK : R_SertifyPubKeys.BASE_LENGTH + R_SertifyPubKeys.SELF_LENGTH;
     const accountsSize = 1;
     len += accountsSize * PublicKeyAccount.PUBLIC_KEY_LENGTH;
 

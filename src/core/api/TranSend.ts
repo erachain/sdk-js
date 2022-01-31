@@ -1,10 +1,12 @@
 import { R_Send } from '../src/core/transaction/R_Send';
+import { ETransferType } from '../src/core/transaction/TranTypes';
 import { Account } from '../src/core/account/Account';
 import { KeyPair } from '../src/core/account/KeyPair';
 import { PrivateKeyAccount } from '../src/core/account/PrivateKeyAccount';
 import { ITranRecipient, ITranAsset, ITranMessage, ITranRaw } from '../src/core/transaction/TranTypes';
 import { Base58 } from '../crypt/libs/Base58';
 import { Bytes } from '../src/core/Bytes';
+import base64 from "../src/core/util/base64";
 
 const crypt = require('../crypt/libs/aesCrypt');
 
@@ -14,6 +16,9 @@ export const tranSend = async (
   asset: ITranAsset,
   body: ITranMessage,
   port: number,
+  genesis_sign: Int8Array,
+  isBase64?: boolean,
+  transferType: ETransferType = ETransferType.DEFAULT
 ): Promise<ITranRaw> => {
   try {
     const feePow = 0;
@@ -33,7 +38,7 @@ export const tranSend = async (
 
     const date = new Date();
     const timestamp = date.getTime();
-    const reference = 1;
+    const reference = 0;
     const tx = new R_Send(
       privateAccount,
       feePow,
@@ -47,9 +52,12 @@ export const tranSend = async (
       timestamp,
       reference,
       port,
+      genesis_sign,
+      transferType,
     );
     await tx.sign(privateAccount, false);
-    const raw = await Base58.encode(await tx.toBytes(true, null));
+    const bytes = await tx.toBytes(true, null);
+    const raw = isBase64 ? base64.encodeFromByteArray(new Uint8Array(bytes)) : await Base58.encode(bytes);
     let size = await tx.getDataLength(false);
 
     const fee = (size * 100.0) / Math.pow(10, 8);

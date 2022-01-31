@@ -7,10 +7,34 @@ import { Bytes } from '../../Bytes';
 import { BlockChain } from '../../BlockChain';
 import { Transaction } from '../../transaction/Transaction';
 import { DataWriter } from '../../DataWriter';
+import Base64 from '../../util/base64';
 
+/**
+ * @class
+ * @classdesc PersonHuman class.
+ */
 export class PersonHuman extends PersonCls {
   ownerSignature: Int8Array;
 
+  /**
+   * Create instance of PersonHuman.
+   *
+   * @constructor
+   * @param {Object} owner - PublicKeyAccount.
+   * @param {string} name - Name.
+   * @param {number} birthday - Birthday.
+   * @param {number} deathday - Deathday.
+   * @param {number} gender - Gender.
+   * @param {number} birthLatitude - Latitude of birth place.
+   * @param {number} birthLongitude - Longitude of birth place.
+   * @param {string} skinColor - Skin color.
+   * @param {string} eyeColor - Eye color.
+   * @param {string} hairColor - Hair color.
+   * @param {number} height - Height.
+   * @param {Int8Array} icon - Icon.
+   * @param {Int8Array} image - Image.
+   * @param {string} description - Description.
+   */
   constructor(
     owner: PublicKeyAccount,
     name: string,
@@ -50,7 +74,12 @@ export class PersonHuman extends PersonCls {
 
   /* tslint:disable-next-line */
   static async parse(rowData: string, includeReference: boolean = false): Promise<PersonHuman> {
-    const data = await Base58.decode(rowData);
+    let data: Int8Array; 
+    if (Base64.isBase64(rowData)) {
+      data = Base64.decodeToByteArray(rowData);
+    } else {
+      data = await Base58.decode(rowData);
+    }
 
     // READ TYPE
     const typeBytes = data.slice(0, ItemCls.TYPE_LENGTH);
@@ -95,7 +124,8 @@ export class PersonHuman extends PersonCls {
     const imageLength = await Bytes.intFromByteArray(imageLengthBytes);
     position += ItemCls.IMAGE_SIZE_LENGTH;
 
-    if (imageLength < 0 || imageLength > ItemCls.MAX_IMAGE_LENGTH) {
+    //if (imageLength < 0 || imageLength > ItemCls.MAX_IMAGE_LENGTH) {
+    if (imageLength < 0) {
       throw new Error('Invalid image length: ' + imageLength);
     }
 
@@ -125,12 +155,14 @@ export class PersonHuman extends PersonCls {
     //READ BIRTDAY
     const birthdayBytes = data.slice(position, position + ItemCls.BIRTHDAY_LENGTH);
     const birthday = await Bytes.longFromByteArray(birthdayBytes);
+
     //console.log("PersonHuman.Parse", { birthday });
     position += ItemCls.BIRTHDAY_LENGTH;
 
     //READ DEATHDAY
     const deathdayBytes = data.slice(position, position + ItemCls.DEATHDAY_LENGTH);
     const deathday = await Bytes.longFromByteArray(deathdayBytes);
+    
     position += ItemCls.DEATHDAY_LENGTH;
 
     //READ GENDER
@@ -238,7 +270,7 @@ export class PersonHuman extends PersonCls {
   }
 
   async sign(secretKey: Int8Array): Promise<void> {
-    const data = await this.toBytes(false, true);
+    const data = await this.toBytesWithoutAppData(false, true);
     const sign = AppCrypt.sign(data, secretKey);
     this.ownerSignature = new Int8Array(sign);
   }
@@ -251,5 +283,19 @@ export class PersonHuman extends PersonCls {
     }
 
     return data.data;
+  }
+
+  async raw(secretKey: Int8Array): Promise<string> {
+    await this.sign(secretKey);
+    const bytes = await this.toBytes(false, false);
+    const raw = await Base58.encode(new Int8Array(bytes));
+    return raw.trim();
+  }
+
+  async raw64(secretKey: Int8Array): Promise<string> {
+    await this.sign(secretKey);
+    const bytes = await this.toBytes(false, false);
+    const raw = Base64.encodeFromByteArray(bytes);
+    return raw.trim();
   }
 }

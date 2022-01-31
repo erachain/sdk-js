@@ -4,14 +4,19 @@ import { Bytes } from '../core/src/core/Bytes';
 describe('Base58', () => {
   it('Base58.encode().decode()', () => {
     const s = 'Здравствуй, EraChain API!';
-    Bytes.stringToByteArray(s).then(a => {
-      Base58.encode(a).then(base58 => {
-        Base58.decode(base58).then(a2 => {
-          Bytes.stringFromByteArray(a2).then(s2 => {
-            expect(s2).toEqual(s);
+    return Bytes.stringToByteArray(s)
+      .then((a: any) => {
+        return Base58.encode(a)
+          .then((base58: any) => {
+            return Base58.decode(base58)
+              .then((a2: any) => {
+                return Bytes.stringFromByteArray(a2)
+                  .then((s2: any) => {
+                    expect(s2).toEqual(s);
+                  });
+              });
           });
-        });
-      });
-    });
+      })
+      .catch(e => { expect(true).toBe(false); });
   });
 });

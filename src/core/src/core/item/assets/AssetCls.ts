@@ -22,8 +22,10 @@ export class AssetCls extends ItemCls {
     icon: Int8Array,
     image: Int8Array,
     description: string,
+    iconType?: number,
+    imageType?: number,
   ) {
-    super(typeBytes, owner, name, icon, image, description);
+    super(typeBytes, owner, name, icon, image, description, iconType, imageType);
 
     this.quantity = quantity;
     this.scale = scale;
@@ -38,10 +40,15 @@ export class AssetCls extends ItemCls {
 
     //console.log({ dataWriter: dataWriter.data });
     // WRITE QUANTITY
-    await this.quantityToBytes(dataWriter);
+    if (this.typeBytes[0] === 2) {
+      await this.quantityToBytes(dataWriter);
+    }
+    
     //console.log({ dataWriter: dataWriter.data });
     // WRITE SCALE
-    await this.scaleToBytes(dataWriter);
+    if (this.typeBytes[0] === 2) {
+      await this.scaleToBytes(dataWriter);
+    }
     //console.log({ dataWriter: dataWriter.data });
     // WRITE ASSET_TYPE
     await this.assetTypeToBytes(dataWriter);

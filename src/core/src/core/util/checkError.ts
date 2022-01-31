@@ -1,9 +1,8 @@
-export const checkProp = (obj: any, name: string) => {
-  //console.log("checkProp", { obj, name });
-  if ({}.hasOwnProperty.call(obj, name)) {
-    return obj[name] !== undefined;
+export const checkProp = (obj: any, name: string): boolean => {
+  if (!obj) {
+    return false;
   }
-  return false;
+  return {}.hasOwnProperty.call(obj, name);
 };
 
 export const checkError = (e: any): string => {

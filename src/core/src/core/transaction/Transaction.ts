@@ -23,6 +23,10 @@ export abstract class Transaction {
   static SEND_ASSET_TRANSACTION = 31;
 
   static ORDER_TRANSACTION = 50;
+  
+  static UPDATE_ORDER_TRANSACTION = 52;
+
+  static DOCUMENT_TRANSACTION = 35;
 
   static ORDER_TRANSACTION_CANCEL = 51;
 
@@ -69,9 +73,11 @@ export abstract class Transaction {
 
   private timestamp: number;
 
-  private reference: number;
+  private reference: number | null;
 
   private port: number;
+
+  private genesis_sign: Int8Array;
 
   static diffScale(v: number) {
     const n = new BigDecimal(v);
@@ -90,8 +96,9 @@ export abstract class Transaction {
     creator: PrivateKeyAccount,
     feePow: number,
     timestamp: number,
-    reference: number,
+    reference: number | null,
     port: number,
+    genesis_sign: Int8Array,
   ) {
     this.typeBytes = typeBytes;
     this.port = port;
@@ -99,6 +106,7 @@ export abstract class Transaction {
     //this.props = props;
     this.timestamp = timestamp;
     this.reference = reference;
+    this.genesis_sign = genesis_sign;
     if (feePow < 0) {
       feePow = 0;
     } else if (feePow > BlockChain.FEE_POW_MAX) {
@@ -117,10 +125,18 @@ export abstract class Transaction {
     const data = new DataWriter();
     data.set(await this.toBytes(false, null));
 
-    // all test a not valid for main test
-    // all other network must be invalid here!
-    //Если не ходят тразакции то возможно неверно указан порт. сейчас ок высчитывается при добавлении новой ноды как порт -1
-    data.set(await Bytes.intToByteArray(this.port));
+    if (this.genesis_sign.length > 0) {
+      // sidechain mode
+      // console.log("transaction.sidechain");
+      data.set(this.genesis_sign);
+    } else {
+      // all test a not valid for main test
+      // all other network must be invalid here!
+      //Если не ходят тразакции то возможно неверно указан порт. сейчас ок высчитывается при добавлении новой ноды как порт -1
+      // console.log("transaction.no_sidechain");
+      data.set(await Bytes.intToByteArray(this.port));
+    }
+
     this.signature = AppCrypt.sign(data.data, creator.getSecretKey());
     if (!asPack) {
       // need for recalc! if not as a pack
@@ -130,17 +146,18 @@ export abstract class Transaction {
 
   async toBytes(withSign: boolean, releaserReference: number | null): Promise<Int8Array> {
     const asPack = releaserReference != null;
-    //console.log("Transaction", { withSign, releaserReference, asPack });
+    // console.log("Transaction", { withSign, releaserReference, asPack });
     const data = new DataWriter();
 
     //WRITE TYPE
     data.set(this.typeBytes);
-    //console.log("Transaction1", { data });
 
     if (!asPack) {
       //WRITE TIMESTAMP
       let timestampBytes = await Bytes.longToByteArray(this.timestamp);
+      //console.log({ timestamp: this.timestamp, timestampBytes, ts2: await Bytes.longFromByteArray(timestampBytes)});
       timestampBytes = Bytes.ensureCapacity(timestampBytes, Transaction.TIMESTAMP_LENGTH, 0);
+
       data.set(timestampBytes);
       //console.log("Transaction2", { data });
     }
@@ -163,7 +180,6 @@ export abstract class Transaction {
       const feePowBytes = new Int8Array([0]);
       feePowBytes[0] = this.feePow;
       data.set(feePowBytes);
-      //console.log("Transaction5", { data });
     }
     //SIGNATURE
     if (withSign) {
@@ -195,19 +211,18 @@ export abstract class Transaction {
     return (await this.getDataLength(false)) * BlockChain.FEE_PER_BYTE;
   }
 
-  abstract async getDataLength(asPack: boolean): Promise<number>;
+  abstract getDataLength(asPack: boolean): Promise<number>;
 
   async amountToBytes(n: BigDecimal, dataWriter: DataWriter): Promise<void> {
     let bytes = new Int8Array([]);
     let diffScale = n.getScale() - Transaction.AMOUNT_DEFAULT_SCALE;
     if (diffScale !== 0) {
-      const num = n.num * Math.pow(10, diffScale);
+      const num = n.num * BigDecimal.pow(10, diffScale);
       if (diffScale < 0) {
         diffScale += Transaction.SCALE_MASK + 1;
       }
       n = new BigDecimal(num);
     }
-    //console.log({ scale: n.getScale(), diffScale, value: n.unscaledValue() });
     bytes = await Bytes.longToByteArray(n.unscaledValue());
     bytes = Bytes.ensureCapacity(bytes, Transaction.AMOUNT_LENGTH, 0);
     dataWriter.set(bytes);

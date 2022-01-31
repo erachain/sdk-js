@@ -86,6 +86,43 @@ export class PersonCls extends ItemCls {
     return dataWriter.data;
   }
 
+  async toBytesWithoutAppData(includeReference: boolean, forOwnerSign: boolean): Promise<Int8Array> {
+    const dataWriter = new DataWriter();
+    dataWriter.set(await super.toBytesWithoutAppData(includeReference, forOwnerSign));
+
+    // WRITE BIRTHDAY
+    await this.birthdayToBytes(dataWriter);
+
+    // WRITE DEATHDAY
+    await this.deathdayToBytes(dataWriter);
+
+    // WRITE GENDER
+    this.genderToBytes(dataWriter);
+
+    // WRITE RACE
+    await this.raceToBytes(dataWriter);
+
+    //WRITE BIRTH_LATITUDE
+    await this.birthLatitudeToBytes(dataWriter);
+
+    //WRITE BIRTH_LONGITUDE
+    await this.birthLongitudeToBytes(dataWriter);
+
+    //WRITE SKIN COLOR
+    await this.skinColorToBytes(dataWriter);
+
+    //WRITE EYE COLOR
+    await this.eyeColorToBytes(dataWriter);
+
+    //WRITE HAIR COLOR
+    await this.hairColorToBytes(dataWriter);
+
+    //WRITE HEIGHT
+    this.heightToBytes(dataWriter);
+
+    return dataWriter.data;
+  }
+
   async birthdayToBytes(dataWriter: DataWriter): Promise<void> {
     const dayBytes = await Bytes.longToByteArray(this.birthday);
     const bytes = Bytes.ensureCapacity(dayBytes, PersonCls.BIRTHDAY_LENGTH, 0);

@@ -16,6 +16,7 @@ export class CancelOrder extends Transaction {
     reference: number,
     port: number,
     signatureOrder: string,
+    genesis_sign: Int8Array,
   ) {
     super(
       new Int8Array([Transaction.ORDER_TRANSACTION_CANCEL, 0, 0, 0]),
@@ -25,6 +26,7 @@ export class CancelOrder extends Transaction {
       timestamp,
       reference,
       port,
+      genesis_sign,
     );
 
     this.signatureOrder = signatureOrder;

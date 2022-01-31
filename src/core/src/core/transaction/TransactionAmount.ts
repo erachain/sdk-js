@@ -34,8 +34,9 @@ export class TransactionAmount extends Transaction {
     timestamp: number,
     reference: number,
     port: number,
+    genesis_sign: Int8Array,
   ) {
-    super(typeBytes, name, creator, feePow, timestamp, reference, port);
+    super(typeBytes, name, creator, feePow, timestamp, reference, port, genesis_sign);
 
     this.recipient = recipient;
 
@@ -56,16 +57,14 @@ export class TransactionAmount extends Transaction {
     //WRITE RECIPIENT
     data.set(await Base58.decode(this.recipient.getAddress()));
 
-    if (this.amount != null) {
+    if (!!this.amount) {
       //WRITE KEY
       let keyBytes = await Bytes.longToByteArray(this.key);
       keyBytes = Bytes.ensureCapacity(keyBytes, Transaction.KEY_LENGTH, 0);
       data.set(keyBytes);
 
       //WRITE AMOUNT
-      let amountBytes = await Bytes.longToByteArray(this.amount.unscaledValue());
-      amountBytes = Bytes.ensureCapacity(amountBytes, TransactionAmount.AMOUNT_LENGTH, 0);
-      data.set(amountBytes);
+      await this.amountToBytes(this.amount, data);
     }
 
     return data.data;

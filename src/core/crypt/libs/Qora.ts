@@ -1,17 +1,34 @@
 import { Base58 } from './Base58';
 import { RIPEMD160 } from './RIPEMD160';
 import { AppCrypt } from '../AppCrypt';
+import { int32ToBytes } from './convert';
 
 export class Qora {
   static ADDRESS_VERSION = 15; // 7
 
+  static async generateAccountSeed(seed: string | Int8Array, nonce: number) {
+    if (typeof seed === 'string') {
+      seed = await Base58.decode(seed);
+    }
+    const nonceBytes = int32ToBytes(nonce);
+    let resultSeed = new Int8Array();
+    resultSeed = appendBuffer(resultSeed, nonceBytes);
+    resultSeed = appendBuffer(resultSeed, seed);
+    resultSeed = appendBuffer(resultSeed, nonceBytes);
+
+    return await Base58.encode(AppCrypt.sha256(AppCrypt.sha256(resultSeed)));
+  }
+
   static async getAccountAddressFromPublicKey(publicKey: Int8Array): Promise<string> {
+    //console.log("getAccountAddressFromPublicKey.publicKey: ", publicKey );
     // SHA256 PUBLICKEY FOR PROTECTION
     let publicKeyHash = AppCrypt.sha256(publicKey);
+    //console.log("getAccountAddressFromPublicKey.publicKeyHash: ", publicKeyHash );
 
     // RIPEMD160 TO CREATE A SHORTER ADDRESS
     const ripEmd160 = new RIPEMD160();
     publicKeyHash = ripEmd160.digest(publicKeyHash);
+    //console.log("getAccountAddressFromPublicKey.publicKeyHash.ripEmd160: ", publicKeyHash );
 
     // CONVERT TO LIST
     let addressList = new Int8Array(0);
@@ -31,12 +48,14 @@ export class Qora {
     addressList = appendBuffer(addressList, new Int8Array([checkSum[2]]));
     addressList = appendBuffer(addressList, new Int8Array([checkSum[3]]));
 
+    //console.log("getAccountAddressFromPublicKey.addressList: ", addressList );
+
     //BASE58 ENCODE ADDRESS
     return await Base58.encode(addressList);
   }
 }
 
-function appendBuffer(buffer1: Int8Array, buffer2: Int8Array): Int8Array {
+export function appendBuffer(buffer1: Int8Array, buffer2: Int8Array): Int8Array {
   buffer1 = new Int8Array(buffer1);
   buffer2 = new Int8Array(buffer2);
   const tmp = new Int8Array(buffer1.byteLength + buffer2.byteLength);

@@ -5,6 +5,13 @@ import { Bytes } from '../Bytes';
 import { DataWriter } from '../DataWriter';
 import { BigDecimal } from '../../BigDecimal';
 import { PrivateKeyAccount } from '../account/PrivateKeyAccount';
+import { ETransferType } from './TranTypes';
+
+interface ITransferFields {
+  typeBytes: Int8Array;
+  assetKey: number;
+  amount: BigDecimal | null;
+}
 
 /* tslint:disable-next-line */
 export class R_Send extends TransactionAmount {
@@ -16,6 +23,62 @@ export class R_Send extends TransactionAmount {
   private data: Int8Array;
   private encrypted: Int8Array;
   private isText: Int8Array;
+
+  static transferTypeFields(
+    transferType: ETransferType,
+    assetKey: number,
+    amount: BigDecimal | null,
+  ): ITransferFields {
+    const transferFields = {
+      typeBytes: new Int8Array([
+        R_Send.TYPE_ID,
+        2,
+        0,
+        amount ? Transaction.diffScale(amount.num) : 0,
+      ]),
+      assetKey,
+      amount
+    };
+
+    if (transferType === ETransferType.DEBT) {
+      // выдать в долг
+      transferFields.assetKey = -1 * transferFields.assetKey;
+    } else if (transferType === ETransferType.RETURN_DEBT) {
+      // вернуть долг
+      transferFields.assetKey = -1 * transferFields.assetKey;
+      // BACKWARD
+      // transferFields.typeBytes[2] = transferFields.typeBytes[2] | 2 | 64;
+    } else if (transferType === ETransferType.CONFISCATE_DEBT) {
+      // конфисковать долг
+      transferFields.assetKey = -1 * transferFields.assetKey;
+      // BACKWARD
+      transferFields.typeBytes[2] = transferFields.typeBytes[2] | 64;
+    } else if (
+      (transferType === ETransferType.TAKE) &&
+      transferFields.amount
+    ) {
+      // принять на руки
+      transferFields.amount = new BigDecimal(-1 * transferFields.amount.num);
+      // BACKWARD
+      transferFields.typeBytes[2] = transferFields.typeBytes[2] | 64;
+    } else if (
+      (transferType === ETransferType.SPEND) &&
+      transferFields.amount
+    ) {
+      // потратить
+      transferFields.amount = new BigDecimal(-1 * transferFields.amount.num);
+      transferFields.assetKey = -1 * transferFields.assetKey;
+    } else if (transferType === ETransferType.PLEDGE && transferFields.amount) {
+      // передать в залог
+      // BACKWARD
+      transferFields.typeBytes[2] = transferFields.typeBytes[2] | 64;
+    } else if (transferType === ETransferType.RETURN_PLEDGE && transferFields.amount) {
+      // вернуть с залога
+      transferFields.amount = new BigDecimal(-1 * transferFields.amount.num);
+    }
+
+    return transferFields;
+  }
 
   constructor(
     creator: PrivateKeyAccount,
@@ -30,15 +93,17 @@ export class R_Send extends TransactionAmount {
     timestamp: number,
     reference: number,
     port: number,
+    genesis_sign: Int8Array,
+    transferType: ETransferType = ETransferType.DEFAULT,
   ) {
-    const typeBytes = new Int8Array([R_Send.TYPE_ID, 0, 0, 0]);
-    super(typeBytes, R_Send.NAME_ID, creator, feePow, recipient, amount, key, timestamp, reference, port);
+    const transferFields = R_Send.transferTypeFields(transferType, key, amount);
+    super(transferFields.typeBytes, R_Send.NAME_ID, creator, feePow, recipient, transferFields.amount, transferFields.assetKey, timestamp, reference, port, genesis_sign);
 
     this.head = head || '';
 
     if (data == null || data.length === 0) {
       // set version byte
-      typeBytes[3] = typeBytes[3] | -128;
+      this.typeBytes[3] = this.typeBytes[3] | -128;
     } else {
       this.data = data;
       this.encrypted = encrypted;

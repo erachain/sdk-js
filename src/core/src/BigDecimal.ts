@@ -64,7 +64,7 @@ export class BigDecimal {
   }
 
   unscaledValue(): number {
-    return this.intCompact;
+    return Math.trunc(this.intCompact);
   }
 
   private _numValue(x: number | BigDecimal): number {
@@ -72,5 +72,16 @@ export class BigDecimal {
       x = x.num;
     }
     return x;
+  }
+
+  // за место Math.pow
+  static pow(a: number, b: number): number {
+    const n = b < 0 ? b * -1 : b;
+    let z = 1;
+    for (let i = 0; i < n; i += 1) {
+      z *= a;
+    }
+
+    return b < 0 ? 1 / z : z;
   }
 }
