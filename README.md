@@ -8,7 +8,7 @@ npm install --save erachain-js-api
 
 ### Download js lib for html => /dist
 
-download https://lab.erachain.org/pub/sdk-js/-/blob/develop/dist/js/erachainapi.js
+download https://github.com/erachain/sdk-js/blob/master/dist/js/erachainapi.js
 
 Usage:
 
